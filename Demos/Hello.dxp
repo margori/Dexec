@@ -1,0 +1,65 @@
+1.1
+Variables
+0
+Archivos
+0
+Instrucciones
+3
+Inicio
+{
+X = 90
+Y = 40
+Ancho = 141
+Alto = 41
+Caption = Program
+MuestraCaption = Si
+Texto = 
+MuestraTexto = No
+Bloqueado = No
+BreackPoint = No
+}
+Salida
+{
+X = 90
+Y = 130
+Ancho = 141
+Alto = 41
+Caption = 
+MuestraCaption = No
+Parametros = "Hello world!"
+Dispositivo = Pantalla
+Archivo =  
+Retorno = Si
+MuestraTexto = Si
+Bloqueado = No
+BreackPoint = No
+}
+Fin
+{
+X = 90
+Y = 230
+Ancho = 141
+Alto = 41
+Caption = End
+MuestraCaption = Si
+Texto = 
+MuestraTexto = No
+Bloqueado = No
+BreackPoint = Si
+}
+Flechas
+2
+Flecha
+{
+Instruccion = 0
+Union = Sur
+Instruccion = 1
+Union = Norte
+}
+Flecha
+{
+Instruccion = 1
+Union = Sur
+Instruccion = 2
+Union = Norte
+}

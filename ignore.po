@@ -1,0 +1,50 @@
+#  Doesn't have any letters
+#. FormMain..MainMenu1..Archivo1..N1..Caption
+#: Formularios/UForm_Main.dfm:444
+#. FormMain..MainMenu1..Ejecutar1..N2..Caption
+#: Formularios/UForm_Main.dfm:465
+msgid "-"
+msgstr ""
+
+#  Doesn't have any letters
+#. formPropiedadesArchivos..btnExaminar..Caption
+#: Formularios/UForm_PropiedadesArchivos.dfm:58
+msgid "..."
+msgstr ""
+
+#  Seems like a Font.Name extract
+#. formCrt..Memo1..Font.Name
+#: Formularios/Uform_Crt.dfm:28
+msgid "Courier New"
+msgstr ""
+
+#  Seems like a Font.Name extract
+#. formActivacion..Font.Name
+#: Formularios/form_Activacion.dfm:13
+#. formAcercade..Font.Name
+#: Formularios/Uform_Acercade.dfm:13
+#. formAcercade..labelVersion..Font.Name
+#: Formularios/Uform_Acercade.dfm:2918
+#. formAcercade..labelDemo..Font.Name
+#: Formularios/Uform_Acercade.dfm:2932
+#. formCrt..Font.Name
+#: Formularios/Uform_Crt.dfm:12
+#. FormMain..Font.Name
+#: Formularios/UForm_Main.dfm:11
+#. FormMain..panelDerecho..panelVariables..labelVariables..Font.Name
+#: Formularios/UForm_Main.dfm:289
+#. FormMain..panelDerecho..panelArchivos..labelArchivos..Font.Name
+#: Formularios/UForm_Main.dfm:365
+#. Font.Name
+#: Formularios/UForm_Propiedades.dfm:14
+#. formPropiedadesArchivos..Font.Name
+#: Formularios/UForm_PropiedadesArchivos.dfm:14
+#. formPropiedadesSalida..Font.Name
+#: Formularios/UForm_PropiedadesSalida.dfm:14
+#. formPropiedadesVariables..Font.Name
+#: Formularios/Uform_PropiedadesVariables.dfm:11
+#. formSplash..Font.Name
+#: Formularios/Uform_Splash.dfm:12
+msgid "MS Sans Serif"
+msgstr ""
+

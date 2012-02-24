@@ -1,0 +1,939 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2008-03-12 18:46\n"
+"PO-Revision-Date: 2008-03-12 18:46\n"
+"Last-Translator: Somebody <your.email@address.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: dxgettext 1.2.1\n"
+
+#. formActivacion..Caption
+#: Formularios/form_Activacion.dfm:6
+msgid "Activacion"
+msgstr ""
+
+#. formActivacion..Font.Name
+#: Formularios/form_Activacion.dfm:13
+#. formAcercade..Font.Name
+#: Formularios/Uform_Acercade.dfm:13
+#. formAcercade..labelVersion..Font.Name
+#: Formularios/Uform_Acercade.dfm:2902
+#. formAcercade..labelEdicion..Font.Name
+#: Formularios/Uform_Acercade.dfm:2916
+#. formAcercade..Label3..Font.Name
+#: Formularios/Uform_Acercade.dfm:2945
+#. formAcercade..Label4..Font.Name
+#: Formularios/Uform_Acercade.dfm:2960
+#. formCrt..Font.Name
+#: Formularios/Uform_Crt.dfm:12
+#. FormMain..Font.Name
+#: Formularios/UForm_Main.dfm:11
+#. FormMain..panelDerecho..panelVariables..labelVariables..Font.Name
+#: Formularios/UForm_Main.dfm:289
+#. FormMain..panelDerecho..panelArchivos..labelArchivos..Font.Name
+#: Formularios/UForm_Main.dfm:365
+#. Font.Name
+#: Formularios/UForm_Propiedades.dfm:14
+#. formPropiedadesArchivos..Font.Name
+#: Formularios/UForm_PropiedadesArchivos.dfm:14
+#. formPropiedadesSalida..Font.Name
+#: Formularios/UForm_PropiedadesSalida.dfm:14
+#. formPropiedadesVariables..Font.Name
+#: Formularios/Uform_PropiedadesVariables.dfm:11
+#. formSplash..Font.Name
+#: Formularios/Uform_Splash.dfm:12
+#. formSplash..labelEdicion..Font.Name
+#: Formularios/Uform_Splash.dfm:8519
+msgid "MS Sans Serif"
+msgstr ""
+
+#. formActivacion..btnOk..Caption
+#: Formularios/form_Activacion.dfm:61
+msgid "OK"
+msgstr ""
+
+#. formActivacion..btnCancel..Caption
+#: Formularios/form_Activacion.dfm:90
+#. btnCancel..Caption
+#: Formularios/UForm_Propiedades.dfm:57
+msgid "Cancel"
+msgstr ""
+
+#. formAcercade..Caption
+#: Formularios/Uform_Acercade.dfm:6
+msgid "About Dexec"
+msgstr ""
+
+#. formAcercade..labelCopyright..Caption
+#: Formularios/Uform_Acercade.dfm:1342
+msgid "Copyright (c) 2000-2008 by Heuristik"
+msgstr ""
+
+#. formAcercade..labelVersion..Caption
+#: Formularios/Uform_Acercade.dfm:2898
+msgid "Version 1.3.0"
+msgstr ""
+
+#. formAcercade..Label1..Caption
+#: Formularios/Uform_Acercade.dfm:2926
+msgid "Mendoza, Argentina"
+msgstr ""
+
+#. formAcercade..Label2..Caption
+#: Formularios/Uform_Acercade.dfm:2933
+msgid "All rights reserved."
+msgstr ""
+
+#. formAcercade..Label3..Caption
+#: Formularios/Uform_Acercade.dfm:2941
+msgid "http://www.dexec.com.ar"
+msgstr ""
+
+#. formAcercade..Label4..Caption
+#: Formularios/Uform_Acercade.dfm:2956
+msgid "http://www.heuristik.com.ar"
+msgstr ""
+
+#. formAcercade..Label5..Caption
+#: Formularios/Uform_Acercade.dfm:2970
+msgid "Credits"
+msgstr ""
+
+#. formAcercade..Label6..Caption
+#: Formularios/Uform_Acercade.dfm:2977
+msgid "Ing. Briones, Marcelo D."
+msgstr ""
+
+#. formAcercade..Label7..Caption
+#: Formularios/Uform_Acercade.dfm:2984
+msgid "Prof. Paz, Claudio F."
+msgstr ""
+
+#. formAcercade..Label8..Caption
+#: Formularios/Uform_Acercade.dfm:2991
+msgid "Paz, Mariano"
+msgstr ""
+
+#. formCrt..Caption
+#: Formularios/Uform_Crt.dfm:7
+#. FormMain..toolbarMain..btnSalida..Caption
+#: Formularios/UForm_Main.dfm:134
+#. FormMain..ActionList1..actSalida..Caption
+#: Formularios/UForm_Main.dfm:1227
+#. FormMain..ActionList1..actSalida..Hint
+#: Formularios/UForm_Main.dfm:1228
+#: Formularios/Uform_Crt.pas:222
+msgid "Output"
+msgstr ""
+
+#. formCrt..Memo1..Font.Name
+#: Formularios/Uform_Crt.dfm:28
+msgid "Courier New"
+msgstr ""
+
+#. FormMain..Caption
+#: Formularios/UForm_Main.dfm:6
+msgid "Dexec - "
+msgstr ""
+
+#. FormMain..toolbarMain..btnSeleccion..Hint
+#: Formularios/UForm_Main.dfm:113
+msgid "Selection (Esc)"
+msgstr ""
+
+#. FormMain..toolbarMain..btnSeleccion..Caption
+#: Formularios/UForm_Main.dfm:115
+msgid "Selection"
+msgstr ""
+
+#. FormMain..toolbarMain..btnEntrada..Hint
+#: Formularios/UForm_Main.dfm:124
+msgid "Input (F3)"
+msgstr ""
+
+#. FormMain..toolbarMain..btnEntrada..Caption
+#: Formularios/UForm_Main.dfm:125
+msgid "Input"
+msgstr ""
+
+#. FormMain..toolbarMain..btnSalida..Hint
+#: Formularios/UForm_Main.dfm:133
+msgid "Output (F4)"
+msgstr ""
+
+#. FormMain..toolbarMain..btnSentencia..Hint
+#: Formularios/UForm_Main.dfm:142
+msgid "Sentence (F5)"
+msgstr ""
+
+#. FormMain..toolbarMain..btnSentencia..Caption
+#: Formularios/UForm_Main.dfm:144
+msgid "Sentence"
+msgstr ""
+
+#. FormMain..toolbarMain..btnCondicion..Hint
+#: Formularios/UForm_Main.dfm:152
+msgid "Condition (F6)"
+msgstr ""
+
+#. FormMain..toolbarMain..btnCondicion..Caption
+#: Formularios/UForm_Main.dfm:154
+msgid "Condition"
+msgstr ""
+
+#. FormMain..toolbarMain..btnFinal..Hint
+#: Formularios/UForm_Main.dfm:162
+msgid "End (F7)"
+msgstr ""
+
+#. FormMain..toolbarMain..btnFinal..Caption
+#: Formularios/UForm_Main.dfm:164
+#: UObjetos.pas:2654
+msgid "End"
+msgstr ""
+
+#. FormMain..toolbarMain..btnNodo..Hint
+#: Formularios/UForm_Main.dfm:172
+msgid "Node (F8)"
+msgstr ""
+
+#. FormMain..toolbarMain..btnNodo..Caption
+#: Formularios/UForm_Main.dfm:174
+msgid "Node"
+msgstr ""
+
+#. FormMain..toolbarMain..btnBorrar..Hint
+#: Formularios/UForm_Main.dfm:189
+msgid "Delete (Del/Supr)"
+msgstr ""
+
+#. FormMain..toolbarMain..btnBorrar..Caption
+#: Formularios/UForm_Main.dfm:191
+#. FormMain..panelDerecho..panelVariables..toolBarVariables..btnBorrarVar..Caption
+#: Formularios/UForm_Main.dfm:324
+#. FormMain..panelDerecho..panelArchivos..toolbarArchivos..btnBorrarArchivo..Caption
+#: Formularios/UForm_Main.dfm:399
+msgid "Delete"
+msgstr ""
+
+#. FormMain..toolbarMain..btnBreak..Hint
+#: Formularios/UForm_Main.dfm:205
+#. FormMain..toolbarMain..btnBreak..Caption
+#: Formularios/UForm_Main.dfm:206
+#. Caption
+#: Formularios/UForm_Propiedades.dfm:38
+#. formPropiedadesSalida..checkBreackPoint..Caption
+#: Formularios/UForm_PropiedadesSalida.dfm:36
+msgid "Breakpoint"
+msgstr ""
+
+#. FormMain..panelDerecho..panelVariables..labelVariables..Caption
+#: Formularios/UForm_Main.dfm:285
+msgid " Variables"
+msgstr ""
+
+#. FormMain..panelDerecho..panelVariables..toolBarVariables..btnNuevaVar..Caption
+#: Formularios/UForm_Main.dfm:310
+#. FormMain..panelDerecho..panelArchivos..toolbarArchivos..btnNuevoArchivo..Caption
+#: Formularios/UForm_Main.dfm:385
+#. FormMain..ActionList1..actNuevo..Hint
+#: Formularios/UForm_Main.dfm:1173
+msgid "New"
+msgstr ""
+
+#. FormMain..panelDerecho..panelVariables..toolBarVariables..btnModificarVar..Caption
+#: Formularios/UForm_Main.dfm:317
+#. FormMain..panelDerecho..panelArchivos..toolbarArchivos..btnModificarArchivo..Caption
+#: Formularios/UForm_Main.dfm:392
+msgid "Modify"
+msgstr ""
+
+#. FormMain..panelDerecho..panelArchivos..labelArchivos..Caption
+#: Formularios/UForm_Main.dfm:361
+msgid "Files"
+msgstr ""
+
+#. FormMain..MainMenu1..Archivo1..Caption
+#: Formularios/UForm_Main.dfm:431
+#. formPropiedadesArchivos..Caption
+#: Formularios/UForm_PropiedadesArchivos.dfm:6
+#. formPropiedadesSalida..radioArchivo..Caption
+#: Formularios/UForm_PropiedadesSalida.dfm:105
+msgid "File"
+msgstr ""
+
+#. FormMain..MainMenu1..Archivo1..N1..Caption
+#: Formularios/UForm_Main.dfm:445
+#. FormMain..MainMenu1..Ejecutar1..N2..Caption
+#: Formularios/UForm_Main.dfm:466
+msgid "-"
+msgstr ""
+
+#. FormMain..MainMenu1..Ejecutar1..Caption
+#: Formularios/UForm_Main.dfm:452
+msgid "Execute"
+msgstr ""
+
+#. FormMain..MainMenu1..Ayuda1..Caption
+#: Formularios/UForm_Main.dfm:473
+msgid "Help"
+msgstr ""
+
+#. FormMain..OpenDialog1..Filter
+#: Formularios/UForm_Main.dfm:480
+#. FormMain..SaveDialog1..Filter
+#: Formularios/UForm_Main.dfm:485
+msgid "Dexec programs (*.dxp)|*.dxp|All files "
+"(*.*)|*.*"
+msgstr ""
+
+#. FormMain..ActionList1..actSalir..Caption
+#: Formularios/UForm_Main.dfm:1165
+msgid "&Exit"
+msgstr ""
+
+#. FormMain..ActionList1..actSalir..Hint
+#: Formularios/UForm_Main.dfm:1166
+msgid "Exit"
+msgstr ""
+
+#. FormMain..ActionList1..actNuevo..Caption
+#: Formularios/UForm_Main.dfm:1172
+msgid "New..."
+msgstr ""
+
+#. FormMain..ActionList1..actAbrir..Caption
+#: Formularios/UForm_Main.dfm:1179
+#. FormMain..ActionList1..actAbrir..Hint
+#: Formularios/UForm_Main.dfm:1180
+msgid "Open..."
+msgstr ""
+
+#. FormMain..ActionList1..actSalvar..Caption
+#: Formularios/UForm_Main.dfm:1186
+#. FormMain..ActionList1..actSalvar..Hint
+#: Formularios/UForm_Main.dfm:1187
+msgid "Save"
+msgstr ""
+
+#. FormMain..ActionList1..actSalvarComo..Caption
+#: Formularios/UForm_Main.dfm:1193
+#. FormMain..ActionList1..actSalvarComo..Hint
+#: Formularios/UForm_Main.dfm:1194
+msgid "Save as..."
+msgstr ""
+
+#. FormMain..ActionList1..actEjecutar..Caption
+#: Formularios/UForm_Main.dfm:1199
+#. FormMain..ActionList1..actEjecutar..Hint
+#: Formularios/UForm_Main.dfm:1200
+msgid "Run"
+msgstr ""
+
+#. FormMain..ActionList1..actPausa..Caption
+#: Formularios/UForm_Main.dfm:1206
+#. FormMain..ActionList1..actPausa..Hint
+#: Formularios/UForm_Main.dfm:1207
+msgid "Pause"
+msgstr ""
+
+#. FormMain..ActionList1..actPaso..Caption
+#: Formularios/UForm_Main.dfm:1213
+#. FormMain..ActionList1..actPaso..Hint
+#: Formularios/UForm_Main.dfm:1214
+msgid "Step"
+msgstr ""
+
+#. FormMain..ActionList1..actParar..Caption
+#: Formularios/UForm_Main.dfm:1220
+#. FormMain..ActionList1..actParar..Hint
+#: Formularios/UForm_Main.dfm:1221
+msgid "Stop"
+msgstr ""
+
+#. FormMain..ActionList1..actAcercade..Caption
+#: Formularios/UForm_Main.dfm:1234
+msgid "About..."
+msgstr ""
+
+#. Caption
+#: Formularios/UForm_Propiedades.dfm:6
+#. formPropiedadesSalida..Caption
+#: Formularios/UForm_PropiedadesSalida.dfm:6
+msgid "Properties"
+msgstr ""
+
+#. checkCaption..Caption
+#: Formularios/UForm_Propiedades.dfm:30
+#. formPropiedadesSalida..checkCaption..Caption
+#: Formularios/UForm_PropiedadesSalida.dfm:28
+msgid "Comment"
+msgstr ""
+
+#. Caption
+#: Formularios/UForm_Propiedades.dfm:47
+msgid "&Ok"
+msgstr ""
+
+#. Caption
+#: Formularios/UForm_Propiedades.dfm:74
+msgid "Instrution"
+msgstr ""
+
+#. Caption
+#: Formularios/UForm_Propiedades.dfm:90
+msgid "Do not move."
+msgstr ""
+
+#. formPropiedadesArchivos..Label1..Caption
+#: Formularios/UForm_PropiedadesArchivos.dfm:28
+#: Formularios/UForm_Main.pas:261
+msgid "Path"
+msgstr ""
+
+#. formPropiedadesArchivos..Label2..Caption
+#: Formularios/UForm_PropiedadesArchivos.dfm:35
+#: Formularios/UForm_Main.pas:260
+msgid "Access"
+msgstr ""
+
+#. formPropiedadesArchivos..Label3..Caption
+#: Formularios/UForm_PropiedadesArchivos.dfm:42
+#. formPropiedadesVariables..Label1..Caption
+#: Formularios/Uform_PropiedadesVariables.dfm:28
+#: Formularios/UForm_Main.pas:259
+msgid "Name"
+msgstr ""
+
+#. formPropiedadesArchivos..btnExaminar..Caption
+#: Formularios/UForm_PropiedadesArchivos.dfm:58
+msgid "..."
+msgstr ""
+
+#. formPropiedadesArchivos..comboAcceso....Items.Strings
+#: Formularios/UForm_PropiedadesArchivos.dfm:71
+#: Formularios/UForm_Main.pas:1742
+msgid "Read"
+msgstr ""
+
+#. formPropiedadesArchivos..comboAcceso....Items.Strings
+#: Formularios/UForm_PropiedadesArchivos.dfm:72
+msgid "Rewrite / create"
+msgstr ""
+
+#. formPropiedadesArchivos..comboAcceso....Items.Strings
+#: Formularios/UForm_PropiedadesArchivos.dfm:73
+#: Formularios/UForm_Main.pas:1744
+msgid "Write"
+msgstr ""
+
+#. formPropiedadesArchivos..SaveDialog1....Filter
+#: Formularios/UForm_PropiedadesArchivos.dfm:104
+msgid "All file (*.*)|*.*|Data files (*.dat)|*.dat|Input files "
+"(*.in)|*.in|Output files (*.out)|*.out|Text files "
+"(*.txt)|*.txt"
+msgstr ""
+
+#. formPropiedadesSalida..btnOk..Caption
+#: Formularios/UForm_PropiedadesSalida.dfm:45
+msgid "Ok"
+msgstr ""
+
+#. formPropiedadesSalida..checkTexto..Caption
+#: Formularios/UForm_PropiedadesSalida.dfm:71
+msgid "Parameters"
+msgstr ""
+
+#. formPropiedadesSalida..checkBloquear..Caption
+#: Formularios/UForm_PropiedadesSalida.dfm:87
+msgid "Do not move"
+msgstr ""
+
+#. formPropiedadesSalida..checkRetorno..Caption
+#: Formularios/UForm_PropiedadesSalida.dfm:95
+msgid "Return"
+msgstr ""
+
+#. formPropiedadesSalida..radioPantalla..Caption
+#: Formularios/UForm_PropiedadesSalida.dfm:113
+msgid "Screen"
+msgstr ""
+
+#. formPropiedadesVariables..Caption
+#: Formularios/Uform_PropiedadesVariables.dfm:6
+#. LValor : TValor;
+#: Formularios/UForm_Main.pas:1563
+msgid "New variable"
+msgstr ""
+
+#. formPropiedadesVariables..Label2..Caption
+#: Formularios/Uform_PropiedadesVariables.dfm:36
+msgid "Type"
+msgstr ""
+
+#. formPropiedadesVariables..Label3..Caption
+#: Formularios/Uform_PropiedadesVariables.dfm:44
+msgid "Initial value"
+msgstr ""
+
+#. formPropiedadesVariables..Label4..Caption
+#: Formularios/Uform_PropiedadesVariables.dfm:52
+msgid "Rows"
+msgstr ""
+
+#. formPropiedadesVariables..Label5..Caption
+#: Formularios/Uform_PropiedadesVariables.dfm:60
+msgid "Columns"
+msgstr ""
+
+#. formPropiedadesVariables..radioEntero..Caption
+#: Formularios/Uform_PropiedadesVariables.dfm:138
+msgid "Integer"
+msgstr ""
+
+#. formPropiedadesVariables..radioCadena..Caption
+#: Formularios/Uform_PropiedadesVariables.dfm:149
+msgid "String"
+msgstr ""
+
+#. formPropiedadesVariables..radioReal..Caption
+#: Formularios/Uform_PropiedadesVariables.dfm:158
+msgid "Real"
+msgstr ""
+
+#. formSplash..Label2..Caption
+#: Formularios/Uform_Splash.dfm:8508
+msgid "-------------------------------------------"
+msgstr ""
+
+#: Dexec.dpr:50
+msgid "Demo version out of date. Valid until "
+"03/31/2008."
+msgstr ""
+
+#: Dexec.dpr:80
+msgid "Wait for %d seconds."
+msgstr ""
+
+#: UArchivos.pas:92
+#: UArchivos.pas:120
+msgid "File does not exist!"
+msgstr ""
+
+#: UArchivos.pas:140
+#: UArchivos.pas:153
+msgid "Reading error!"
+msgstr ""
+
+#: UArchivos.pas:161
+#: UArchivos.pas:171
+msgid "Access mode cannot be changed on an open "
+"file!"
+msgstr ""
+
+#: UArchivos.pas:182
+msgid "File must be open in order to read!"
+msgstr ""
+
+#: UArchivos.pas:190
+msgid "File must be open in order to write!"
+msgstr ""
+
+#: UArchivos.pas:217
+msgid "File index out of range!"
+msgstr ""
+
+#. Declaracion de nombres de tipos
+#. Programmer's name for it: NameIndef
+#: UConstantes.pas:20
+msgid "Indefinido"
+msgstr ""
+
+#. Programmer's name for it: NameInteg
+#: UConstantes.pas:22
+msgid "Entero"
+msgstr ""
+
+#. Programmer's name for it: NameInte8
+#: UConstantes.pas:23
+msgid "Entero 8 bits"
+msgstr ""
+
+#. Programmer's name for it: NameInt16
+#: UConstantes.pas:24
+msgid "Entero 16 bits"
+msgstr ""
+
+#. Programmer's name for it: NameInt32
+#: UConstantes.pas:25
+msgid "Entero 32 bits"
+msgstr ""
+
+#. Programmer's name for it: NameInt64
+#: UConstantes.pas:26
+msgid "Entero 64 bits"
+msgstr ""
+
+#. Programmer's name for it: NameWord1
+#: UConstantes.pas:29
+msgid "Natural 1 bits (Si/No)"
+msgstr ""
+
+#. Programmer's name for it: NameWord4
+#: UConstantes.pas:30
+msgid "Natural 4 bits"
+msgstr ""
+
+#. Programmer's name for it: NameWord8
+#: UConstantes.pas:31
+msgid "Natural 8 bits"
+msgstr ""
+
+#. Programmer's name for it: NameWor16
+#: UConstantes.pas:32
+msgid "Natural 16 bits"
+msgstr ""
+
+#. Programmer's name for it: NameWor32
+#: UConstantes.pas:33
+msgid "Natural 32 bits"
+msgstr ""
+
+#. Programmer's name for it: LogTrue
+#: UConstantes.pas:43
+msgid "si"
+msgstr ""
+
+#. Programmer's name for it: LogFalse
+#: UConstantes.pas:44
+msgid "no"
+msgstr ""
+
+#: UExtractores.pas:46
+#: UParsing.pas:60
+#: UParsing.pas:77
+#: UParsing.pas:104
+#: UParsing.pas:114
+#: UProcedimientos.pas:157
+#: UProcedimientos.pas:179
+#: UProcedimientos.pas:232
+#: UProcedimientos.pas:241
+#: UProcedimientos.pas:262
+#: UProcedimientos.pas:271
+#: UProcedimientos.pas:293
+#: UProcedimientos.pas:312
+#: UVariables.pas:235
+#: UVariables.pas:247
+#: UVariables.pas:260
+#: UVariables.pas:265
+#: UVariables.pas:272
+#. Este no se debe liberar.
+#: UVariables.pas:291
+#: UVariables.pas:303
+#: UVariables.pas:316
+#: UVariables.pas:321
+#: UVariables.pas:350
+msgid "Sintax error!"
+msgstr ""
+
+#: UExtractores.pas:101
+msgid "Parameter error!"
+msgstr ""
+
+#: UExtractores.pas:113
+msgid "Sintax error! \";\" o \")\" missed."
+msgstr ""
+
+#: UFunciones.pas:156
+#: UFunciones.pas:187
+#: UFunciones.pas:214
+#: UFunciones.pas:241
+#: UFunciones.pas:268
+#: UFunciones.pas:299
+#: UFunciones.pas:326
+#: UFunciones.pas:357
+#: UFunciones.pas:384
+#: UFunciones.pas:412
+#: UFunciones.pas:434
+#: UFunciones.pas:456
+#: UFunciones.pas:478
+msgid "Not supported parameter type!"
+msgstr ""
+
+#: UFunciones.pas:175
+#: UFunciones.pas:182
+msgid "Square root of negative number not supported!"
+msgstr ""
+
+#: UFunciones.pas:287
+#: UFunciones.pas:294
+msgid "Tangent not defined for angles = n * Pi + Pi / "
+"2."
+msgstr ""
+
+#: UFunciones.pas:345
+#: UFunciones.pas:352
+msgid "Logarithm of negative numbers not supported!"
+msgstr ""
+
+#: UFunciones.pas:498
+msgid "String expected!"
+msgstr ""
+
+#: UFunciones.pas:509
+#: UFunciones.pas:520
+msgid "Integer number expected!"
+msgstr ""
+
+#: UFunciones.pas:527
+msgid "Parameter expected!"
+msgstr ""
+
+#: UObjetos.pas:1104
+#: UObjetos.pas:1242
+#: UObjetos.pas:1251
+msgid "Exit arrow expected!"
+msgstr ""
+
+#: UObjetos.pas:1924
+#: UObjetos.pas:1951
+msgid "Wrong direction!"
+msgstr ""
+
+#: UObjetos.pas:2055
+#: UObjetos.pas:2084
+#: UObjetos.pas:2115
+#: UObjetos.pas:2144
+msgid "Direction error!"
+msgstr ""
+
+#: UObjetos.pas:2516
+#: UObjetos.pas:2743
+msgid "Exit arrow missed!"
+msgstr ""
+
+#: UObjetos.pas:2716
+#. Cambiar
+#: Formularios/UForm_Main.pas:501
+msgid "Program"
+msgstr ""
+
+#. ---------  Operadores --------------//
+#: UOperadores.pas:110
+#: UOperadores.pas:121
+#: UOperadores.pas:132
+#: UOperadores.pas:143
+#: UOperadores.pas:189
+#: UOperadores.pas:235
+#: UOperadores.pas:281
+#: UOperadores.pas:327
+#: UOperadores.pas:373
+#: UOperadores.pas:419
+#: UOperadores.pas:450
+#: UOperadores.pas:486
+#: UOperadores.pas:512
+#: UOperadores.pas:538
+#: UOperadores.pas:549
+#: UOperadores.pas:560
+msgid "Types missmatch!"
+msgstr ""
+
+#: UParsing.pas:60
+msgid " \":=\" expected."
+msgstr ""
+
+#: UParsing.pas:77
+#: UProcedimientos.pas:232
+#: UVariables.pas:235
+#: UVariables.pas:291
+msgid " Unknown identifier."
+msgstr ""
+
+#: UParsing.pas:104
+msgid " Unary operator expected."
+msgstr ""
+
+#: UParsing.pas:114
+msgid " Operator expected."
+msgstr ""
+
+#: UProcedimientos.pas:157
+#: UProcedimientos.pas:179
+#: UProcedimientos.pas:241
+#: UProcedimientos.pas:271
+msgid " Parameter expected."
+msgstr ""
+
+#: UProcedimientos.pas:262
+#: UProcedimientos.pas:293
+#: UProcedimientos.pas:312
+msgid " Unknown file identifier."
+msgstr ""
+
+#: UValores.pas:43
+msgid "Not supported asignation!"
+msgstr ""
+
+#: UValores.pas:56
+msgid "Debug: Data type not supported!"
+msgstr ""
+
+#. nDoub: Result := FloatToStr(pDoub(V.Puntero)^);
+#: UValores.pas:78
+msgid "Debug: Data type error!"
+msgstr ""
+
+#: UValores.pas:103
+#: UValores.pas:141
+msgid "String unconvertible to value!"
+msgstr ""
+
+#: UValores.pas:117
+msgid "Convertion error to integer type!"
+msgstr ""
+
+#: UValores.pas:127
+msgid "Convertion error to real type!"
+msgstr ""
+
+#: UValores.pas:158
+msgid "Debug: Not supported type!"
+msgstr ""
+
+#: UVariables.pas:247
+#: UVariables.pas:265
+#: UVariables.pas:303
+#: UVariables.pas:321
+msgid " Integer number expected."
+msgstr ""
+
+#: UVariables.pas:260
+#: UVariables.pas:316
+msgid " \")\" expected."
+msgstr ""
+
+#: UVariables.pas:272
+msgid " \"%s\" expected."
+msgstr ""
+
+#: UVariables.pas:350
+msgid " Types missmatch."
+msgstr ""
+
+#: UVariables.pas:512
+#: UVariables.pas:541
+msgid "Row index out of range!"
+msgstr ""
+
+#: UVariables.pas:516
+#: UVariables.pas:545
+msgid "Character index out of range!"
+msgstr ""
+
+#: UVariables.pas:519
+#: UVariables.pas:548
+msgid "Column index out of range!"
+msgstr ""
+
+#: UVariables.pas:534
+msgid "Type not supported!"
+msgstr ""
+
+#: Formularios/form_Activacion.pas:65
+msgid "Activation code error!"
+msgstr ""
+
+#: Formularios/Uform_Crt.pas:162
+#: Formularios/Uform_Crt.pas:166
+msgid "Columns mismatch!"
+msgstr ""
+
+#: Formularios/Uform_Crt.pas:220
+msgid "Output - reading"
+msgstr ""
+
+#: Formularios/UForm_Main.pas:257
+msgid "Variable"
+msgstr ""
+
+#: Formularios/UForm_Main.pas:258
+msgid "Value"
+msgstr ""
+
+#: Formularios/UForm_Main.pas:444
+msgid "Do you want to replace?"
+msgstr ""
+
+#: Formularios/UForm_Main.pas:460
+#: Formularios/UForm_Main.pas:480
+#: Formularios/UForm_Main.pas:521
+msgid "Do you want to save?"
+msgstr ""
+
+#: Formularios/UForm_Main.pas:666
+#: Formularios/UForm_Main.pas:699
+#: Formularios/UForm_Main.pas:708
+#: Formularios/UForm_Main.pas:733
+#: Formularios/UForm_Main.pas:759
+#: Formularios/UForm_Main.pas:774
+#. LSegmento := LFlecha.Segmentos.Items[Aux];
+#: Formularios/UForm_Main.pas:828
+msgid "File error!"
+msgstr ""
+
+#: Formularios/UForm_Main.pas:1065
+msgid "TInstruccion object expected."
+msgstr ""
+
+#: Formularios/UForm_Main.pas:1146
+msgid "Toolbar button error!"
+msgstr ""
+
+#: Formularios/UForm_Main.pas:1523
+msgid " - Running"
+msgstr ""
+
+#: Formularios/UForm_Main.pas:1525
+msgid " - Pause"
+msgstr ""
+
+#: Formularios/UForm_Main.pas:1599
+msgid "Variable "
+msgstr ""
+
+#: Formularios/UForm_Main.pas:1709
+msgid "New file"
+msgstr ""
+
+#: Formularios/UForm_Main.pas:1743
+msgid "Rewrite"
+msgstr ""
+
+#: Formularios/UForm_Main.pas:1765
+msgid "Modify file"
+msgstr ""
+
+#: Formularios/UForm_PropiedadesArchivos.pas:67
+msgid "Error in combobox."
+msgstr ""
+
+#: Formularios/Uform_PropiedadesVariables.pas:90
+msgid "Not supported type!"
+msgstr ""
+
+#: Formularios/Uform_PropiedadesVariables.pas:116
+msgid "Debug: Error in radiogroup!"
+msgstr ""
+
+#: Formularios/Uform_PropiedadesVariables.pas:208
+msgid "Invalid identifier."
+msgstr ""
+
