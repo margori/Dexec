@@ -546,7 +546,6 @@ begin
 	Funciones.Registrar('TAN',FuncTan);
 	Funciones.Registrar('ARCTAN',FuncArcTan);
 
-
 	Funciones.Registrar('LOG',FuncLog);
   Funciones.Registrar('EXP',FuncExp);
 
@@ -577,4 +576,4 @@ finalization
 	Funciones.Free;
 
 end.
-
+

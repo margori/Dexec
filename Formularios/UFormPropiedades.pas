@@ -1,5 +1,7 @@
 unit UFormPropiedades;
 
+{$mode objfpc}{$H+}
+
 interface
 
 uses
@@ -109,4 +111,4 @@ begin
 	// TODO: Translate components.
 end;
 
-end.
+end.

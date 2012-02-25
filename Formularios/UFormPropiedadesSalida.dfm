@@ -1,11 +1,11 @@
 object formPropiedadesSalida: TformPropiedadesSalida
-  Left = 349
+  Left = 827
   Height = 259
-  Top = 246
-  Width = 320
+  Top = 235
+  Width = 400
   Caption = 'Properties'
   ClientHeight = 259
-  ClientWidth = 320
+  ClientWidth = 400
   Color = clBtnFace
   Constraints.MaxHeight = 259
   Constraints.MinHeight = 259
@@ -16,26 +16,26 @@ object formPropiedadesSalida: TformPropiedadesSalida
   OnCreate = FormCreate
   LCLVersion = '0.9.30'
   object checkCaption: TCheckBox
-    Left = 15
+    Left = 23
     Height = 17
-    Top = 18
+    Top = 28
     Width = 64
     Caption = 'Comment'
     TabOrder = 0
   end
   object checkBreackPoint: TCheckBox
-    Left = 15
+    Left = 23
     Height = 17
-    Top = 136
-    Width = 71
-    Caption = 'Breakpoint'
+    Top = 146
+    Width = 82
+    Caption = 'Is Breakpoint'
     TabOrder = 1
   end
   object btnOk: TBitBtn
-    Left = 32
-    Height = 25
-    Top = 190
-    Width = 140
+    Left = 47
+    Height = 33
+    Top = 200
+    Width = 202
     Anchors = [akTop, akLeft, akRight]
     Caption = 'Ok'
     Kind = bkOK
@@ -43,69 +43,69 @@ object formPropiedadesSalida: TformPropiedadesSalida
     TabOrder = 2
   end
   object btnCancel: TBitBtn
-    Left = 180
-    Height = 25
-    Top = 190
-    Width = 120
+    Left = 263
+    Height = 33
+    Top = 200
+    Width = 90
     Anchors = [akTop, akRight]
     Kind = bkCancel
     ModalResult = 2
     TabOrder = 3
   end
   object editCaption: TEdit
-    Left = 95
+    Left = 103
     Height = 21
-    Top = 16
-    Width = 211
+    Top = 26
+    Width = 273
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 4
   end
   object checkTexto: TCheckBox
-    Left = 15
+    Left = 23
     Height = 17
-    Top = 42
+    Top = 52
     Width = 73
     Caption = 'Parameters'
     TabOrder = 5
   end
   object editParametros: TEdit
-    Left = 95
+    Left = 103
     Height = 21
-    Top = 40
-    Width = 211
+    Top = 50
+    Width = 275
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 6
   end
   object checkBloquear: TCheckBox
-    Left = 15
+    Left = 23
     Height = 17
-    Top = 160
-    Width = 81
-    Caption = 'Do not move'
+    Top = 170
+    Width = 123
+    Caption = 'Locked. Do not move'
     TabOrder = 7
   end
   object checkRetorno: TCheckBox
-    Left = 15
+    Left = 23
     Height = 17
-    Top = 66
-    Width = 52
-    Caption = 'Return'
+    Top = 76
+    Width = 94
+    Caption = 'Carriage Return'
     Checked = True
     State = cbChecked
     TabOrder = 8
   end
   object radioArchivo: TRadioButton
-    Left = 15
+    Left = 23
     Height = 17
-    Top = 114
+    Top = 124
     Width = 36
     Caption = 'File'
     TabOrder = 9
   end
   object radioPantalla: TRadioButton
-    Left = 15
+    Left = 23
     Height = 17
-    Top = 90
+    Top = 100
     Width = 54
     Caption = 'Screen'
     Checked = True
@@ -113,10 +113,10 @@ object formPropiedadesSalida: TformPropiedadesSalida
     TabStop = True
   end
   object editArchivo: TEdit
-    Left = 95
+    Left = 103
     Height = 21
-    Top = 112
-    Width = 209
+    Top = 122
+    Width = 273
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 11
   end

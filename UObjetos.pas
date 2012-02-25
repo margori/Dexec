@@ -1,11 +1,10 @@
 unit UObjetos;
 
+{$mode objfpc}
+
 interface
 
 uses
-{$ifdef WINDOWS}
-	Windows,
-{$endif}
   SysUtils, Classes, Controls, Graphics, Types, Messages, LMessages, UUtiles, Math, Forms;
 
 type
@@ -355,7 +354,7 @@ type
 	TSentencia = class(TInstruccion)
 	private
 	protected
-		function EstaMouseEnObjeto(X,Y: Integer): Boolean; override;
+		function EstaMouseEnObjeto(AX,AY: Integer): Boolean; override;
 
 		procedure DarCapacidades; override;
 
@@ -396,7 +395,7 @@ type
 	protected
 		procedure Actualizar; override;
 
-		function EstaMouseEnObjeto(X,Y: Integer): Boolean; override;
+		function EstaMouseEnObjeto(AX,AY: Integer): Boolean; override;
 
 		procedure PaintObjeto; override;
 	public
@@ -410,7 +409,7 @@ type
 	protected
     procedure Actualizar; override;
 
-		function EstaMouseEnObjeto(X,Y: Integer): Boolean; override;
+		function EstaMouseEnObjeto(AX,AY: Integer): Boolean; override;
 
 		procedure PaintObjeto; override;
 	public
@@ -424,7 +423,7 @@ type
 	protected
 		procedure PaintObjeto; override;
 
-		function EstaMouseEnObjeto(X,Y: Integer): Boolean; override;
+		function EstaMouseEnObjeto(AX,AY: Integer): Boolean; override;
 
 		procedure DarCapacidades; override;
 	public
@@ -442,7 +441,7 @@ type
 		procedure DarCapacidades; override;
 
 		procedure PaintObjeto; override;
-		function EstaMouseEnObjeto(X,Y: Integer): Boolean; override;
+		function EstaMouseEnObjeto(AX,AY: Integer): Boolean; override;
 	public
 		constructor Create(AOwner: TComponent; AParent: TWinControl); override;
 
@@ -460,7 +459,7 @@ type
 		procedure DarCapacidades; override;
 
 		procedure PaintObjeto; override;
-		function EstaMouseEnObjeto(X,Y: Integer): Boolean; override;
+		function EstaMouseEnObjeto(AX,AY: Integer): Boolean; override;
 	public
 		constructor Create(AOwner: TComponent; AParent: TWinControl); override;
 
@@ -475,7 +474,7 @@ type
 		procedure DarCapacidades; override;
 
 		procedure PaintObjeto; override;
-		function EstaMouseEnObjeto(X,Y: Integer): Boolean; override;
+		function EstaMouseEnObjeto(AX,AY: Integer): Boolean; override;
 	public
 		constructor Create(AOwner: TComponent; AParent: TWinControl); override;
 		function Ejecutar: TInstruccion; override;
@@ -517,7 +516,7 @@ procedure Register;
 
 implementation
 
-uses UFormPropiedades, UAnalizadores, UConstantes;
+uses UAnalizadores, UConstantes;
 
 procedure Register;
 begin
@@ -636,7 +635,7 @@ end;
 procedure TInstruccion.PaintTamano;
 begin
 	if MouseEnControl and PuedeTamano and not Bloqueado then
-		with Canvas do
+		with Self.Canvas do
 		begin
 			Pen.Color := clBlack;
 			Pen.Width := 1;
@@ -1050,14 +1049,13 @@ begin
 	MuestraTexto := True;
 end;
 
-function TSentencia.EstaMouseEnObjeto(X, Y: Integer): Boolean;
+function TSentencia.EstaMouseEnObjeto(AX, AY: Integer): Boolean;
 begin
-	Result := (X>=0)and(X<=Self.Width)and(Y>=0)and(Y<=Self.Height);
+	Result := (AX>=0)and(AX<=Self.Width)and(AY>=0)and(AY<=Self.Height);
 end;
 
 procedure TSentencia.DarCapacidades;
 begin
-  inherited;
 	PuedeMover := True;
 	PuedeTamano := True;
 	PuedeUnionNorte := True;
@@ -1073,7 +1071,6 @@ end;
 
 procedure TSentencia.PaintObjeto;
 begin
-	inherited;
 	with Canvas do
 	begin
 		Pen.Color := clBlack;
@@ -1118,12 +1115,12 @@ const
 	N1 = 15;
 	N2 = 15;
 var
-	P : array[0..3] of TPoint;
+	LPuntos : array[0..3] of TPoint;
 begin
-	with Canvas do
+	with Self.Canvas do
 	begin
 		Pen.Color := clBlack;
-		if Selected then
+		if Self.Selected then
 			Pen.Width := 3
 		else
 			Pen.Width := 1;
@@ -1137,44 +1134,49 @@ begin
 		else
 			Brush.Color := COLOR_OBJETO;
 
-		// Rombo principal
-		P[0] := Point(0,Self.Height div 2);
-		P[1] := Point(Self.Width div 2,0);
-		P[2] := Point(Self.Width-1,Self.Height div 2);
-		P[3] := Point(Self.Width div 2,Self.Height-1);
-		Polygon(P);
+		Brush.Style := bsSolid;
 
-		Pen.Width := 1;
+    // Rombo principal
+		LPuntos[0] := Point(0,Self.Height div 2);
+		LPuntos[1] := Point(Self.Width div 2,0);
+		LPuntos[2] := Point(Self.Width-1,Self.Height div 2);
+		LPuntos[3] := Point(Self.Width div 2,Self.Height-1);
+		Polygon(LPuntos);
+
+    // Draw true triangle in green
+    Pen.Width := 1;
 		Brush.Color := RGBToColor(0,196,0);
-		P[0] := Point(Self.Width div 2,Self.Height-1);
+		LPuntos[0] := Point(Self.Width div 2,Self.Height-1);
 		if Self.Width > Self.Height then
-			P[1] := Point(Self.Width div 2 - N1, Self.Height - N1 * Self.Height div Self.Width - 1)
+			LPuntos[1] := Point(Self.Width div 2 - N1, Self.Height - N1 * Self.Height div Self.Width - 1)
 		else
-			P[1] := Point(Self.Width * (Self.Height - 2 * N1) div (Self.Height * 2), Self.Height - N1);
+			LPuntos[1] := Point(Self.Width * (Self.Height - 2 * N1) div (Self.Height * 2), Self.Height - N1);
 
 		if Self.Width > Self.Height then
-			P[2] := Point(Self.Width div 2 + N1, Self.Height - N1 * Self.Height div Self.Width - 1)
+			LPuntos[2] := Point(Self.Width div 2 + N1, Self.Height - N1 * Self.Height div Self.Width - 1)
 		else
-			P[2] := Point(Self.Width * (Self.Height + 2 * N1) div (Self.Height * 2), Self.Height - N1);
-		P[3] := Point(Self.Width div 2,Self.Height-1);
-		Polygon(P);
+			LPuntos[2] := Point(Self.Width * (Self.Height + 2 * N1) div (Self.Height * 2), Self.Height - N1);
+		LPuntos[3] := Point(Self.Width div 2,Self.Height-1);
+		Polygon(LPuntos);
+
+    // Draw false triangle in red
 		Pen.Width := 1;
 		Brush.Color := clRed;
-		P[0] := Point(Self.Width - 1,Self.Height div 2);
+		LPuntos[0] := Point(Self.Width - 1,Self.Height div 2);
 		if Self.Width > Self.Height then
-			P[1] := Point(Self.Width - N2, Self.Height * (Self.Width - 2 * N2) div (2 * Self.Width))
+			LPuntos[1] := Point(Self.Width - N2, Self.Height * (Self.Width - 2 * N2) div (2 * Self.Width))
 		else
-			P[1] := Point(Self.Width - Self.Width * N2 div Self.Height, Self.Height div 2 - N2);
+			LPuntos[1] := Point(Self.Width - Self.Width * N2 div Self.Height, Self.Height div 2 - N2);
 		if Self.Width > Self.Height then
-			P[2] := Point(Self.Width - N2, Self.Height * (N2 * 2 + Self.Width) div (2 * Self.Width))
+			LPuntos[2] := Point(Self.Width - N2, Self.Height * (N2 * 2 + Self.Width) div (2 * Self.Width))
 		else
-			P[2] := Point(Self.Width - Self.Width * N2 div Self.Height, Self.Height div 2 + N2);
-		P[3] := Point(Self.Width - 1,Self.Height div 2);
-		Polygon(P);
+			LPuntos[2] := Point(Self.Width - Self.Width * N2 div Self.Height, Self.Height div 2 + N2);
+		LPuntos[3] := Point(Self.Width - 1,Self.Height div 2);
+		Polygon(LPuntos);
 	end;
 end;
 
-function TCondicion.EstaMouseEnObjeto(X, Y: Integer): Boolean;
+function TCondicion.EstaMouseEnObjeto(AX, AY: Integer): Boolean;
 var
 	M1,M2 : Real;
 	X1,Y1,X2,Y2,X3,Y3 : Real;
@@ -1187,7 +1189,7 @@ begin
 	Y2 := 0;
 	X3 := Self.Width / 2;
 	Y3 := Self.Height;
-	if X<=X2 then
+	if AX<=X2 then
 	begin
 
 		M1 := (Y2-Y1)/(X2-X1);
@@ -1195,14 +1197,14 @@ begin
 
 		Result := (Y>=M1*(X-X1)+Y1)and(Y<=M2*(X-X1)+Y1);
 	end;
-	if Not Result and (X>=X2) then
+	if Not Result and (AX>=X2) then
 	begin
 		X1 := Self.Width;
 		Y1 := Self.Height / 2;
 
 		M1 := (Y2-Y1)/(X2-X1);
 		M2 := (Y3-Y1)/(X3-X1);
-		Result := (Y>=M1*(X-X1)+Y1)and(Y<=M2*(X-X1)+Y1);
+		Result := (AY>=M1*(AX-X1)+Y1)and(AY<=M2*(AX-X1)+Y1);
 	end;
 end;
 
@@ -1217,7 +1219,6 @@ end;
 
 procedure TCondicion.DarCapacidades;
 begin
-  inherited;
 	PuedeMover := True;
 	PuedeTamano := True;
 	PuedeUnionNorte := True;
@@ -1872,7 +1873,7 @@ begin
 	if i <= 0 then
 		result := Nil
 	else
-		Result := FSegmentos.Items[i-1];
+		Result := TSegmento(FSegmentos.Items[i-1]);
 end;
 
 function TFlecha.GetD1: TDireccion;
@@ -1893,7 +1894,7 @@ begin
 	if i >= FSegmentos.Count-1 then
 		result := Nil
 	else
-		Result := FSegmentos.Items[i+1];
+		Result := TSegmento(FSegmentos.Items[i+1]);
 end;
 
 procedure TFlecha.MoverSegmento(ASegmento: TSegmento; DX, DY: Integer;
@@ -2014,7 +2015,7 @@ begin
       FUnionDesde.Flecha := Nil;
 		FUnionDesde := Value;
 		FUnionDesde.Flecha := Self;
-		OnDestroy2 := FUnionDesde.OnDestroyFlecha;
+		OnDestroy2 := @FUnionDesde.OnDestroyFlecha;
 //		Reset;
 	end;
 end;
@@ -2027,7 +2028,7 @@ begin
       FUnionHasta.Flecha := Nil;
 		FUnionHasta := Value;
 		FUnionHasta.Flecha := Self;
-		OnDestroy2 := FUnionHasta.OnDestroyFlecha;
+		OnDestroy2 := @FUnionHasta.OnDestroyFlecha;
 //		Reset;
 	end;
 end;
@@ -2043,7 +2044,7 @@ begin
       Reset
     else
     begin
-      LSegmento := Segmentos.Items[0];
+      LSegmento := TSegmento(Segmentos.Items[0]);
       case LSegmento.Direccion of
         dHorizontal:
             LSegmento.X1 := Value;
@@ -2218,7 +2219,7 @@ var
 begin
 	for j := 1 to Segmentos.Count-2 do
 	begin
-		LSegmento := Segmentos.Items[j];
+		LSegmento := TSegmento(Segmentos.Items[j]);
 		MoverSegmento(Lsegmento,DX,DY,False,False);
 	end;
 end;
@@ -2300,7 +2301,7 @@ begin
 	Parent := AParent;
 	Ancho := 5;
 	FPen := TPen.Create;
-	FPen.OnChange := Actualizar;
+	FPen.OnChange := @Actualizar;
 	ActualizarLimites;
 end;
 
@@ -2458,7 +2459,6 @@ end;
 
 procedure TNodo.DarCapacidades;
 begin
-	inherited;
 	PuedeMover := True;
 	PuedeTamano := False;
 	PuedeUnionNorte := True;
@@ -2493,14 +2493,13 @@ begin
 	end;
 end;
 
-function TNodo.EstaMouseEnObjeto(X, Y: Integer): Boolean;
+function TNodo.EstaMouseEnObjeto(AX, AY: Integer): Boolean;
 begin
-	Result := Sqr(BORDE / 2) > Sqr(X - Self.Width / 2) + Sqr(Y - Self.Height / 2);
+	Result := Sqr(BORDE / 2) > Sqr(AX - Self.Width / 2) + Sqr(AY - Self.Height / 2);
 end;
 
 procedure TNodo.PaintObjeto;
 begin
-  inherited;
 	with Canvas do
 	begin
 		Pen.Color := clBlack;
@@ -2634,7 +2633,6 @@ end;
 
 procedure TFin.DarCapacidades;
 begin
-  inherited;
 	PuedeMover := True;
 	PuedeTamano := True;
 	PuedeUnionNorte := True;
@@ -2651,14 +2649,13 @@ begin
 	Result := Nil;
 end;
 
-function TFin.EstaMouseEnObjeto(X, Y: Integer): Boolean;
+function TFin.EstaMouseEnObjeto(AX, AY: Integer): Boolean;
 begin
-	Result := (X>=0)and(X<=Self.Width)and(Y>=0)and(Y<=Self.Height);
+	Result := (AX>=0)and(AX<=Self.Width)and(AY>=0)and(AY<=Self.Height);
 end;
 
 procedure TFin.PaintObjeto;
 begin
-  inherited;
 	with Canvas do
 	begin
 		Pen.Color := clBlack;
@@ -2694,7 +2691,6 @@ end;
 
 procedure TInicio.DarCapacidades;
 begin
-	inherited;
 	PuedeMover := True;
 	PuedeTamano := True;
 	PuedeUnionNorte := False;
@@ -2720,16 +2716,15 @@ begin
 	end;
 end;
 
-function TInicio.EstaMouseEnObjeto(X, Y: Integer): Boolean;
+function TInicio.EstaMouseEnObjeto(AX, AY: Integer): Boolean;
 begin
-	Result := (X>=0)and(X<=self.Width)and(Y>=0)and(Y<=self.Height);
+	Result := (AX>=0)and(AX<=Self.Width)and(AY>=0)and(AY<=Self.Height);
 end;
 
 procedure TInicio.PaintObjeto;
 var
    w,h : integer;
 begin
-	inherited;
 	with Canvas do
 	begin
 		Pen.Color := clBlack;
@@ -2762,22 +2757,15 @@ procedure TEntrada.Actualizar;
 var
   s : string;
 begin
-  inherited;
-  S := '';
-  if (Dispositivo = diPantalla)  then
-  begin
-    if Retorno then
-      S := 'LeerRt('
-    else
-      S := 'Leer(';
-  end
-  else
-  begin
-    if Retorno then
-      S := 'LeerArchivoRt('
-    else
-      S := 'LeerArchivo(';
-  end;
+  S := 'Read';
+
+  if (Dispositivo = diArchivo)  then
+    S := S + 'File';
+
+  if Retorno then
+     S := S + 'Ln';
+
+  S := S + '(';
 
   if Dispositivo=diArchivo then
     S := S + Archivo + SEPARADOR + ' ';
@@ -2799,9 +2787,9 @@ begin
   inherited;
 end;
 
-function TEntrada.EstaMouseEnObjeto(X, Y: Integer): Boolean;
+function TEntrada.EstaMouseEnObjeto(AX, AY: Integer): Boolean;
 begin
-	Result := (X>=0)and(X<=Self.Width)and(Y>=0)and(Y<=Self.Height);
+	Result := (AX>=0)and(AX<=Self.Width)and(AY>=0)and(AY<=Self.Height);
 end;
 
 procedure TEntrada.PaintObjeto;
@@ -2842,22 +2830,14 @@ procedure TSalida.Actualizar;
 var
   s : string;
 begin
-  inherited;
-  S := '';
-  if (Dispositivo = diPantalla)  then
-  begin
-    if Retorno then
-      S := 'MostrarRt('
-    else
-      S := 'Mostrar(';
-  end
-  else
-  begin
-    if Retorno then
-      S := 'MostrarArchivoRt('
-    else
-      S := 'MostrarArchivo(';
-  end;
+  S := 'Write';
+  if (Dispositivo = diArchivo)  then
+    S := S + 'File';
+
+  if Retorno then
+     S := S + 'Ln';
+
+  S := S + '(';
 
   if Dispositivo=diArchivo then
     S := S + Archivo + SEPARADOR + ' ';
@@ -2878,11 +2858,11 @@ begin
   inherited;
 end;
 
-function TSalida.EstaMouseEnObjeto(X, Y: Integer): Boolean;
+function TSalida.EstaMouseEnObjeto(AX, AY: Integer): Boolean;
 begin
-	Result := (X>=0)and(Y>=0)and(Y<=Self.Height)
-		and (Y >= Round(Self.Height * (X - Self.Width + PUNTA_ENT_SAL) / 2 / PUNTA_ENT_SAL))
-		and (Y <= Round(Self.Height * (Self.Width + PUNTA_ENT_SAL - X) / 2 / PUNTA_ENT_SAL ));
+	Result := (AX>=0)and(AY>=0)and(AY<=Self.Height)
+		and (AY >= Round(Self.Height * (AX - Self.Width + PUNTA_ENT_SAL) / 2 / PUNTA_ENT_SAL))
+		and (AY <= Round(Self.Height * (Self.Width + PUNTA_ENT_SAL - AX) / 2 / PUNTA_ENT_SAL ));
 end;
 
 procedure TSalida.PaintObjeto;
@@ -2971,4 +2951,4 @@ begin
   end;
 end;
 
-end.
+end.

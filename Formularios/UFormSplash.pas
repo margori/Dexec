@@ -1,5 +1,7 @@
 unit UFormSplash;
 
+{$mode objfpc}{$H+}
+
 interface
 
 uses
@@ -33,4 +35,4 @@ begin
 {$ENDIF}
 end;
 
-end.
+end.

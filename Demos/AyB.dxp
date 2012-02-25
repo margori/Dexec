@@ -1,0 +1,321 @@
+1.1
+Variables
+2
+Entero 32 bits
+{
+Nombre = a
+ValorPorDefecto = 0
+Filas = 1
+Columnas = 1
+}
+Entero 32 bits
+{
+Nombre = b
+ValorPorDefecto = 0
+Filas = 1
+Columnas = 1
+}
+Archivos
+0
+Instrucciones
+13
+Inicio
+{
+X = 90
+Y = 40
+Ancho = 141
+Alto = 41
+Caption = Program
+MuestraCaption = Si
+Texto = 
+MuestraTexto = No
+Bloqueado = No
+BreackPoint = No
+}
+Condicion
+{
+X = 415
+Y = 110
+Ancho = 141
+Alto = 41
+Caption = 
+MuestraCaption = No
+Texto = a = b
+MuestraTexto = Si
+Bloqueado = No
+BreackPoint = No
+}
+Entrada
+{
+X = 90
+Y = 295
+Ancho = 141
+Alto = 41
+Caption = 
+MuestraCaption = No
+Parametros = a
+Dispositivo = Pantalla
+Archivo =   
+Retorno = Si
+MuestraTexto = Si
+Bloqueado = No
+BreackPoint = No
+}
+Entrada
+{
+X = 90
+Y = 475
+Ancho = 141
+Alto = 41
+Caption = 
+MuestraCaption = No
+Parametros = b
+Dispositivo = Pantalla
+Archivo =   
+Retorno = Si
+MuestraTexto = Si
+Bloqueado = No
+BreackPoint = No
+}
+Salida
+{
+X = 90
+Y = 220
+Ancho = 141
+Alto = 41
+Caption = 
+MuestraCaption = No
+Parametros = "a = "
+Dispositivo = Pantalla
+Archivo =   
+Retorno = No
+MuestraTexto = Si
+Bloqueado = No
+BreackPoint = No
+}
+Salida
+{
+X = 90
+Y = 380
+Ancho = 141
+Alto = 41
+Caption = 
+MuestraCaption = No
+Parametros = "b = "
+Dispositivo = Pantalla
+Archivo =   
+Retorno = No
+MuestraTexto = Si
+Bloqueado = No
+BreackPoint = No
+}
+Fin
+{
+X = 680
+Y = 570
+Ancho = 141
+Alto = 41
+Caption = End
+MuestraCaption = Si
+Texto = 
+MuestraTexto = No
+Bloqueado = No
+BreackPoint = Si
+}
+Nodo
+{
+X = 680
+Y = 440
+Ancho = 9
+Alto = 9
+Caption = 
+MuestraCaption = No
+Texto = 
+MuestraTexto = No
+Bloqueado = No
+BreackPoint = No
+}
+Condicion
+{
+X = 680
+Y = 200
+Ancho = 141
+Alto = 41
+Caption = 
+MuestraCaption = No
+Texto = a < b
+MuestraTexto = Si
+Bloqueado = No
+BreackPoint = No
+}
+Salida
+{
+X = 680
+Y = 310
+Ancho = 199
+Alto = 41
+Caption = 
+MuestraCaption = No
+Parametros = "a es menor que b"
+Dispositivo = Pantalla
+Archivo =   
+Retorno = Si
+MuestraTexto = Si
+Bloqueado = No
+BreackPoint = No
+}
+Salida
+{
+X = 415
+Y = 305
+Ancho = 141
+Alto = 41
+Caption = 
+MuestraCaption = No
+Parametros = "Son iguales"
+Dispositivo = Pantalla
+Archivo =   
+Retorno = Si
+MuestraTexto = Si
+Bloqueado = No
+BreackPoint = No
+}
+Salida
+{
+X = 885
+Y = 310
+Ancho = 187
+Alto = 49
+Caption = 
+MuestraCaption = No
+Parametros = "a es mayor que b"
+Dispositivo = Pantalla
+Archivo =   
+Retorno = Si
+MuestraTexto = Si
+Bloqueado = No
+BreackPoint = No
+}
+Sentencia
+{
+X = 90
+Y = 130
+Ancho = 141
+Alto = 41
+Caption = 
+MuestraCaption = No
+Texto = Cls
+MuestraTexto = Si
+Bloqueado = No
+BreackPoint = No
+}
+Flechas
+14
+Flecha
+{
+Instruccion = 1
+Union = Este
+Instruccion = 8
+Union = Norte
+X = 680
+}
+Flecha
+{
+Instruccion = 8
+Union = Sur
+Instruccion = 9
+Union = Norte
+}
+Flecha
+{
+Instruccion = 8
+Union = Este
+Instruccion = 11
+Union = Norte
+X = 885
+}
+Flecha
+{
+Instruccion = 1
+Union = Sur
+Instruccion = 10
+Union = Norte
+}
+Flecha
+{
+Instruccion = 10
+Union = Sur
+Instruccion = 7
+Union = Oeste
+Y = 440
+}
+Flecha
+{
+Instruccion = 9
+Union = Sur
+Instruccion = 7
+Union = Norte
+}
+Flecha
+{
+Instruccion = 3
+Union = Sur
+Instruccion = 1
+Union = Norte
+X = 252
+Y = 81
+}
+Flecha
+{
+Instruccion = 0
+Union = Sur
+Instruccion = 12
+Union = Norte
+X = 90
+}
+Flecha
+{
+Instruccion = 4
+Union = Sur
+Instruccion = 2
+Union = Norte
+X = 90
+}
+Flecha
+{
+Instruccion = 2
+Union = Sur
+Instruccion = 5
+Union = Norte
+X = 90
+}
+Flecha
+{
+Instruccion = 5
+Union = Sur
+Instruccion = 3
+Union = Norte
+X = 90
+}
+Flecha
+{
+Instruccion = 11
+Union = Sur
+Instruccion = 7
+Union = Este
+Y = 440
+}
+Flecha
+{
+Instruccion = 7
+Union = Sur
+Instruccion = 6
+Union = Norte
+}
+Flecha
+{
+Instruccion = 12
+Union = Sur
+Instruccion = 4
+Union = Norte
+}

@@ -1,7 +1,7 @@
 object FormPropiedades: TFormPropiedades
-  Left = 429
+  Left = 390
   Height = 182
-  Top = 229
+  Top = 223
   Width = 400
   Caption = 'Properties'
   ClientHeight = 182
@@ -16,21 +16,21 @@ object FormPropiedades: TFormPropiedades
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '0.9.30.2'
+  LCLVersion = '0.9.30'
   object checkCaption: TCheckBox
     Left = 18
-    Height = 21
+    Height = 17
     Top = 25
-    Width = 78
+    Width = 64
     Caption = 'Comment'
     TabOrder = 0
   end
   object checkBreackPoint: TCheckBox
     Left = 18
-    Height = 21
+    Height = 17
     Top = 74
-    Width = 84
-    Caption = 'Breakpoint'
+    Width = 82
+    Caption = 'Is Breakpoint'
     TabOrder = 4
   end
   object btnOk: TBitBtn
@@ -57,7 +57,7 @@ object FormPropiedades: TFormPropiedades
   end
   object editCaption: TEdit
     Left = 110
-    Height = 23
+    Height = 21
     Top = 23
     Width = 273
     Anchors = [akTop, akLeft, akRight]
@@ -65,15 +65,15 @@ object FormPropiedades: TFormPropiedades
   end
   object checkTexto: TCheckBox
     Left = 18
-    Height = 21
+    Height = 17
     Top = 49
-    Width = 76
-    Caption = 'Instrution'
+    Width = 69
+    Caption = 'Instruction'
     TabOrder = 2
   end
   object editTexto: TEdit
     Left = 110
-    Height = 23
+    Height = 21
     Top = 47
     Width = 273
     Anchors = [akTop, akLeft, akRight]
@@ -81,10 +81,10 @@ object FormPropiedades: TFormPropiedades
   end
   object checkBloquear: TCheckBox
     Left = 18
-    Height = 21
+    Height = 17
     Top = 94
-    Width = 100
-    Caption = 'Do not move.'
+    Width = 126
+    Caption = 'Locked. Do not move.'
     TabOrder = 5
   end
-end
+end

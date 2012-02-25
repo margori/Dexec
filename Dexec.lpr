@@ -1,13 +1,13 @@
 program Dexec;
 
-{$MODE Delphi}
+{$mode objfpc}{$H+}
 
 uses
+  {$IFDEF UNIX}{$IFDEF UseCThreads}
+  cthreads,
+  {$ENDIF}{$ENDIF}
+  Interfaces, // this includes the LCL widgetset
   Forms,
-  SysUtils,
-  Dialogs,
-  Graphics,
-  Interfaces,
   UObjetos in 'UObjetos.pas',
   UUtiles in 'UUtiles.pas',
   UAnalizadores in 'UAnalizadores.pas',
@@ -29,25 +29,11 @@ uses
   UFormAcercaDe in 'Formularios/UFormAcercaDe.pas' {formAcercade},
   UFormPropiedadesSalida in 'Formularios/UFormPropiedadesSalida.pas' {formPropiedadesSalida},
   UValidadores in 'UValidadores.pas',
-  UFormSplash in 'Formularios/UFormSplash.pas' {formSplash},
   UConfiguracion in 'UConfiguracion.pas';
 
 {$R *.res}
-const
-  ESPERA_RELEASE = 2;
-var
-  LInicio: TDateTime;
-  LSegundos: integer;
 begin
-  LInicio := Now;
-
   Application.Initialize;
-
-  formSplash := TformSplash.Create(Application);
-  formSplash.Label2.Caption := '';
-  formSplash.Show;
-  Application.ProcessMessages;
-
   Application.Title := 'Dexec';
   Application.CreateForm(TFormMain, FormMain);
   Application.CreateForm(TformCrt, formCrt);
@@ -56,12 +42,6 @@ begin
   Application.CreateForm(TformPropiedadesArchivos, formPropiedadesArchivos);
   Application.CreateForm(TformAcercade, formAcercade);
   Application.CreateForm(TformPropiedadesSalida, formPropiedadesSalida);
-  repeat
-    LSegundos := Trunc((Now - LInicio) * 24 * 3600);
-  until (LSegundos >= ESPERA_RELEASE);
-
-  formSplash.Free;
-
   Application.Run;
 end.
 

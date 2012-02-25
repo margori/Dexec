@@ -1,7 +1,7 @@
 object FormMain: TFormMain
-  Left = 332
+  Left = 164
   Height = 524
-  Top = 114
+  Top = 129
   Width = 1018
   Caption = 'Dexec - '
   ClientHeight = 505

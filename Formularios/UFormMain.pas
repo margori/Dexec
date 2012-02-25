@@ -1,5 +1,7 @@
 unit UFormMain;
 
+{$mode objfpc}
+
 interface
 
 uses
@@ -90,7 +92,7 @@ TFormMain = class(TForm)
 		actSalida: TAction;
 		actAcercade: TAction;
 
-		procedure IntruccionDestroy(Sender : TObject);
+    procedure IntruccionDestroy(Sender : TObject);
 		procedure InstruccionMouseDown(Sender: TObject; Button: TMouseButton;
 			Shift: TShiftState; X, Y: Integer);
 		procedure InstruccionMouseMove(Sender: TObject; Shift: TShiftState; X,
@@ -132,7 +134,6 @@ TFormMain = class(TForm)
 		procedure actPasoExecute(Sender: TObject);
 		procedure actPararExecute(Sender: TObject);
 		procedure actEjecutarExecute(Sender: TObject);
-		procedure Variables1Click(Sender: TObject);
 		procedure actSalidaExecute(Sender: TObject);
 		procedure actSalvarcomoExecute(Sender: TObject);
 		procedure actSalvarExecute(Sender: TObject);
@@ -229,9 +230,9 @@ begin
 	// TODO: Translate Components
 	Encabezado := 'Dexec';
 
-	GOnSegmentoMouseDown := SegmentoMouseDown;
-	GOnSegmentoMouseUp := SegmentoMouseUp;
-	GOnSegmentoMouseMove := SegmentoMouseMove;
+	GOnSegmentoMouseDown := @SegmentoMouseDown;
+	GOnSegmentoMouseUp := @SegmentoMouseUp;
+	GOnSegmentoMouseMove := @SegmentoMouseMove;
 
 	ThousandSeparator := ',';
 	DecimalSeparator := '.';
@@ -243,7 +244,7 @@ begin
 	Dragger := TDragger.Create(Self);
 	Dragger.Parent := ScrollBox1;
 	Dragger.Visible := False;
-	Dragger.OnMouseMove := DraggerMouseMove;
+	Dragger.OnMouseMove := @DraggerMouseMove;
 
 	//ScrollBox1.VertScrollBar.Margin := BORDE_PANTALLA;
 	//ScrollBox1.HorzScrollBar.Margin := BORDE_PANTALLA;
@@ -405,12 +406,6 @@ begin
 			Fin := True;
 	until Fin;
 	Ejecutando := InstruccionActual <> Nil;
-end;
-
-procedure TFormMain.Variables1Click(Sender: TObject);
-begin
-	panelVariables.Visible := not panelVariables.Visible;
-//	Variables1.Checked := panelVariables.Visible;
 end;
 
 procedure TFormMain.actSalidaExecute(Sender: TObject);
@@ -742,7 +737,7 @@ begin
 
 			Readln(LEntrada,S);
 			Aux := StrToInt(Copy(S,14,Length(S)));
-			LInstruccion := Instrucciones.Items[Aux];
+			LInstruccion := TInstruccion(Instrucciones.Items[Aux]);
 			Readln(LEntrada,S);
       LUnion1 := Nil;
 			if S = 'Union = Norte' then
@@ -758,7 +753,7 @@ begin
 
 			Readln(LEntrada,S);
 			Aux := StrToInt(Copy(S,14,Length(S)));
-			LInstruccion := Instrucciones.Items[Aux];
+			LInstruccion := TInstruccion(Instrucciones.Items[Aux]);
 			Readln(LEntrada,S);
       LUnion2 := Nil;
 			if S = 'Union = Norte' then
@@ -774,8 +769,8 @@ begin
 
 			LFlecha := TFlecha.Create(Self,ScrollBox1);
 			Flechas.Add(LFlecha);
-			LFlecha.OnDestroy := FlechaDestroy;
-			LFlecha.OnModificar := Modificacion;
+			LFlecha.OnDestroy := @FlechaDestroy;
+			LFlecha.OnModificar := @Modificacion;
 
 			LFlecha.UnionDesde := LUnion1;
 			LFlecha.UnionHasta := LUnion2;
@@ -784,22 +779,22 @@ begin
 			repeat
 				Readln(LEntrada,S);
 
-				LSegmento := LFlecha.Segmentos.Items[Aux];
+				LSegmento := TSegmento(LFlecha.Segmentos.Items[Aux]);
 				if S[1] ='Y' then
 				begin
 					if LSegmento.Direccion = dHorizontal then
 					begin
 						X1 := LSegmento.X1;
 						X2 := LSegmento.X2;
-						LSegmento := LFlecha.Segmentos.Items[Aux+1];
+						LSegmento := TSegmento(LFlecha.Segmentos.Items[Aux+1]);
 						LFlecha.MoverSegmento(LSegmento,X1-X2,0);
-						LSegmento := LFlecha.Segmentos.Items[Aux];
+						LSegmento := TSegmento(LFlecha.Segmentos.Items[Aux]);
 					end;
 					Y1 := LSegmento.Y2;
 					Y2 := StrToInt(Copy(S,5,Length(S)));
 					if Y1<>Y2 then
 					begin
-						LSegmento := LFlecha.Segmentos.Items[Aux+1];
+						LSegmento := TSegmento(LFlecha.Segmentos.Items[Aux+1]);
 						LFlecha.MoverSegmento(LSegmento,0,Y2-Y1);
 	//          LSegmento := LFlecha.Segmentos.Items[Aux];
 					end
@@ -810,15 +805,15 @@ begin
 					begin
 						Y1 := LSegmento.Y1;
 						Y2 := LSegmento.Y2;
-						LSegmento := LFlecha.Segmentos.Items[Aux+1];
+						LSegmento := TSegmento(LFlecha.Segmentos.Items[Aux+1]);
 						LFlecha.MoverSegmento(LSegmento,0,Y1-Y2);
-						LSegmento := LFlecha.Segmentos.Items[Aux];
+						LSegmento := TSegmento(LFlecha.Segmentos.Items[Aux]);
 					end;
 					X1 := LSegmento.X2;
 					X2 := StrToInt(Copy(S,5,Length(S)));
 					if X1<>X2 then
 					begin
-						LSegmento := LFlecha.Segmentos.Items[Aux+1];
+						LSegmento := TSegmento(LFlecha.Segmentos.Items[Aux+1]);
 						LFlecha.MoverSegmento(LSegmento,X2-X1,0);
 	//          LSegmento := LFlecha.Segmentos.Items[Aux];
 					end
@@ -848,7 +843,7 @@ var
   j,k: integer;
 begin
 	if FileExists(FArchivoPrograma) then
-		CopyFile(PChar(FArchivoPrograma),PChar(FArchivoPrograma + '~'),False);
+		CopyFile(FArchivoPrograma,FArchivoPrograma + '~',False);
 
 	AssignFile(LSalida,FArchivoPrograma);
 	try
@@ -890,7 +885,7 @@ begin
     Writeln(LSalida,Instrucciones.Count);
     for j := 0 to Instrucciones.Count-1 do
     begin
-      LInstruccion := Instrucciones.Items[j];
+      LInstruccion := TInstruccion(Instrucciones.Items[j]);
       if LInstruccion is TInicio then
         Writeln(LSalida,'Inicio')
       else if (LInstruccion is TSentencia)and not (LInstruccion is TEntradaSalida) then
@@ -958,7 +953,7 @@ begin
     begin
       Writeln(LSalida,'Flecha');
       Writeln(LSalida,'{');
-      LFlecha := Flechas.Items[j];
+      LFlecha := TFlecha(Flechas.Items[j]);
       LUnion := LFlecha.UnionDesde;
 
       LInstruccion := LUnion.Instruccion;
@@ -992,7 +987,7 @@ begin
 
       for k := 0 to LFlecha.Segmentos.Count-2 do
       begin
-				LSegmento := LFlecha.Segmentos.Items[k];
+				LSegmento := TSegmento(LFlecha.Segmentos.Items[k]);
 
         if LSegmento.Direccion= dHorizontal then
           Writeln(LSalida,'X = ',LSegmento.X2)
@@ -1177,14 +1172,14 @@ procedure TFormMain.InstruccionEventos(AInstruccion: TInstruccion);
 begin
   With AInstruccion do
   begin
-    OnMouseDown := InstruccionMouseDown;
-	  OnMouseMove := InstruccionMouseMove;
-    OnMouseUp := InstruccionMouseUp;
-    OnUnionMouseDown := UnionMouseDown;
-	  OnUnionMouseUp := UnionMouseUp;
-    OnUnionMouseMove := UnionMouseMove;
-	  OnDestroy := IntruccionDestroy;
-    OnModificar := Modificacion;
+    OnMouseDown := @InstruccionMouseDown;
+	  OnMouseMove := @InstruccionMouseMove;
+    OnMouseUp := @InstruccionMouseUp;
+    OnUnionMouseDown := @UnionMouseDown;
+	  OnUnionMouseUp := @UnionMouseUp;
+    OnUnionMouseMove := @UnionMouseMove;
+	  OnDestroy := @IntruccionDestroy;
+    OnModificar := @Modificacion;
   END;
 end;
 
@@ -1213,7 +1208,7 @@ begin
 	begin
 		DX := 0;
 		DY := 0;
-		LInstruccion := Instrucciones.Items[0];
+		LInstruccion := TInstruccion(Instrucciones.Items[0]);
 		while LInstruccion.Left + ScrollBox1.HorzScrollBar.Position + DX > BORDE_PANTALLA + GRILLAX - 1 do
 			DX := DX - GRILLAX;
 		while LInstruccion.Left + ScrollBox1.HorzScrollBar.Position + DX < BORDE_PANTALLA - 1 do
@@ -1225,7 +1220,7 @@ begin
 
 		for j := 1 to Instrucciones.Count-1 do
 		begin
-			LInstruccion := Instrucciones.Items[j];
+			LInstruccion := TInstruccion(Instrucciones.Items[j]);
 			while LInstruccion.Left + ScrollBox1.HorzScrollBar.Position + DX < BORDE_PANTALLA - 1 do
 				DX := DX + GRILLAX;
 			while LInstruccion.Top + ScrollBox1.VertScrollBar.Position + DY < BORDE_PANTALLA - 1 do
@@ -1233,10 +1228,10 @@ begin
 		end;
 		for j := 0 to Flechas.Count-1 do
 		begin
-			LFlecha := Flechas.Items[j];
+			LFlecha := TFlecha(Flechas.Items[j]);
 			for k := 0 to LFlecha.Segmentos.Count-1 do
 			begin
-				LSegmento := LFlecha.Segmentos.Items[k];
+				LSegmento := TSegmento(LFlecha.Segmentos.Items[k]);
 				while LSegmento.Left + ScrollBox1.HorzScrollBar.Position + DX < BORDE_PANTALLA - 1 do
 					DX := DX + GRILLAX;
 				while LSegmento.Top + ScrollBox1.VertScrollBar.Position + DY < BORDE_PANTALLA - 1 do
@@ -1246,13 +1241,13 @@ begin
 
 		for j := 0 to Instrucciones.Count-1 do
 		begin
-			LInstruccion := Instrucciones.Items[j];
+			LInstruccion := TInstruccion(Instrucciones.Items[j]);
 			LInstruccion.X := LInstruccion.X + DX;
 			LInstruccion.Y := LInstruccion.Y + DY;
 		end;
 		for j := 0 to Flechas.Count-1 do
 		begin
-			LFlecha := Flechas.Items[j];
+			LFlecha := TFlecha(Flechas.Items[j]);
 			LFlecha.DesplazarTodo(DX,DY);
 		end;
 	end;
@@ -1360,7 +1355,7 @@ begin
     with LFlecha do begin
       UnionDesde := LUnion1;
       UnionHasta := LUnion2;
-      OnDestroy := FlechaDestroy;
+      OnDestroy := @FlechaDestroy;
     end;
   end
   else
@@ -1397,7 +1392,7 @@ var
 begin
 	for j := 0 to Seleccion.Count-1 do
 	begin
-		LInstruccion := Seleccion.Items[j];
+		LInstruccion := TInstruccion(Seleccion.Items[j]);
 		if LInstruccion is TInicio then
 			LInstruccion.Selected := False
 		else
@@ -1426,7 +1421,7 @@ begin
 
 	for j := 0 to Flechas.Count-1 do
 	begin
-		LFlecha := Flechas.Items[j];
+		LFlecha := TFlecha(Flechas.Items[j]);
 		for k := 0 to LFlecha.Segmentos.Count-1 do
 		begin
 			LSegmento := TSegmento(LFlecha.Segmentos.Items[k]);
@@ -1805,7 +1800,7 @@ var
 begin
 	for j := 0 to Seleccion.Count-1 do
 	begin
-		LInstruccion := Seleccion.Items[j];
+		LInstruccion := TInstruccion(Seleccion.Items[j]);
 		if not(LInstruccion is TInicio) then
 			LInstruccion.BreakPoint := not LInstruccion.BreakPoint;
 	end;

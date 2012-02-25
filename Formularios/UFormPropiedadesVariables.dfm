@@ -1,7 +1,7 @@
 object formPropiedadesVariables: TformPropiedadesVariables
-  Left = 272
+  Left = 449
   Height = 203
-  Top = 194
+  Top = 211
   Width = 304
   Caption = 'New variable'
   ClientHeight = 203
@@ -13,12 +13,12 @@ object formPropiedadesVariables: TformPropiedadesVariables
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnShow = FormShow
-  LCLVersion = '0.9.30.2'
+  LCLVersion = '0.9.30'
   object Label1: TLabel
     Left = 45
     Height = 14
     Top = 23
-    Width = 34
+    Width = 29
     Alignment = taRightJustify
     Caption = 'Name'
     ParentColor = False
@@ -27,7 +27,7 @@ object formPropiedadesVariables: TformPropiedadesVariables
     Left = 49
     Height = 14
     Top = 47
-    Width = 27
+    Width = 25
     Alignment = taRightJustify
     Caption = 'Type'
     ParentColor = False
@@ -36,7 +36,7 @@ object formPropiedadesVariables: TformPropiedadesVariables
     Left = 20
     Height = 14
     Top = 106
-    Width = 66
+    Width = 54
     Alignment = taRightJustify
     Caption = 'Initial value'
     ParentColor = False
@@ -45,7 +45,7 @@ object formPropiedadesVariables: TformPropiedadesVariables
     Left = 46
     Height = 14
     Top = 133
-    Width = 31
+    Width = 28
     Alignment = taRightJustify
     Caption = 'Rows'
     ParentColor = False
@@ -54,14 +54,14 @@ object formPropiedadesVariables: TformPropiedadesVariables
     Left = 151
     Height = 14
     Top = 133
-    Width = 50
+    Width = 41
     Alignment = taRightJustify
     Caption = 'Columns'
     ParentColor = False
   end
   object editNombre: TEdit
     Left = 81
-    Height = 23
+    Height = 21
     Top = 19
     Width = 193
     Anchors = [akTop, akLeft, akRight]
@@ -69,32 +69,34 @@ object formPropiedadesVariables: TformPropiedadesVariables
   end
   object editValorDefecto: TEdit
     Left = 81
-    Height = 23
+    Height = 21
     Top = 102
     Width = 193
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 1
   end
   object BitBtn1: TBitBtn
-    Left = 81
+    Left = 49
     Height = 25
     Top = 160
-    Width = 75
+    Width = 119
     Kind = bkOK
+    ModalResult = 1
     OnClick = BitBtn1Click
     TabOrder = 2
   end
   object BitBtn2: TBitBtn
-    Left = 161
+    Left = 184
     Height = 25
     Top = 160
     Width = 75
     Kind = bkCancel
+    ModalResult = 2
     TabOrder = 3
   end
   object editFilas: TEdit
     Left = 82
-    Height = 23
+    Height = 21
     Top = 129
     Width = 41
     TabOrder = 4
@@ -102,7 +104,7 @@ object formPropiedadesVariables: TformPropiedadesVariables
   end
   object updownFilas: TUpDown
     Left = 123
-    Height = 23
+    Height = 21
     Top = 129
     Width = 15
     Associate = editFilas
@@ -114,7 +116,7 @@ object formPropiedadesVariables: TformPropiedadesVariables
   end
   object editColumnas: TEdit
     Left = 216
-    Height = 23
+    Height = 21
     Top = 129
     Width = 41
     TabOrder = 6
@@ -122,7 +124,7 @@ object formPropiedadesVariables: TformPropiedadesVariables
   end
   object updownColumnas: TUpDown
     Left = 257
-    Height = 23
+    Height = 21
     Top = 129
     Width = 15
     Associate = editColumnas
@@ -134,9 +136,9 @@ object formPropiedadesVariables: TformPropiedadesVariables
   end
   object radioEntero: TRadioButton
     Left = 79
-    Height = 21
+    Height = 17
     Top = 48
-    Width = 63
+    Width = 53
     Caption = 'Integer'
     Checked = True
     OnClick = radioEnteroClick
@@ -145,20 +147,20 @@ object formPropiedadesVariables: TformPropiedadesVariables
   end
   object radioCadena: TRadioButton
     Left = 79
-    Height = 21
+    Height = 17
     Top = 78
-    Width = 56
+    Width = 47
     Caption = 'String'
     OnClick = radioCadenaClick
     TabOrder = 9
   end
   object radioReal: TRadioButton
     Left = 79
-    Height = 21
+    Height = 17
     Top = 63
-    Width = 48
+    Width = 42
     Caption = 'Real'
     OnClick = radioRealClick
     TabOrder = 10
   end
-end
+end
