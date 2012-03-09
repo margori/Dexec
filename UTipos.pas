@@ -28,18 +28,18 @@ uses UConstantes, classes;
 type
 
 //----- Declaracion interna de tipos y punteros a tipos -----
-	TTipo = integer;
-	TIdentificador = String; // Identificadores de variables y funciones
-	TExpresion = String; // Expresion a parsear
+	TTypeNumber = Integer;
+	TIdentifier = String; // Identificadores de variables y funciones
+	TExpression = String; // Expresion a parsear
 
-	TInte8 = LongInt;
-	PInte8 = ^TInte8;
+	TInteger8 = LongInt;
+	PInteger8 = ^TInteger8;
 
-	TInt16 = LongInt;
-	PInt16 = ^TInt16;
+	TInteger16 = LongInt;
+	PInteger16 = ^TInteger16;
 
-	TInt32 = LongInt;
-	PInt32 = ^TInt32;
+	TInteger32 = LongInt;
+	PInteger32 = ^TInteger32;
 
 	TInt64 = Int64;
 	PInt64 = ^TInt64;
@@ -71,8 +71,8 @@ type
 //	tCurr = Currency;
 //	pCurr = ^tCurr;
 
-	TCadena = ShortString;
-	PCadena = ^TCadena;
+	TString = ShortString;
+	PString = ^TString;
 
 const
   //----- Indices internos de los tipos -----
@@ -93,13 +93,13 @@ const
 	nDoub = 21;
 	nExte = 22;
 
-	nCad = 30;
+	nString = 30;
 
-	nTipos : array[1..13] of byte = (
+	nTypes : array[1..13] of byte = (
 		nInte8,nInt16,nInt32,nInt64,nWord1,
     nWord4,nWord8,nWor16,nWor32,
 		nSing,nDoub,nExte,
- 		nCad
+ 		nString
 	);
 
 var
@@ -111,11 +111,11 @@ var
 
 // ---| Funciones de tipos |---
 type
-  TTipos = class
-    class function NombreTipo(nTipo: byte): String;
-    class function GetTipo (Name : String): Byte;
-    class function SizeTipo(nTipo: byte): Word;
-    class function GrupoTipo(nTipo: byte): byte;
+  TTypes = class
+    class function NameOfType(AnType: byte): String;
+    class function GetType (AName : String): Byte;
+    class function SizeOfType(AnType: byte): Word;
+    class function GroupOfType(AnType: byte): byte;
   end;
 
 implementation
@@ -125,21 +125,21 @@ uses SysUtils;
 //uses MemControl;
 {$endif}
 
-class function TTipos.GetTipo (Name : String): Byte;
+class function TTypes.GetType (AName : String): Byte;
 var a : integer;
 Begin
   result := 0;
-	for a := 1 to High(nTipos) do
-	 if UpperCase(Name) = UpperCase(NombreTipo(nTipos[a])) then
+	for a := 1 to High(nTypes) do
+	 if UpperCase(AName) = UpperCase(NameOfType(nTypes[a])) then
 	 begin
-		 Result := nTipos[a];
+		 Result := nTypes[a];
 		 Break;
 	 end;
 end;
 
-class function TTipos.NombreTipo(nTipo: byte): String;
+class function TTypes.NameOfType(AnType: byte): String;
 begin
-	case nTipo of
+	case AnType of
     nIndef: result:= NameIndef;
 
 		nInte8: result:= NameInte8;
@@ -157,7 +157,7 @@ begin
 		nDoub: result:= NameDoub;
 		nExte: result:= NameExte;
 
-		nCad: result:= NameCad;
+		nString: result:= NameCad;
 {$ifdef debug}
 		else
 			assert(false,'nTipo error!'); // Expresion falsa -> Error
@@ -165,16 +165,16 @@ begin
 	end;
 end;
 
-class function TTipos.SizeTipo(nTipo: byte): Word;
+class function TTypes.SizeOfType(AnType: byte): Word;
 begin
 {$ifdef fulldebug}
 	inc(fSizeTipoCalls);
 {$endif}
-	result:= 0; // Los valores indefinidos no ocupan lugar.
-	case nTipo of
-		nInte8: result:= sizeof(TInte8);
-		nInt16: result:= sizeof(TInt16);
-		nInt32: result:= sizeof(TInt32);
+	result:= 0; // Undefined values don't occupy memory.
+	case AnType of
+		nInte8: result:= sizeof(TInteger8);
+		nInt16: result:= sizeof(TInteger16);
+		nInt32: result:= sizeof(TInteger32);
 		nInt64: result:= sizeof(TInt64);
 		nWord1: result:= sizeof(TWord1);
 		nWord4: result:= sizeof(TWord4);
@@ -186,7 +186,7 @@ begin
 		nDoub: result:= sizeof(TDoub);
 		nExte: result:= sizeof(TExte);
 
-		nCad: result:= SizeOf(TCadena); // Las cadenas tienen largo variante!
+		nString: result:= SizeOf(TString); // Las cadenas tienen largo variante!
 {$ifdef debug}
 		else
 			assert(false,'Error en nTipo'); // Expresion falsa -> Error
@@ -194,7 +194,7 @@ begin
 	end;
 end;
 
-class function TTipos.GrupoTipo(nTipo: byte): byte;
+class function TTypes.GroupOfType(AnType: byte): byte;
 		{ Devueve el grupo del tipo
 		Ej: 1 -> Entero con signo;
 				2 -> Entero sin signo;
@@ -206,15 +206,15 @@ begin
 {$ifdef fulldebug}
 	inc(fGrupoTipoCalls);
 {$endif}
-	result:= nTipo div 10 + 1 ;
+	result:= AnType div 10 + 1 ;
 end;
 
 initialization
 begin
 	TiposList:= TStringList.Create;
-	TiposList.Add(TTipos.NombreTipo(nInt32));
-	TiposList.Add(TTipos.NombreTipo(nExte));
-	TiposList.Add(TTipos.NombreTipo(nCad));
+	TiposList.Add(TTypes.NameOfType(nInt32));
+	TiposList.Add(TTypes.NameOfType(nExte));
+	TiposList.Add(TTypes.NameOfType(nString));
 end;
 
 finalization
@@ -223,4 +223,4 @@ begin
 end;
 
 end.
-
+

@@ -18,12 +18,12 @@ begin
   Result := True;
   if Length(S)=0 then
     Result := False
-  else if not (S[1] in Letras) then
+  else if not (S[1] in LETTERS) then
     Result := False
   else
   begin
     for j := 1 to Length(S) do
-      if not(S[j] in IDENTIFICADORES) then
+      if not(S[j] in IDENTIFIER_CHARS) then
       begin
         Result := False;
         Break;
@@ -31,4 +31,4 @@ begin
   end;
 end;
 
-end.
+end.

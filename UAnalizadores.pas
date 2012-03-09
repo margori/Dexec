@@ -5,11 +5,11 @@ interface
 uses UVariables, UValores;
 
 type
-  TAnalizadores = class
-    class procedure Sentencia(S: String);
-    class function Expresion(S: String): TValor;
-    class function Operando(S: String): TValor;
-    class function Condicion(S: String): Boolean;
+  TAnalyzers = class
+    class procedure Sentence(S: String);
+    class function Expression(S: String): TValue;
+    class function Operand(S: String): TValue;
+    class function Condition(S: String): Boolean;
   end;
 
 implementation
@@ -17,7 +17,7 @@ implementation
 uses SysUtils, UTipos,
   UProcedimientos, UFunciones, UExtractores, UOperadores;
 
-class function TAnalizadores.Operando(S: String): TValor;
+class function TAnalyzers.Operand(S: String): TValue;
 var
   i,p : string;
 begin
@@ -25,38 +25,38 @@ begin
     if (S[1]='(') and (S[Length(S)]=')') then
     begin
       S := Copy(S,2,Length(S)-2);
-      Result := Expresion(S);
+      Result := Expression(S);
     end
     else
     begin
-      i := TExtractores.ExtraerIdentificador(S);
-      if Variables.EsVariable(i) then
+      i := TExtractors.ExtractIdentifier(S);
+      if Variables.IsVariable(i) then
       begin
-        p := TExtractores.ExtraerExpresion(s);
-				Result := Variables.Valor(i+p);
+        p := TExtractors.ExtractExpression(s);
+				Result := Variables.Parse(i+p);
       end
-      else if Funciones.EsFuncion(i) then
+      else if Functions.IsFunction(i) then
       begin
-        p := TExtractores.ExtraerParametros(s);
-				Result := Funciones.Funcion(i).Valor(p);
+        p := TExtractors.ExtractParameters(s);
+				Result := Functions.GetFunction(i).FunctionPointer(p);
       end
       else
-        Result := TValores.StringAValor(i+s);
+        Result := TValues.Parse(i+s);
     end;
 end;
 
-class procedure TAnalizadores.Sentencia(S: String);
+class procedure TAnalyzers.Sentence(S: String);
 var
 	i : string;
 	p : string;
-	LValor : TValor;
+	LValue : TValue;
 begin
-	i := Uppercase(TExtractores.ExtraerIdentificador(s));
-	if Variables.EsVariable(i) then
+	i := Uppercase(TExtractors.ExtractIdentifier(s));
+	if Variables.IsVariable(i) then
 	begin
 //		LVariable := Variables.Variable(i);
 
-		p := TExtractores.ExtraerExpresion(s);
+		p := TExtractors.ExtractExpression(s);
 
 		if Copy(s,1,2)<>':=' then
 			raise Exception.Create('Sintax error!' + ' ' + '":=" expected.');
@@ -64,119 +64,119 @@ begin
 		delete(s,1,2);
 		s := trim(s);
 		try
-			LValor := Expresion(S);
-			Variables.Asignar(i+p,LValor);
+			LValue := Expression(S);
+			Variables.Assign(i+p,LValue);
 		finally
-			TValores.FreeValor(LValor);
+			TValues.FreeValue(LValue);
 		end;
 	end
-	else if Procedimientos.EsProcedimiento(i) then
+	else if Procedures.IsProcedure(i) then
 	begin
-		p := TExtractores.ExtraerParametros(s);
-		Procedimientos.Procedimiento(i).Valor(p);
+		p := TExtractors.ExtractParameters(s);
+		Procedures.GetProcedure(i).ProcedurePointer(p);
 	end
 	else
 			raise Exception.Create('Sintax error!' + ' ' + 'Unknown identifier.');
 end;
 
-class function TAnalizadores.Expresion(S: String): TValor;
+class function TAnalyzers.Expression(S: String): TValue;
 var
-	Operando1, Operando2,OperandoAux : string;
-	Valor1, Valor2, Valor3: TValor;
-	Operador1,Operador2: String;
-	Operador1N,Operador2N : integer;
+	LOperand1, LOperand2,LAuxiliarOperand : string;
+	LValue1, LValue2, LValue3: TValue;
+	LOperator1,LOperator2: String;
+	LOperatorLevel1,LOperatorLevel2 : integer;
 begin
 	S := Trim(s);
-	Valor1 := VALOR_VACIO;
-	Valor2 := VALOR_VACIO;
+	LValue1 := DEFAULT_VALUE;
+	LValue2 := DEFAULT_VALUE;
 
-	Operando1 := '';
-	Operando2 := '';
-	OperandoAux := '';
+	LOperand1 := '';
+	LOperand2 := '';
+	LAuxiliarOperand := '';
 
-	Operando1 := TExtractores.ExtraerOperando(S);
+	LOperand1 := TExtractors.ExtractOperand(S);
 
 	try
-		if Operando1<>'' then
-			Valor1 := Operando(Operando1);
-		Operador1 := TExtractores.ExtraerOperador(S);
-		if Operador1<>'' then
+		if LOperand1<>'' then
+			LValue1 := Operand(LOperand1);
+		LOperator1 := TExtractors.ExtractOperator(S);
+		if LOperator1<>'' then
 		begin
-			if (Valor1.Tipo = nIndef) and Not EsOperadorUnario(Operador1) then
+			if (LValue1.ValueType = nIndef) and Not IsUnaryOperator(LOperator1) then
 				raise Exception.Create('Sintax error!' + ' ' +'Unary operator expected.');
 
 			repeat
-				Operando2 := TExtractores.ExtraerOperando(S);
+				LOperand2 := TExtractors.ExtractOperand(S);
 
-				Operador2 := TExtractores.ExtraerOperador(S);
+				LOperator2 := TExtractors.ExtractOperator(S);
 
-				if Operando2='' then
+				if LOperand2='' then
 				begin
-					if Not EsOperadorUnario(Operador2) then
+					if Not IsUnaryOperator(LOperator2) then
 						raise Exception.Create('Sintax error!' + ' ' +'Operator expected.');
-					if OperandoAux='' then
-						OperandoAux := Operador2
+					if LAuxiliarOperand='' then
+						LAuxiliarOperand := LOperator2
 					else
-						OperandoAux := OperandoAux + ' '+ Operador2;
+						LAuxiliarOperand := LAuxiliarOperand + ' '+ LOperator2;
 				end
-				else if Operador2<>'' then
+				else if LOperator2<>'' then
 				begin
-					if OperandoAux='' then
-						OperandoAux := Operando2
+					if LAuxiliarOperand='' then
+						LAuxiliarOperand := LOperand2
 					else
-						OperandoAux := OperandoAux + ' '+ Operando2;
+						LAuxiliarOperand := LAuxiliarOperand + ' '+ LOperand2;
 
-					Operador1N := OperadorNivel(Operador1);
-					Operador2N := OperadorNivel(Operador2);
+					LOperatorLevel1 := GetOperatorLevel(LOperator1);
+					LOperatorLevel2 := GetOperatorLevel(LOperator2);
 
-					if Operador1N>=Operador2N then
+					if LOperatorLevel1>=LOperatorLevel2 then
 					begin
-						Valor2 := Expresion(OperandoAux);
-						Valor3 := Evaluar(Operador1,Valor1,Valor2);
-						TValores.FreeValor(Valor1);
-						TValores.FreeValor(Valor2);
-						Valor1 := Valor3;
-						Operador1 := Operador2;
-						OperandoAux:= '';
+						LValue2 := Expression(LAuxiliarOperand);
+						LValue3 := Evaluate(LOperator1,LValue1,LValue2);
+						TValues.FreeValue(LValue1);
+						TValues.FreeValue(LValue2);
+						LValue1 := LValue3;
+						LOperator1 := LOperator2;
+						LAuxiliarOperand:= '';
 					end
 					else
 					begin
-						OperandoAux := OperandoAux+ ' ' + Operador2;
+						LAuxiliarOperand := LAuxiliarOperand+ ' ' + LOperator2;
 					end;
 				end
 				else
 				begin
-					if OperandoAux='' then
-						OperandoAux := Operando2
+					if LAuxiliarOperand='' then
+						LAuxiliarOperand := LOperand2
 					else
-						OperandoAux := OperandoAux + ' '+ Operando2;
-					Valor2 := Expresion(OperandoAux);
-					Valor3 := Evaluar(Operador1,Valor1,Valor2);
-					TValores.FreeValor(Valor1);
-					TValores.FreeValor(Valor2);
-					Valor1 := Valor3;
-					Operador1 := Operador2;
-					OperandoAux:= '';
+						LAuxiliarOperand := LAuxiliarOperand + ' '+ LOperand2;
+					LValue2 := Expression(LAuxiliarOperand);
+					LValue3 := Evaluate(LOperator1,LValue1,LValue2);
+					TValues.FreeValue(LValue1);
+					TValues.FreeValue(LValue2);
+					LValue1 := LValue3;
+					LOperator1 := LOperator2;
+					LAuxiliarOperand:= '';
 				end;
-			until Operador2='';
+			until LOperator2='';
 		end;
 
-		Result := TValores.CopiarValor(Valor1);
+		Result := TValues.Clone(LValue1);
 	finally
-		TValores.FreeValor(Valor1);
-		TValores.FreeValor(Valor2);
+		TValues.FreeValue(LValue1);
+		TValues.FreeValue(LValue2);
 	end;
 end;
 
-class function TAnalizadores.Condicion(S: String): Boolean;
+class function TAnalyzers.Condition(S: String): Boolean;
 var
-	LValor : TValor;
+	LValue : TValue;
 begin
 	try
-		LValor := Expresion(S);
-		Result := PInt32(LValor.Puntero)^ <> 0;
+		LValue := Expression(S);
+		Result := PInteger32(LValue.ValuePointer)^ <> 0;
 	finally
-		TValores.FreeValor(LValor);
+		TValues.FreeValue(LValue);
 	end;
 end;
 

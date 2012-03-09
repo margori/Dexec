@@ -24,19 +24,19 @@ TFormPropiedades = class(TForm)
 		checkTexto: TCheckBox;
 		editTexto: TEdit;
 		checkBloquear: TCheckBox;
-procedure btnOkClick(Sender: TObject);
-procedure FormShow(Sender: TObject);
+    procedure btnOkClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
 	private
 	public
-		function Execute(AInstruccion : TInstruccion): Boolean;
+		function Execute(AInstruction : TInstruction): Boolean;
 
-		function MuestraCaption: Boolean;
-		function MuestraTexto: Boolean;
-		function Caption: String;
-		function Texto: String;
+		function ShowComments: Boolean;
+		function ShowParameters: Boolean;
+		function Comments: String;
+		function Parameters: String;
 		function BreckPoint: Boolean;
-		function Bloquear: Boolean;
+		function Locked: Boolean;
 	end;
 
 var
@@ -48,7 +48,7 @@ implementation
 
 { TFormPropiedades }
 
-function TFormPropiedades.Bloquear: Boolean;
+function TFormPropiedades.Locked: Boolean;
 begin
 	Result := checkBloquear.Checked;
 end;
@@ -58,24 +58,24 @@ begin
 	Result := checkBreackPoint.Checked;
 end;
 
-function TFormPropiedades.Caption: String;
+function TFormPropiedades.Comments: String;
 begin
 	Result := editCaption.Text;
 end;
 
-function TFormPropiedades.Execute(AInstruccion: TInstruccion): Boolean;
+function TFormPropiedades.Execute(AInstruction: TInstruction): Boolean;
 begin
-	if AInstruccion is TNodo then
+	if AInstruction is TNode then
 	begin
 		Result := False;
 		Exit;
 	end;
-	editCaption.Text := AInstruccion.Caption;
-	editTexto.Text := AInstruccion.Texto;
-	checkBreackPoint.Checked := AInstruccion.BreakPoint;
-	checkCaption.Checked := AInstruccion.MuestraCaption;
-	checkTexto.Checked := AInstruccion.MuestraTexto;
-	checkBloquear.Checked := AInstruccion.Bloqueado;
+	editCaption.Text := AInstruction.Caption;
+	editTexto.Text := AInstruction.Parameters;
+	checkBreackPoint.Checked := AInstruction.BreakPoint;
+	checkCaption.Checked := AInstruction.ShowComments;
+	checkTexto.Checked := AInstruction.ShowParameters;
+	checkBloquear.Checked := AInstruction.Locked;
 	Result := Self.ShowModal = mrOk;
 end;
 
@@ -91,17 +91,17 @@ begin
 
 end;
 
-function TFormPropiedades.MuestraCaption: Boolean;
+function TFormPropiedades.ShowComments: Boolean;
 begin
 	Result := checkCaption.Checked;
 end;
 
-function TFormPropiedades.MuestraTexto: Boolean;
+function TFormPropiedades.ShowParameters: Boolean;
 begin
 	Result := checkTexto.Checked;
 end;
 
-function TFormPropiedades.Texto: String;
+function TFormPropiedades.Parameters: String;
 begin
 	Result := editTexto.Text;
 end;

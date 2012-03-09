@@ -93,11 +93,11 @@ TFormMain = class(TForm)
 		actAcercade: TAction;
 
     procedure IntruccionDestroy(Sender : TObject);
-		procedure InstruccionMouseDown(Sender: TObject; Button: TMouseButton;
+		procedure InstructionMouseDown(Sender: TObject; Button: TMouseButton;
 			Shift: TShiftState; X, Y: Integer);
-		procedure InstruccionMouseMove(Sender: TObject; Shift: TShiftState; X,
+		procedure InstructionMouseMove(Sender: TObject; Shift: TShiftState; X,
 			Y: Integer);
-		procedure InstruccionMouseUp(Sender: TObject; Button: TMouseButton;
+		procedure InstructionMouseUp(Sender: TObject; Button: TMouseButton;
 			Shift: TShiftState; X, Y: Integer);
 
 		procedure UnionMouseDown(Sender: TObject; Button: TMouseButton;
@@ -107,11 +107,11 @@ TFormMain = class(TForm)
 		procedure UnionMouseMove(Sender: TObject; Shift: TShiftState; X,
 			Y: Integer);
 
-		procedure SegmentoMouseDown(Sender: TObject; Button: TMouseButton;
+		procedure SegmentMouseDown(Sender: TObject; Button: TMouseButton;
 			Shift: TShiftState; X, Y: Integer);
-		procedure SegmentoMouseUp(Sender: TObject; Button: TMouseButton;
+		procedure SegmentMouseUp(Sender: TObject; Button: TMouseButton;
 			Shift: TShiftState; X, Y: Integer);
-		procedure SegmentoMouseMove(Sender: TObject; Shift: TShiftState; X,
+		procedure SegmentMouseMove(Sender: TObject; Shift: TShiftState; X,
 			Y: Integer);
 
 		procedure DraggerMouseMove(Sender: TObject; Shift: TShiftState; X,
@@ -162,10 +162,10 @@ TFormMain = class(TForm)
 
 		TamanoInicial: TPoint;
 		PosInicialMouse : TPoint;
-		PosInicialInstruccion : array of TPoint;
+		PosInicialInstruction : array of TPoint;
 
-		FUnion1: TUnion;
-		FInstruccionActual: TInstruccion;
+		FUnion1: TJoin;
+		FInstructionActual: TInstruction;
 		FArchivoPrograma: String;
 		FModificado: Boolean;
 
@@ -174,12 +174,12 @@ TFormMain = class(TForm)
 		FEjecutando: Boolean;
 //		FArrastrandoUnion : Boolean;
 
-		procedure Propiedades(AInstruccion :TInstruccion);
+		procedure Propiedades(AInstruction :TInstruction);
 
-		procedure InstruccionEventos(AInstruccion : TInstruccion);
-		procedure FlechaDestroy(Sender: TObject);
+		procedure InstructionEventos(AInstruction : TInstruction);
+		procedure ArrowDestroy(Sender: TObject);
 
-		procedure SetInstruccionActual(const Value: TInstruccion);
+		procedure SetInstructionActual(const Value: TInstruction);
 
 		procedure SetArchivoPrograma(const Value: String);
 
@@ -188,7 +188,7 @@ TFormMain = class(TForm)
 		procedure Salvar;
 		procedure Cargar;
 
-		procedure AjustarInstrucciones;
+		procedure AjustarInstructiones;
 		procedure AjustarBevel;
 		procedure SetModificado(const Value: Boolean);
 		procedure SetEjecutando(const Value: Boolean);
@@ -202,15 +202,15 @@ TFormMain = class(TForm)
 
 		Seleccion : TList;
 
-		Instrucciones : TList;
-		Flechas : TList;
+		Instructiones : TList;
+		Arrows : TList;
 
 		property Ejecutando : Boolean read FEjecutando write SetEjecutando;
 		property Pausa : Boolean read FPausa write SetPausa;
 		property Modificado: Boolean read FModificado write SetModificado;
 
 		property ArchivoPrograma : String read FArchivoPrograma write SetArchivoPrograma;
-		property InstruccionActual: TInstruccion read FInstruccionActual write SetInstruccionActual;
+		property InstructionActual: TInstruction read FInstructionActual write SetInstructionActual;
 	end;
 
 var
@@ -230,15 +230,15 @@ begin
 	// TODO: Translate Components
 	Encabezado := 'Dexec';
 
-	GOnSegmentoMouseDown := @SegmentoMouseDown;
-	GOnSegmentoMouseUp := @SegmentoMouseUp;
-	GOnSegmentoMouseMove := @SegmentoMouseMove;
+	GOnSegmentMouseDown := @SegmentMouseDown;
+	GOnSegmentMouseUp := @SegmentMouseUp;
+	GOnSegmentMouseMove := @SegmentMouseMove;
 
 	ThousandSeparator := ',';
 	DecimalSeparator := '.';
 
-	Instrucciones := TList.Create;
-	Flechas := TList.Create;
+	Instructiones := TList.Create;
+	Arrows := TList.Create;
 	Seleccion := TList.Create;
 
 	Dragger := TDragger.Create(Self);
@@ -246,8 +246,8 @@ begin
 	Dragger.Visible := False;
 	Dragger.OnMouseMove := @DraggerMouseMove;
 
-	//ScrollBox1.VertScrollBar.Margin := BORDE_PANTALLA;
-	//ScrollBox1.HorzScrollBar.Margin := BORDE_PANTALLA;
+	//ScrollBox1.VertScrollBar.Margin := BORDER_SCREEN;
+	//ScrollBox1.HorzScrollBar.Margin := BORDER_SCREEN;
 
 	Nuevo1.Click;
 
@@ -260,26 +260,26 @@ begin
 	ActualizarVariables;
 end;
 
-procedure TFormMain.InstruccionMouseMove(Sender: TObject;
+procedure TFormMain.InstructionMouseMove(Sender: TObject;
 	Shift: TShiftState; X, Y: Integer);
 var
-  LInstruccion: TInstruccion;
+  LInstruction: TInstruction;
   LPos : TPoint;
   j : integer;
 begin
-	Assert(Sender is TInstruccion);
-	LInstruccion := Sender as TInstruccion;
-	LPos.X := LInstruccion.Left + X;
-	LPos.Y := LInstruccion.Top + Y;
+	Assert(Sender is TInstruction);
+	LInstruction := Sender as TInstruction;
+	LPos.X := LInstruction.Left + X;
+	LPos.Y := LInstruction.Top + Y;
 
 	if FArrastrandoObjeto then
 	begin
 		for j := 0 to Seleccion.Count-1 do
 		begin
-			with TInstruccion(Seleccion.Items[j]) do
+			with TInstruction(Seleccion.Items[j]) do
 			begin
-				X := PosInicialInstruccion[j].X + LPos.X - PosInicialMouse.X;
-				Y := PosInicialInstruccion[j].Y + LPos.Y - PosInicialMouse.Y;
+				X := PosInicialInstruction[j].X + LPos.X - PosInicialMouse.X;
+				Y := PosInicialInstruction[j].Y + LPos.Y - PosInicialMouse.Y;
 			end;
 		end;
 	end
@@ -287,17 +287,17 @@ begin
 	begin
 		for j := 0 to Seleccion.Count-1 do
 		begin
-			with TInstruccion(Seleccion.Items[j]) do
+			with TInstruction(Seleccion.Items[j]) do
 			begin
-				Ancho := TamanoInicial.X + (LPos.X - PosInicialMouse.X)*2;
-				Alto := TamanoInicial.Y + (LPos.Y - PosInicialMouse.Y)*2;
+				Width := TamanoInicial.X + (LPos.X - PosInicialMouse.X)*2;
+				Height := TamanoInicial.Y + (LPos.Y - PosInicialMouse.Y)*2;
 			end;
 		end;
 	end
 	else if Assigned(FUnion1) and Dragger.Visible then
 	begin
-		Dragger.X2 := TInstruccion(Sender).Left+X;
-		Dragger.Y2 := TInstruccion(Sender).Top+Y;
+		Dragger.X2 := TInstruction(Sender).Left+X;
+		Dragger.Y2 := TInstruction(Sender).Top+Y;
 	end;
 
 end;
@@ -315,10 +315,10 @@ end;
 procedure TFormMain.IntruccionDestroy(Sender: TObject);
 var j: integer;
 begin
-	j := Instrucciones.IndexOf(Sender);
+	j := Instructiones.IndexOf(Sender);
   Assert(j>-1);
   if j>-1 then
-    Instrucciones.Delete(j);
+    Instructiones.Delete(j);
 end;
 
 procedure TFormMain.actPasoExecute(Sender: TObject);
@@ -330,10 +330,10 @@ begin
 		exit;
 
 	try
-		if InstruccionActual = Nil then
-			InstruccionActual := TInstruccion(Instrucciones.Items[0])
+		if InstructionActual = Nil then
+			InstructionActual := TInstruction(Instructiones.Items[0])
 		else
-			InstruccionActual := InstruccionActual.Ejecutar;
+			InstructionActual := InstructionActual.Execute;
 	except
 		Pausa := true;
 		raise;
@@ -349,30 +349,30 @@ begin
 	formCrt.Finalizar;
 	Ejecutando := False;
 	Pausa := False;
-	InstruccionActual := Nil;
+	InstructionActual := Nil;
 	ActualizarVariables;
 end;
 
-procedure TFormMain.SetInstruccionActual(const Value: TInstruccion);
+procedure TFormMain.SetInstructionActual(const Value: TInstruction);
 begin
-	if FInstruccionActual <> Value then
+	if FInstructionActual <> Value then
 	begin
-		if FInstruccionActual <> Nil then
+		if FInstructionActual <> Nil then
 		begin
-			FInstruccionActual.Ejecutando := False;
-			FInstruccionActual.Error := False;
+			FInstructionActual.Executing := False;
+			FInstructionActual.Error := False;
 		end
 		else
 		begin
-			Variables.Inicializar;
+			Variables.Initialize;
 			Archivos.Inicializar;
 		end;
 
-		FInstruccionActual := Value;
-		if FInstruccionActual <> Nil then
+		FInstructionActual := Value;
+		if FInstructionActual <> Nil then
 		begin
-			FInstruccionActual.Ejecutando := True;
-			FInstruccionActual.Error := False;
+			FInstructionActual.Executing := True;
+			FInstructionActual.Error := False;
 		end
 		else
 		begin
@@ -395,17 +395,17 @@ begin
 	repeat
 		Paso1.Click;
 		Application.ProcessMessages;
-		if InstruccionActual <> Nil then
+		if InstructionActual <> Nil then
 		begin
 			if Pausa then
 				Fin := True
 			else
-				Fin := InstruccionActual.BreakPoint;
+				Fin := InstructionActual.BreakPoint;
 		end
 		else
 			Fin := True;
 	until Fin;
-	Ejecutando := InstruccionActual <> Nil;
+	Ejecutando := InstructionActual <> Nil;
 end;
 
 procedure TFormMain.actSalidaExecute(Sender: TObject);
@@ -463,9 +463,9 @@ end;
 
 procedure TFormMain.actNuevoExecute(Sender: TObject);
 var
-	Aux : TInstruccion;
+	Aux : TInstruction;
 begin
-	if (Instrucciones.Count>0) then
+	if (Instructiones.Count>0) then
 	begin
 	 if FModificado then
 			case MessageDlg('Do you want to save?',mtConfirmation,mbYesNoCancel,-1) of
@@ -476,32 +476,32 @@ begin
 		Stop1.Click
 	end;
 
-	while Instrucciones.Count>0 do
+	while Instructiones.Count>0 do
 	begin
-		Aux := TInstruccion(Instrucciones[0]);
+		Aux := TInstruction(Instructiones[0]);
 		Aux.Free;
 	end;
 
-	Instrucciones.Clear;
+	Instructiones.Clear;
 
-	Aux := TInicio.Create(Self,ScrollBox1);
-	InstruccionEventos(Aux);
-	Instrucciones.Add(Aux);
+	Aux := TBegin.Create(Self,ScrollBox1);
+	InstructionEventos(Aux);
+	Instructiones.Add(Aux);
 	Aux.X := 100; // Da igual ya
 	Aux.Y := 100; // Cambiar
-	Aux.Caption := 'Program';
-	Aux.Texto := '';
+	Aux.Comments := 'Program';
+	Aux.Parameters := '';
 
-	InstruccionActual := Nil;
+	InstructionActual := Nil;
 
-	Variables.DeregistrarTodo;
+	Variables.Clean;
 	ActualizarVariables;
 
 	Archivos.DeregistrarTodo;
 	ActualizarArchivos;
 
 	ArchivoPrograma := '';
-	AjustarInstrucciones;
+	AjustarInstructiones;
 	AjustarBevel;
 	Modificado := False;
 end;
@@ -515,23 +515,23 @@ begin
 		end;
 end;
 
-procedure TFormMain.FlechaDestroy(Sender: TObject);
+procedure TFormMain.ArrowDestroy(Sender: TObject);
 var j: integer;
 begin
-	j := Flechas.IndexOf(Sender);
+	j := Arrows.IndexOf(Sender);
 	Assert(j>-1);
-	Flechas.Delete(j);
+	Arrows.Delete(j);
 end;
 
 procedure TFormMain.Cargar;
 var
 	LEntrada: TextFile;
-	LInstruccion : TInstruccion;
-	LFlecha : TFlecha;
-	LSegmento : TSegmento;
-	LUnion1,LUnion2 : TUnion;
+	LInstruction : TInstruction;
+	LArrow : TArrow;
+	LSegment : TSegment;
+	LUnion1,LUnion2 : TJoin;
 	S : String;
-	LInfoVariable: TInfoVariable;
+	LInfoVariable: TVariableInformation;
 	LInfoArchivo: TInfoArchivo;
 	Cant,j,Aux : integer;
 	X1,X2,Y1,Y2 : Integer;
@@ -541,21 +541,21 @@ begin
 
 	Seleccion.Clear;
 
-	while Instrucciones.Count>0 do
+	while Instructiones.Count>0 do
 	begin
-		LInstruccion := TInstruccion(Instrucciones[0]);
-		LInstruccion.Free;
+		LInstruction := TInstruction(Instructiones[0]);
+		LInstruction.Free;
 	end;
-	Instrucciones.Clear;
+	Instructiones.Clear;
 
-	while Flechas.Count>0 do
+	while Arrows.Count>0 do
 	begin
-		LFlecha := TFlecha(Flechas[0]);
-		LFlecha.Free;
+		LArrow := TArrow(Arrows[0]);
+		LArrow.Free;
 	end;
-	Flechas.Clear;
+	Arrows.Clear;
 
-	Variables.DeregistrarTodo;
+	Variables.Clean;
 	Archivos.DeregistrarTodo;
 
 	try
@@ -574,24 +574,24 @@ begin
 		for j := 1 to Cant do
 		begin
 			Readln(LEntrada,S);
-			LInfoVariable.Tipo := TTipos.GetTipo(S);
+			LInfoVariable.TypeNumber := TTypes.GetType(S);
 			Readln(LEntrada,S);
 			Readln(LEntrada,S);
-			LInfoVariable.Nombre := Copy(S,10,Length(S));
+			LInfoVariable.Name := Copy(S,10,Length(S));
 			Readln(LEntrada,S);
-			LInfoVariable.ValorPorDefecto := Copy(S,19,Length(S));
-			Readln(LEntrada,S);
-			if LVersion = '1.0' then
-				LInfoVariable.Filas := StrToInt(Copy(S,7,Length(S)))
-			else
-				LInfoVariable.Filas := StrToInt(Copy(S,8,Length(S)));
+			LInfoVariable.DefaultValue := Copy(S,19,Length(S));
 			Readln(LEntrada,S);
 			if LVersion = '1.0' then
-				LInfoVariable.Columnas := StrToInt(Copy(S,7,Length(S)))
+				LInfoVariable.Rows := StrToInt(Copy(S,7,Length(S)))
 			else
-				LInfoVariable.Columnas := StrToInt(Copy(S,11,Length(S)));
+				LInfoVariable.Rows := StrToInt(Copy(S,8,Length(S)));
 			Readln(LEntrada,S);
-			Variables.Registrar(LInfoVariable);
+			if LVersion = '1.0' then
+				LInfoVariable.Columns := StrToInt(Copy(S,7,Length(S)))
+			else
+				LInfoVariable.Columns := StrToInt(Copy(S,11,Length(S)));
+			Readln(LEntrada,S);
+			Variables.Add(LInfoVariable);
 		end;
 		ActualizarVariables;
 
@@ -630,192 +630,192 @@ begin
 		end;
 		ActualizarArchivos;
 
-// Cargo instrucciones
+// Cargo Instructiones
 		Readln(LEntrada,S); // Descarte por ser solo un identificador
 		Readln(LEntrada,S);
 		Cant := StrToInt(S);
 
-    LInstruccion := Nil;
-		for j:= 1 to Cant do // carga de instrucciones
+    LInstruction := Nil;
+		for j:= 1 to Cant do // carga de Instructiones
 		begin
 			Readln(LEntrada,S);
 
 			if S = 'Entrada' then
-				LInstruccion := TEntrada.Create(Self,ScrollBox1)
+				LInstruction := TInput.Create(Self,ScrollBox1)
 			else if S = 'Salida' then
-				LInstruccion := TSalida.Create(Self,ScrollBox1)
+				LInstruction := TOutput.Create(Self,ScrollBox1)
 			else if S = 'Sentencia' then
-				LInstruccion := TSentencia.Create(Self,ScrollBox1)
+				LInstruction := TSentence.Create(Self,ScrollBox1)
 			else if S = 'Condicion' then
-				LInstruccion := TCondicion.Create(Self,ScrollBox1)
+				LInstruction := TCondition.Create(Self,ScrollBox1)
 			else if S = 'Nodo' then
-				LInstruccion := TNodo.Create(Self,ScrollBox1)
+				LInstruction := TNode.Create(Self,ScrollBox1)
 			else if S = 'Inicio' then
-				LInstruccion := TInicio.Create(Self,ScrollBox1)
+				LInstruction := TBegin.Create(Self,ScrollBox1)
 			else if S = 'Fin' then
-				LInstruccion := TFin.Create(Self,ScrollBox1)
+				LInstruction := TEnd.Create(Self,ScrollBox1)
 			else
 				raise Exception.Create('File error!');
 
-			Instrucciones.Add(LInstruccion);
-			InstruccionEventos(LInstruccion);
+			Instructiones.Add(LInstruction);
+			InstructionEventos(LInstruction);
 			Readln(LEntrada,S);
 			Readln(LEntrada,S);
 
-			LInstruccion.X := StrToInt(Copy(S,5,Length(S)));
+			LInstruction.X := StrToInt(Copy(S,5,Length(S)));
 			Readln(LEntrada,S);
-			LInstruccion.Y := StrToInt(Copy(S,5,Length(S)));
+			LInstruction.Y := StrToInt(Copy(S,5,Length(S)));
 			Readln(LEntrada,S);
-			LInstruccion.Ancho := StrToInt(Copy(S,9,Length(S)));
+			LInstruction.Width := StrToInt(Copy(S,9,Length(S)));
 			Readln(LEntrada,S);
-			LInstruccion.Alto := StrToInt(Copy(S,8,Length(S)));
+			LInstruction.Height := StrToInt(Copy(S,8,Length(S)));
 			Readln(LEntrada,S);
-			LInstruccion.Caption := Copy(S,11,Length(S));
+			LInstruction.Comments := Copy(S,11,Length(S));
 			Readln(LEntrada,S);
 			if S = 'MuestraCaption = Si' then
-				LInstruccion.MuestraCaption := True
+				LInstruction.ShowComments := True
 			else if S = 'MuestraCaption = No' then
-				LInstruccion.MuestraCaption := False;
+				LInstruction.ShowComments := False;
 
-      if LInstruccion is TEntradaSalida then
-        with LInstruccion as TEntradaSalida do
+      if LInstruction is TCommunication then
+        with LInstruction as TCommunication do
         begin
           Readln(LEntrada,S);
-          Parametros := Copy(S,14,Length(S));
+          Parameters := Copy(S,14,Length(S));
 					Readln(LEntrada,S);
 					if S = 'Dispositivo = Pantalla' then
-            Dispositivo := diPantalla
+            Device := deScreen
           else if S = 'Dispositivo = Archivo' then
-            Dispositivo := diArchivo
+            Device := deFile
           else
             raise Exception.Create('File error!');
           Readln(LEntrada,S);
-          Archivo := Copy(S,10,Length(S));
+          FilePath := Copy(S,10,Length(S));
           Readln(LEntrada,S);
           if S = 'Retorno = Si' then
-            Retorno := True
+            CarriageReturn := True
           else if S = 'Retorno = No' then
-            Retorno := False
+            CarriageReturn := False
           else
             raise Exception.Create('File error!');
         end
       else
       begin
         Readln(LEntrada,S);
-        LInstruccion.Texto := Copy(S,9,Length(S));
+        LInstruction.Parameters := Copy(S,9,Length(S));
       end;
 
 			Readln(LEntrada,S);
 			if S = 'MuestraTexto = Si' then
-				LInstruccion.MuestraTexto := True
+				LInstruction.ShowParameters := True
 			else if S = 'MuestraTexto = No' then
-				LInstruccion.MuestraTexto := False;
+				LInstruction.ShowParameters := False;
 			Readln(LEntrada,S);
 			if S = 'Bloqueado = Si' then
-				LInstruccion.Bloqueado := True
+				LInstruction.Locked := True
 			else if S = 'Bloqueado = No' then
-				LInstruccion.Bloqueado := False;
+				LInstruction.Locked := False;
 			Readln(LEntrada,S);
 			if S = 'BreackPoint = Si' then
-				LInstruccion.BreakPoint := True
+				LInstruction.BreakPoint := True
 			else if S = 'BreackPoint = No' then
-				LInstruccion.BreakPoint := False;
+				LInstruction.BreakPoint := False;
 			Readln(LEntrada,S);
 			if S <> '}' then
 				raise Exception.Create('File error!');
 		end;
 
-    // Cargo flechas
+    // Cargo Arrows
 	  Readln(LEntrada,S); // Descartado por solo ser un comentario
 		Readln(LEntrada,S);
 		Cant := StrToInt(S);
 
-		for j:= 1 to Cant do // carga de flechas
+		for j:= 1 to Cant do // carga de Arrows
 		begin
 			Readln(LEntrada,S);
 			Readln(LEntrada,S);
 
 			Readln(LEntrada,S);
 			Aux := StrToInt(Copy(S,14,Length(S)));
-			LInstruccion := TInstruccion(Instrucciones.Items[Aux]);
+			LInstruction := TInstruction(Instructiones.Items[Aux]);
 			Readln(LEntrada,S);
       LUnion1 := Nil;
 			if S = 'Union = Norte' then
-				LUnion1 := LInstruccion.UnionNorte
+				LUnion1 := LInstruction.NorthJoin
 			else if S = 'Union = Sur' then
-				LUnion1 := LInstruccion.UnionSur
+				LUnion1 := LInstruction.SouthJoin
 			else if S = 'Union = Este' then
-				LUnion1 := LInstruccion.UnionEste
+				LUnion1 := LInstruction.EastJoin
 			else if S = 'Union = Oeste' then
-				LUnion1 := LInstruccion.UnionOeste
+				LUnion1 := LInstruction.WestJoin
 			else
 				raise Exception.Create('File error!');
 
 			Readln(LEntrada,S);
 			Aux := StrToInt(Copy(S,14,Length(S)));
-			LInstruccion := TInstruccion(Instrucciones.Items[Aux]);
+			LInstruction := TInstruction(Instructiones.Items[Aux]);
 			Readln(LEntrada,S);
       LUnion2 := Nil;
 			if S = 'Union = Norte' then
-				LUnion2 := LInstruccion.UnionNorte
+				LUnion2 := LInstruction.NorthJoin
 			else if S = 'Union = Sur' then
-				LUnion2 := LInstruccion.UnionSur
+				LUnion2 := LInstruction.SouthJoin
 			else if S = 'Union = Este' then
-				LUnion2 := LInstruccion.UnionEste
+				LUnion2 := LInstruction.EastJoin
 			else if S = 'Union = Oeste' then
-				LUnion2 := LInstruccion.UnionOeste
+				LUnion2 := LInstruction.WestJoin
 			else
 				raise Exception.Create('File error!');
 
-			LFlecha := TFlecha.Create(Self,ScrollBox1);
-			Flechas.Add(LFlecha);
-			LFlecha.OnDestroy := @FlechaDestroy;
-			LFlecha.OnModificar := @Modificacion;
+			LArrow := TArrow.Create(Self,ScrollBox1);
+			Arrows.Add(LArrow);
+			LArrow.OnDestroy := @ArrowDestroy;
+			LArrow.OnModify := @Modificacion;
 
-			LFlecha.UnionDesde := LUnion1;
-			LFlecha.UnionHasta := LUnion2;
+			LArrow.FromJoin := LUnion1;
+			LArrow.ToJoin := LUnion2;
 
 			Aux := 0;
 			repeat
 				Readln(LEntrada,S);
 
-				LSegmento := TSegmento(LFlecha.Segmentos.Items[Aux]);
+				LSegment := TSegment(LArrow.Segments.Items[Aux]);
 				if S[1] ='Y' then
 				begin
-					if LSegmento.Direccion = dHorizontal then
+					if LSegment.Direction = diHorizontal then
 					begin
-						X1 := LSegmento.X1;
-						X2 := LSegmento.X2;
-						LSegmento := TSegmento(LFlecha.Segmentos.Items[Aux+1]);
-						LFlecha.MoverSegmento(LSegmento,X1-X2,0);
-						LSegmento := TSegmento(LFlecha.Segmentos.Items[Aux]);
+						X1 := LSegment.X1;
+						X2 := LSegment.X2;
+						LSegment := TSegment(LArrow.Segments.Items[Aux+1]);
+						LArrow.MoveSegment(LSegment,X1-X2,0);
+						LSegment := TSegment(LArrow.Segments.Items[Aux]);
 					end;
-					Y1 := LSegmento.Y2;
+					Y1 := LSegment.Y2;
 					Y2 := StrToInt(Copy(S,5,Length(S)));
 					if Y1<>Y2 then
 					begin
-						LSegmento := TSegmento(LFlecha.Segmentos.Items[Aux+1]);
-						LFlecha.MoverSegmento(LSegmento,0,Y2-Y1);
-	//          LSegmento := LFlecha.Segmentos.Items[Aux];
+						LSegment := TSegment(LArrow.Segments.Items[Aux+1]);
+						LArrow.MoveSegment(LSegment,0,Y2-Y1);
+	//          LSegment := LArrow.Segments.Items[Aux];
 					end
 				end
 				else if S[1] ='X' then
 				begin
-					if LSegmento.Direccion = dVertical then
+					if LSegment.Direction = diVertical then
 					begin
-						Y1 := LSegmento.Y1;
-						Y2 := LSegmento.Y2;
-						LSegmento := TSegmento(LFlecha.Segmentos.Items[Aux+1]);
-						LFlecha.MoverSegmento(LSegmento,0,Y1-Y2);
-						LSegmento := TSegmento(LFlecha.Segmentos.Items[Aux]);
+						Y1 := LSegment.Y1;
+						Y2 := LSegment.Y2;
+						LSegment := TSegment(LArrow.Segments.Items[Aux+1]);
+						LArrow.MoveSegment(LSegment,0,Y1-Y2);
+						LSegment := TSegment(LArrow.Segments.Items[Aux]);
 					end;
-					X1 := LSegmento.X2;
+					X1 := LSegment.X2;
 					X2 := StrToInt(Copy(S,5,Length(S)));
 					if X1<>X2 then
 					begin
-						LSegmento := TSegmento(LFlecha.Segmentos.Items[Aux+1]);
-						LFlecha.MoverSegmento(LSegmento,X2-X1,0);
-	//          LSegmento := LFlecha.Segmentos.Items[Aux];
+						LSegment := TSegment(LArrow.Segments.Items[Aux+1]);
+						LArrow.MoveSegment(LSegment,X2-X1,0);
+	//          LSegment := LArrow.Segments.Items[Aux];
 					end
 				end
 				else if S<>'}' then
@@ -827,7 +827,7 @@ begin
 		CloseFile(LEntrada);
   end;
 
-  AjustarInstrucciones;
+  AjustarInstructiones;
   Modificado := False;
 end;
 
@@ -835,10 +835,10 @@ procedure TFormMain.Salvar;
 var
 	LSalida : TextFile;
 	LVariable : TVariable;
-	LInstruccion : TInstruccion;
-	LFlecha : TFlecha;
-	LSegmento : TSegmento;
-	LUnion: TUnion;
+	LInstruction : TInstruction;
+	LArrow : TArrow;
+	LSegment : TSegment;
+	LUnion: TJoin;
 	LArchivo : TArchivo;
   j,k: integer;
 begin
@@ -856,12 +856,12 @@ begin
 		for j := 0 to Variables.Count-1 do
 		begin
 			LVariable := Variables.Variable(j);
-			Writeln(LSalida, TTipos.NombreTipo(LVariable.Tipo));
+			Writeln(LSalida, TTypes.NameOfType(LVariable.TypeNumber));
 			Writeln(LSalida, '{');
-			Writeln(LSalida, 'Nombre = ', LVariable.Nombre);
+			Writeln(LSalida, 'Nombre = ', LVariable.Name);
 			Writeln(LSalida, 'ValorPorDefecto = ', LVariable.ValorPorDefecto);
-			Writeln(LSalida, 'Filas = ', LVariable.Filas);
-			Writeln(LSalida, 'Columnas = ', LVariable.Columnas);
+			Writeln(LSalida, 'Filas = ', LVariable.Rows);
+			Writeln(LSalida, 'Columnas = ', LVariable.Columns);
 			Writeln(LSalida, '}');
 		end;
 
@@ -881,65 +881,65 @@ begin
 			Writeln(LSalida,'}');
     end;
 
-    Writeln(LSalida,'Instrucciones');
-    Writeln(LSalida,Instrucciones.Count);
-    for j := 0 to Instrucciones.Count-1 do
+    Writeln(LSalida,'Instructiones');
+    Writeln(LSalida,Instructiones.Count);
+    for j := 0 to Instructiones.Count-1 do
     begin
-      LInstruccion := TInstruccion(Instrucciones.Items[j]);
-      if LInstruccion is TInicio then
+      LInstruction := TInstruction(Instructiones.Items[j]);
+      if LInstruction is TBegin then
         Writeln(LSalida,'Inicio')
-      else if (LInstruccion is TSentencia)and not (LInstruccion is TEntradaSalida) then
+      else if (LInstruction is TSentence)and not (LInstruction is TCommunication) then
         Writeln(LSalida,'Sentencia')
-      else if LInstruccion is TCondicion then
+      else if LInstruction is TCondition then
         Writeln(LSalida,'Condicion')
-      else if LInstruccion is TNodo then
+      else if LInstruction is TNode then
         Writeln(LSalida,'Nodo')
-      else if LInstruccion is TFin then
+      else if LInstruction is TEnd then
         Writeln(LSalida,'Fin')
-      else if LInstruccion is TSalida then
+      else if LInstruction is TOutput then
         Writeln(LSalida,'Salida')
-      else if LInstruccion is TEntrada then
+      else if LInstruction is TInput then
         Writeln(LSalida,'Entrada')
       else 
         raise Exception.Create('Objeto desconocido.');
 
       Writeln(LSalida,'{');
-      Writeln(LSalida,'X = ', LInstruccion.X);
-      Writeln(LSalida,'Y = ', LInstruccion.Y);
-			Writeln(LSalida,'Ancho = ', LInstruccion.Ancho);
-      Writeln(LSalida,'Alto = ', LInstruccion.Alto);
-      Writeln(LSalida,'Caption = ', LInstruccion.Caption);
-      if LInstruccion.MuestraCaption then
+      Writeln(LSalida,'X = ', LInstruction.X);
+      Writeln(LSalida,'Y = ', LInstruction.Y);
+			Writeln(LSalida,'Ancho = ', LInstruction.Width);
+      Writeln(LSalida,'Alto = ', LInstruction.Height);
+      Writeln(LSalida,'Caption = ', LInstruction.Comments);
+      if LInstruction.ShowComments then
         Writeln(LSalida,'MuestraCaption = Si')
       else
         Writeln(LSalida,'MuestraCaption = No');
 
-      if LInstruccion is TEntradaSalida then
-        with (LInstruccion as TEntradaSalida) do
+      if LInstruction is TCommunication then
+        with (LInstruction as TCommunication) do
         begin
-          Writeln(LSalida,'Parametros = ',Parametros);
-          if Dispositivo = diPantalla then
+          Writeln(LSalida,'Parametros = ',Parameters);
+          if Device = deScreen then
             Writeln(LSalida,'Dispositivo = Pantalla')
           else
             Writeln(LSalida,'Dispositivo = Archivo');
-          Writeln(LSalida,'Archivo = ',Archivo);
-          if Retorno then
+          Writeln(LSalida,'Archivo = ',FilePath);
+          if CarriageReturn then
             Writeln(LSalida,'Retorno = Si')
           else
             Writeln(LSalida,'Retorno = No');
         end
       else
-        Writeln(LSalida,'Texto = ', LInstruccion.Texto);
+        Writeln(LSalida,'Texto = ', LInstruction.Parameters);
 
-      if LInstruccion.MuestraTexto then
+      if LInstruction.ShowParameters then
         Writeln(LSalida,'MuestraTexto = Si')
       else
         Writeln(LSalida,'MuestraTexto = No');
-      if LInstruccion.Bloqueado then
+      if LInstruction.Locked then
         Writeln(LSalida,'Bloqueado = Si')
       else
 				Writeln(LSalida,'Bloqueado = No');
-      if LInstruccion.BreakPoint then
+      if LInstruction.BreakPoint then
         Writeln(LSalida,'BreackPoint = Si')
       else
         Writeln(LSalida,'BreackPoint = No');
@@ -947,52 +947,52 @@ begin
       Writeln(LSalida,'}');
     end;
 
-    Writeln(LSalida,'Flechas');
-    Writeln(LSalida,Flechas.Count);
-    for j:= 0 to Flechas.Count-1 do
+    Writeln(LSalida,'Arrows');
+    Writeln(LSalida,Arrows.Count);
+    for j:= 0 to Arrows.Count-1 do
     begin
-      Writeln(LSalida,'Flecha');
+      Writeln(LSalida,'Arrow');
       Writeln(LSalida,'{');
-      LFlecha := TFlecha(Flechas.Items[j]);
-      LUnion := LFlecha.UnionDesde;
+      LArrow := TArrow(Arrows.Items[j]);
+      LUnion := LArrow.FromJoin;
 
-      LInstruccion := LUnion.Instruccion;
-      Writeln(LSalida,'Instruccion = ',Instrucciones.IndexOf(LInstruccion));
+      LInstruction := LUnion.Instruction;
+      Writeln(LSalida,'Instruction = ',Instructiones.IndexOf(LInstruction));
 
-      if LInstruccion.UnionNorte = LUnion then
+      if LInstruction.NorthJoin = LUnion then
         Writeln(LSalida,'Union = Norte')
-      else if LInstruccion.UnionEste = LUnion then
+      else if LInstruction.EastJoin = LUnion then
         Writeln(LSalida,'Union = Este')
-      else if LInstruccion.UnionSur = LUnion then
+      else if LInstruction.SouthJoin = LUnion then
         Writeln(LSalida,'Union = Sur')
-      else if LInstruccion.UnionOeste = LUnion then
+      else if LInstruction.WestJoin = LUnion then
         Writeln(LSalida,'Union = Oeste')
       else
         Raise Exception.Create('Error en union.');
 
-			LUnion := LFlecha.UnionHasta;
-      LInstruccion := LUnion.Instruccion;
-      Writeln(LSalida,'Instruccion = ',Instrucciones.IndexOf(LInstruccion));
+			LUnion := LArrow.ToJoin;
+      LInstruction := LUnion.Instruction;
+      Writeln(LSalida,'Instruction = ',Instructiones.IndexOf(LInstruction));
 
-      if LInstruccion.UnionNorte = LUnion then
+      if LInstruction.NorthJoin = LUnion then
         Writeln(LSalida,'Union = Norte')
-      else if LInstruccion.UnionEste = LUnion then
+      else if LInstruction.EastJoin = LUnion then
         Writeln(LSalida,'Union = Este')
-      else if LInstruccion.UnionSur = LUnion then
+      else if LInstruction.SouthJoin = LUnion then
         Writeln(LSalida,'Union = Sur')
-      else if LInstruccion.UnionOeste = LUnion then
+      else if LInstruction.WestJoin = LUnion then
         Writeln(LSalida,'Union = Oeste')
       else
         Raise Exception.Create('Error en union.');
 
-      for k := 0 to LFlecha.Segmentos.Count-2 do
+      for k := 0 to LArrow.Segments.Count-2 do
       begin
-				LSegmento := TSegmento(LFlecha.Segmentos.Items[k]);
+				LSegment := TSegment(LArrow.Segments.Items[k]);
 
-        if LSegmento.Direccion= dHorizontal then
-          Writeln(LSalida,'X = ',LSegmento.X2)
+        if LSegment.Direction= diHorizontal then
+          Writeln(LSalida,'X = ',LSegment.X2)
         else
-          Writeln(LSalida,'Y = ',LSegmento.Y2);
+          Writeln(LSalida,'Y = ',LSegment.Y2);
       end;
 
       Writeln(LSalida,'}');
@@ -1040,63 +1040,63 @@ begin
 		btnSeleccion.Down := True;
 end;
 
-procedure TFormMain.InstruccionMouseDown(Sender: TObject;
+procedure TFormMain.InstructionMouseDown(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 var
-  LInstruccion : TInstruccion;
+  LInstruction : TInstruction;
   LPosEnSeleccion: Integer;
   j :integer;
 begin
-	Assert(Sender is TInstruccion,'TInstruccion object expected.');
-	LInstruccion := Sender as TInstruccion;
+	Assert(Sender is TInstruction,'TInstruction object expected.');
+	LInstruction := Sender as TInstruction;
 
 	if Button = mbLeft then
 	begin
-		if (ssDouble in Shift) and LInstruccion.MouseEnObjeto then
+		if (ssDouble in Shift) and LInstruction.MouseInObject then
 		begin
-      Propiedades(Sender as TInstruccion);
+      Propiedades(Sender as TInstruction);
 		end
 		else
 		begin
-			FArrastrandoObjeto := LInstruccion.MouseEnObjeto and not LInstruccion.Bloqueado;
-			FArrastrandoTamano := LInstruccion.MouseEnTamano;
-			PosInicialMouse.X := LInstruccion.Left + X;
-			PosInicialMouse.Y := LInstruccion.Top + Y;
-			TamanoInicial := Point(LInstruccion.Ancho,LInstruccion.Alto);
+			FArrastrandoObjeto := LInstruction.MouseInObject and not LInstruction.Locked;
+			FArrastrandoTamano := LInstruction.MouseInResize;
+			PosInicialMouse.X := LInstruction.Left + X;
+			PosInicialMouse.Y := LInstruction.Top + Y;
+			TamanoInicial := Point(LInstruction.Width,LInstruction.Height);
 
 			LPosEnSeleccion := Seleccion.IndexOf(Sender);
 
-			if (ssCtrl in Shift) and (LInstruccion.MouseEnObjeto or
-				LInstruccion.MouseEnTamano) then
+			if (ssCtrl in Shift) and (LInstruction.MouseInObject or
+				LInstruction.MouseInResize) then
 			begin
 				if LPosEnSeleccion > -1 then
 				begin
-					LInstruccion.Selected := False;
+					LInstruction.Selected := False;
 					Seleccion.Delete(LPosEnSeleccion);
 				end
 				else
 				begin
-					LInstruccion.Selected := True;
-					Seleccion.Add(LInstruccion);
+					LInstruction.Selected := True;
+					Seleccion.Add(LInstruction);
 				end;
 			end
-			else if (LInstruccion.MouseEnObjeto or
-				LInstruccion.MouseEnTamano) then
+			else if (LInstruction.MouseInObject or
+				LInstruction.MouseInResize) then
 			begin
 				if LPosEnSeleccion = -1 then
 				begin
 					for j := 0 to Seleccion.Count-1 do
-						TInstruccion(Seleccion.Items[j]).Selected := False;
+						TInstruction(Seleccion.Items[j]).Selected := False;
 					Seleccion.Clear;
-					Seleccion.Add(LInstruccion);
-					LInstruccion.Selected := True;
+					Seleccion.Add(LInstruction);
+					LInstruction.Selected := True;
 				end;
 			end;
 
-			SetLength(PosInicialInstruccion,Seleccion.Count);
+			SetLength(PosInicialInstruction,Seleccion.Count);
 			for j := 0 to Seleccion.Count-1 do
-				PosInicialInstruccion[j] := Point(TInstruccion(Seleccion.items[j]).X,
-					TInstruccion(Seleccion.items[j]).Y);
+				PosInicialInstruction[j] := Point(TInstruction(Seleccion.items[j]).X,
+					TInstruction(Seleccion.items[j]).Y);
 		end;
 	end;
 end;
@@ -1104,39 +1104,39 @@ end;
 procedure TFormMain.ScrollBox1MouseDown(Sender: TObject; Button: TMouseButton;
 	Shift: TShiftState; X, Y: Integer);
 var
-	Aux : TInstruccion;
+	Aux : TInstruction;
 	j : integer;
 begin
 	if btnSeleccion.Down then
   begin
     for j := 0 to Seleccion.Count-1 do
-      TInstruccion(Seleccion.Items[j]).Selected := False;
+      TInstruction(Seleccion.Items[j]).Selected := False;
     Seleccion.Clear;
   end
   else
   begin
     if btnEntrada.Down then
-			Aux := TEntrada.Create(Self,ScrollBox1)
+			Aux := TInput.Create(Self,ScrollBox1)
 		else if btnSalida.Down then
-      Aux := TSalida.Create(Self,ScrollBox1)
+      Aux := TOutput.Create(Self,ScrollBox1)
     else if btnSentencia.Down then
-      Aux := TSentencia.Create(Self,ScrollBox1)
+      Aux := TSentence.Create(Self,ScrollBox1)
     else if btnCondicion.Down then
-      Aux := TCondicion.Create(Self,ScrollBox1)
+      Aux := TCondition.Create(Self,ScrollBox1)
     else if btnNodo.Down then
-      Aux := TNodo.Create(Self,ScrollBox1)
+      Aux := TNode.Create(Self,ScrollBox1)
     else if btnFinal.Down then
-			Aux := TFin.Create(Self,ScrollBox1)
+			Aux := TEnd.Create(Self,ScrollBox1)
 		else
 			raise Exception.Create('Toolbar button error!');
 
-		Instrucciones.Add(Aux);
-		InstruccionEventos(Aux);
+		Instructiones.Add(Aux);
+		InstructionEventos(Aux);
 		Aux.X := X + ScrollBox1.HorzScrollBar.Position;
 		Aux.Y := Y + ScrollBox1.VertScrollBar.Position;
 
 		btnSeleccion.Down := True;
-    AjustarInstrucciones;
+    AjustarInstructiones;
   end;
 end;
 
@@ -1157,8 +1157,8 @@ procedure TFormMain.ScrollBox1MouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
 	if Assigned(FUnion1) then
-		if Assigned(FUnion1.Flecha) then
-			FUnion1.Flecha.Free;
+		if Assigned(FUnion1.Arrow) then
+			FUnion1.Arrow.Free;
 
   if Assigned(FUnion1) then
   begin
@@ -1168,22 +1168,22 @@ begin
 	Dragger.Hide;
 end;
 
-procedure TFormMain.InstruccionEventos(AInstruccion: TInstruccion);
+procedure TFormMain.InstructionEventos(AInstruction: TInstruction);
 begin
-  With AInstruccion do
+  With AInstruction do
   begin
-    OnMouseDown := @InstruccionMouseDown;
-	  OnMouseMove := @InstruccionMouseMove;
-    OnMouseUp := @InstruccionMouseUp;
+    OnMouseDown := @InstructionMouseDown;
+	  OnMouseMove := @InstructionMouseMove;
+    OnMouseUp := @InstructionMouseUp;
     OnUnionMouseDown := @UnionMouseDown;
 	  OnUnionMouseUp := @UnionMouseUp;
     OnUnionMouseMove := @UnionMouseMove;
 	  OnDestroy := @IntruccionDestroy;
-    OnModificar := @Modificacion;
+    OnModify := @Modificacion;
   END;
 end;
 
-procedure TFormMain.InstruccionMouseUp(Sender: TObject;
+procedure TFormMain.InstructionMouseUp(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
 	if Dragger.Visible then
@@ -1192,63 +1192,63 @@ begin
 	FArrastrandoObjeto := False;
 	FArrastrandoTamano := False;
 
-	AjustarInstrucciones;
+	AjustarInstructiones;
 	AjustarBevel;
 end;
 
-procedure TFormMain.AjustarInstrucciones;
+procedure TFormMain.AjustarInstructiones;
 var
 	j,k: integer;
-	LInstruccion : TInstruccion;
-	LFlecha : TFlecha;
-	LSegmento :  TSegmento;
+	LInstruction : TInstruction;
+	LArrow : TArrow;
+	LSegment :  TSegment;
 	DX,DY : IntegeR;
 begin
-	if Instrucciones.Count>0 then
+	if Instructiones.Count>0 then
 	begin
 		DX := 0;
 		DY := 0;
-		LInstruccion := TInstruccion(Instrucciones.Items[0]);
-		while LInstruccion.Left + ScrollBox1.HorzScrollBar.Position + DX > BORDE_PANTALLA + GRILLAX - 1 do
-			DX := DX - GRILLAX;
-		while LInstruccion.Left + ScrollBox1.HorzScrollBar.Position + DX < BORDE_PANTALLA - 1 do
-			DX := DX + GRILLAX;
-		while LInstruccion.Top + ScrollBox1.VertScrollBar.Position + DY > BORDE_PANTALLA + GRILLAY - 1 do
-			DY := DY - GRILLAY;
-		while LInstruccion.Top + ScrollBox1.VertScrollBar.Position + DY < BORDE_PANTALLA - 1 do
-			DY := DY + GRILLAY;
+		LInstruction := TInstruction(Instructiones.Items[0]);
+		while LInstruction.Left + ScrollBox1.HorzScrollBar.Position + DX > BORDER_SCREEN + GRID_X - 1 do
+			DX := DX - GRID_X;
+		while LInstruction.Left + ScrollBox1.HorzScrollBar.Position + DX < BORDER_SCREEN - 1 do
+			DX := DX + GRID_X;
+		while LInstruction.Top + ScrollBox1.VertScrollBar.Position + DY > BORDER_SCREEN + GRID_Y - 1 do
+			DY := DY - GRID_Y;
+		while LInstruction.Top + ScrollBox1.VertScrollBar.Position + DY < BORDER_SCREEN - 1 do
+			DY := DY + GRID_Y;
 
-		for j := 1 to Instrucciones.Count-1 do
+		for j := 1 to Instructiones.Count-1 do
 		begin
-			LInstruccion := TInstruccion(Instrucciones.Items[j]);
-			while LInstruccion.Left + ScrollBox1.HorzScrollBar.Position + DX < BORDE_PANTALLA - 1 do
-				DX := DX + GRILLAX;
-			while LInstruccion.Top + ScrollBox1.VertScrollBar.Position + DY < BORDE_PANTALLA - 1 do
-				DY := DY + GRILLAY;
+			LInstruction := TInstruction(Instructiones.Items[j]);
+			while LInstruction.Left + ScrollBox1.HorzScrollBar.Position + DX < BORDER_SCREEN - 1 do
+				DX := DX + GRID_X;
+			while LInstruction.Top + ScrollBox1.VertScrollBar.Position + DY < BORDER_SCREEN - 1 do
+				DY := DY + GRID_Y;
 		end;
-		for j := 0 to Flechas.Count-1 do
+		for j := 0 to Arrows.Count-1 do
 		begin
-			LFlecha := TFlecha(Flechas.Items[j]);
-			for k := 0 to LFlecha.Segmentos.Count-1 do
+			LArrow := TArrow(Arrows.Items[j]);
+			for k := 0 to LArrow.Segments.Count-1 do
 			begin
-				LSegmento := TSegmento(LFlecha.Segmentos.Items[k]);
-				while LSegmento.Left + ScrollBox1.HorzScrollBar.Position + DX < BORDE_PANTALLA - 1 do
-					DX := DX + GRILLAX;
-				while LSegmento.Top + ScrollBox1.VertScrollBar.Position + DY < BORDE_PANTALLA - 1 do
-					DY := DY + GRILLAY;
+				LSegment := TSegment(LArrow.Segments.Items[k]);
+				while LSegment.Left + ScrollBox1.HorzScrollBar.Position + DX < BORDER_SCREEN - 1 do
+					DX := DX + GRID_X;
+				while LSegment.Top + ScrollBox1.VertScrollBar.Position + DY < BORDER_SCREEN - 1 do
+					DY := DY + GRID_Y;
 			end;
 		end;
 
-		for j := 0 to Instrucciones.Count-1 do
+		for j := 0 to Instructiones.Count-1 do
 		begin
-			LInstruccion := TInstruccion(Instrucciones.Items[j]);
-			LInstruccion.X := LInstruccion.X + DX;
-			LInstruccion.Y := LInstruccion.Y + DY;
+			LInstruction := TInstruction(Instructiones.Items[j]);
+			LInstruction.X := LInstruction.X + DX;
+			LInstruction.Y := LInstruction.Y + DY;
 		end;
-		for j := 0 to Flechas.Count-1 do
+		for j := 0 to Arrows.Count-1 do
 		begin
-			LFlecha := TFlecha(Flechas.Items[j]);
-			LFlecha.DesplazarTodo(DX,DY);
+			LArrow := TArrow(Arrows.Items[j]);
+			LArrow.MoveAll(DX,DY);
 		end;
 	end;
 end;
@@ -1256,15 +1256,15 @@ end;
 procedure TFormMain.UnionMouseDown(Sender: TObject; Button: TMouseButton;
 	Shift: TShiftState; X, Y: Integer);
 var
-	LUnion : TUnion;
+	LUnion : TJoin;
 begin
-	Assert(Sender is TUnion);
+	Assert(Sender is TJoin);
 
-	LUnion := TUnion(Sender);
-	if (Button=mbLeft) and LUnion.MouseEnUnion and (not Assigned(FUnion1)
+	LUnion := TJoin(Sender);
+	if (Button=mbLeft) and LUnion.MouseInJoin and (not Assigned(FUnion1)
 		or (LUnion=FUnion1))  then
   begin
-    if not Assigned(LUnion.Flecha) then
+    if not Assigned(LUnion.Arrow) then
     begin
       Dragger.X1 := LUnion.X2;
       Dragger.Y1 := LUnion.Y2;
@@ -1272,19 +1272,19 @@ begin
       Dragger.Y2 := LUnion.Y2;
     end
     else
-      if LUnion.Flecha.UnionDesde = LUnion then
+      if LUnion.Arrow.FromJoin = LUnion then
       begin
-        Dragger.X1 := LUnion.Flecha.UnionHasta.X2;
-        Dragger.Y1 := LUnion.Flecha.UnionHasta.Y2;
-        Dragger.X2 := LUnion.Flecha.UnionHasta.X2;
-        Dragger.Y2 := LUnion.Flecha.UnionHasta.Y2;
+        Dragger.X1 := LUnion.Arrow.ToJoin.X2;
+        Dragger.Y1 := LUnion.Arrow.ToJoin.Y2;
+        Dragger.X2 := LUnion.Arrow.ToJoin.X2;
+        Dragger.Y2 := LUnion.Arrow.ToJoin.Y2;
       end
       else
       begin
-        Dragger.X1 := LUnion.Flecha.UnionDesde.X2;
-        Dragger.Y1 := LUnion.Flecha.UnionDesde.Y2;
-        Dragger.X2 := LUnion.Flecha.UnionDesde.X2;
-        Dragger.Y2 := LUnion.Flecha.UnionDesde.Y2;
+        Dragger.X1 := LUnion.Arrow.FromJoin.X2;
+        Dragger.Y1 := LUnion.Arrow.FromJoin.Y2;
+        Dragger.X2 := LUnion.Arrow.FromJoin.X2;
+        Dragger.Y2 := LUnion.Arrow.FromJoin.Y2;
       end;
 
     FUnion1 := LUnion;
@@ -1298,9 +1298,9 @@ end;
 procedure TFormMain.UnionMouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 var
-  LUnion : TUnion;
-  LFlecha : TFlecha;
-  LUnion1,LUnion2 : TUnion;
+  LUnion : TJoin;
+  LArrow : TArrow;
+  LUnion1,LUnion2 : TJoin;
 
   procedure LimpiarFUnion1;
   begin
@@ -1310,25 +1310,25 @@ var
   end;
 
 begin
-  Assert(Sender is TUnion);
-  LUnion := TUnion(Sender);
+  Assert(Sender is TJoin);
+  LUnion := TJoin(Sender);
 
   if not Assigned(FUnion1) or (LUnion=FUnion1) then
     exit;
 
-  if not Assigned(FUnion1.Flecha) then
+  if not Assigned(FUnion1.Arrow) then
   begin
-    if FUnion1.AceptaEntrada and LUnion.AceptaEntrada then
+    if FUnion1.AcceptEntry and LUnion.AcceptEntry then
     begin
       LimpiarFUnion1;
       Exit;
     end
-    else if FUnion1.AceptaSalida and LUnion.AceptaSalida then
+    else if FUnion1.AcceptExit and LUnion.AcceptExit then
     begin
       LimpiarFUnion1;
       Exit;
     end
-    else if FUnion1.AceptaSalida  and LUnion.AceptaEntrada then
+    else if FUnion1.AcceptExit  and LUnion.AcceptEntry then
     begin
       LUnion1 := FUnion1;
       LUnion2 := LUnion;
@@ -1339,31 +1339,31 @@ begin
       LUnion2 := FUnion1;
     end;
 
-    if Assigned(LUnion1.Flecha) then
+    if Assigned(LUnion1.Arrow) then
     begin
-      LUnion1.Flecha.Free;
-      LUnion1.Flecha := Nil;
+      LUnion1.Arrow.Free;
+      LUnion1.Arrow := Nil;
     end;
-    if Assigned(LUnion2.Flecha) then
+    if Assigned(LUnion2.Arrow) then
     begin
-      LUnion2.Flecha.Free;
-      LUnion2.Flecha := Nil;
+      LUnion2.Arrow.Free;
+      LUnion2.Arrow := Nil;
     end;
 
-    LFlecha := TFlecha.Create(Self,ScrollBox1);
-    Flechas.Add(LFlecha);
-    with LFlecha do begin
-      UnionDesde := LUnion1;
-      UnionHasta := LUnion2;
-      OnDestroy := @FlechaDestroy;
+    LArrow := TArrow.Create(Self,ScrollBox1);
+    Arrows.Add(LArrow);
+    with LArrow do begin
+      FromJoin := LUnion1;
+      ToJoin := LUnion2;
+      OnDestroy := @ArrowDestroy;
     end;
   end
   else
   begin
-    if (FUnion1.Flecha.UnionDesde = FUnion1)and(LUnion.AceptaSalida) then
-      FUnion1.Flecha.UnionDesde := LUnion
-    else if (FUnion1.Flecha.UnionHasta = FUnion1)and(LUnion.AceptaEntrada) then
-      FUnion1.Flecha.UnionHasta := LUnion
+    if (FUnion1.Arrow.FromJoin = FUnion1)and(LUnion.AcceptExit) then
+      FUnion1.Arrow.FromJoin := LUnion
+    else if (FUnion1.Arrow.ToJoin = FUnion1)and(LUnion.AcceptEntry) then
+      FUnion1.Arrow.ToJoin := LUnion
     else
       beep;
   end;
@@ -1374,10 +1374,10 @@ end;
 procedure TFormMain.UnionMouseMove(Sender: TObject; Shift: TShiftState; X,
   Y: Integer);
 var
-  LUnion : TUnion;
+  LUnion : TJoin;
 begin
-  Assert(Sender is TUnion);
-  LUnion := TUnion(Sender);
+  Assert(Sender is TJoin);
+  LUnion := TJoin(Sender);
   if Dragger.Visible then
   begin
 		Dragger.X2 := LUnion.Left+X;
@@ -1388,15 +1388,15 @@ end;
 procedure TFormMain.btnBorrarClick(Sender: TObject);
 var
 	j : integer;
-	LInstruccion : TInstruccion;
+	LInstruction : TInstruction;
 begin
 	for j := 0 to Seleccion.Count-1 do
 	begin
-		LInstruccion := TInstruccion(Seleccion.Items[j]);
-		if LInstruccion is TInicio then
-			LInstruccion.Selected := False
+		LInstruction := TInstruction(Seleccion.Items[j]);
+		if LInstruction is TBegin then
+			LInstruction.Selected := False
 		else
-			LInstruccion.Free;
+			LInstruction.Free;
 	end;
 	Seleccion.Clear;
 end;
@@ -1404,31 +1404,31 @@ end;
 procedure TFormMain.AjustarBevel;
 var
 	j,k : integer;
-	LInstruccion : TInstruccion;
-	LFlecha : TFlecha;
-	LSegmento : TSegmento;
+	LInstruction : TInstruction;
+	LArrow : TArrow;
+	LSegment : TSegment;
 begin
 	BevelAncho.Left := 0;
 	BevelAlto.Top := 0;
-	for j := 1 to Instrucciones.Count-1 do
+	for j := 1 to Instructiones.Count-1 do
 	begin
-		LInstruccion := TInstruccion(Instrucciones.Items[j]);
-		if BevelAncho.Left < (LInstruccion.Left + LInstruccion.Width - 1 + BORDE) then
-			BevelAncho.Left := LInstruccion.Left + LInstruccion.Width - 1 + BORDE;
-		if BevelAlto.Top < (LInstruccion.Top + LInstruccion.Height - 1 + BORDE) then
-			BevelAlto.Top := LInstruccion.Top + LInstruccion.Height - 1 + BORDE;
+		LInstruction := TInstruction(Instructiones.Items[j]);
+		if BevelAncho.Left < (LInstruction.Left + LInstruction.Width - 1 + BORDER) then
+			BevelAncho.Left := LInstruction.Left + LInstruction.Width - 1 + BORDER;
+		if BevelAlto.Top < (LInstruction.Top + LInstruction.Height - 1 + BORDER) then
+			BevelAlto.Top := LInstruction.Top + LInstruction.Height - 1 + BORDER;
 	end;
 
-	for j := 0 to Flechas.Count-1 do
+	for j := 0 to Arrows.Count-1 do
 	begin
-		LFlecha := TFlecha(Flechas.Items[j]);
-		for k := 0 to LFlecha.Segmentos.Count-1 do
+		LArrow := TArrow(Arrows.Items[j]);
+		for k := 0 to LArrow.Segments.Count-1 do
 		begin
-			LSegmento := TSegmento(LFlecha.Segmentos.Items[k]);
-			if BevelAncho.Left < (LSegmento.Left + LSegmento.Width - 1 + BORDE) then
-				BevelAncho.Left := LSegmento.Left + LSegmento.Width - 1 + BORDE;
-			if BevelAlto.Top < (LSegmento.Top + LSegmento.Height - 1 + BORDE) then
-				BevelAlto.Top := LSegmento.Top + LSegmento.Height - 1 + BORDE;
+			LSegment := TSegment(LArrow.Segments.Items[k]);
+			if BevelAncho.Left < (LSegment.Left + LSegment.Width - 1 + BORDER) then
+				BevelAncho.Left := LSegment.Left + LSegment.Width - 1 + BORDER;
+			if BevelAlto.Top < (LSegment.Top + LSegment.Height - 1 + BORDER) then
+				BevelAlto.Top := LSegment.Top + LSegment.Height - 1 + BORDER;
 		end;
 	end;
 end;
@@ -1438,31 +1438,31 @@ begin
 	formAcercade.ShowModal;
 end;
 
-procedure TFormMain.SegmentoMouseDown(Sender: TObject;
+procedure TFormMain.SegmentMouseDown(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
 //
 end;
 
-procedure TFormMain.SegmentoMouseMove(Sender: TObject; Shift: TShiftState;
+procedure TFormMain.SegmentMouseMove(Sender: TObject; Shift: TShiftState;
 	X, Y: Integer);
 begin
-	Assert(Sender is TSegmento);
+	Assert(Sender is TSegment);
 
 	if Dragger.Visible then
 	begin
-		Dragger.X2 := TSegmento(Sender).Left+X;
-		Dragger.Y2 := TSegmento(Sender).Top+Y;
+		Dragger.X2 := TSegment(Sender).Left+X;
+		Dragger.Y2 := TSegment(Sender).Top+Y;
 	end;
 end;
 
-procedure TFormMain.SegmentoMouseUp(Sender: TObject; Button: TMouseButton;
+procedure TFormMain.SegmentMouseUp(Sender: TObject; Button: TMouseButton;
 	Shift: TShiftState; X, Y: Integer);
 begin
 	if Dragger.Visible then
 		Dragger.Hide;
 
-	AjustarInstrucciones;
+	AjustarInstructiones;
 	AjustarBevel;
 end;
 
@@ -1480,35 +1480,35 @@ begin
 		ScrollBox1.VertScrollBar.Position := ScrollBox1.VertScrollBar.Position - WheelDelta;
 end;
 
-procedure TFormMain.Propiedades(AInstruccion: TInstruccion);
+procedure TFormMain.Propiedades(AInstruction: TInstruction);
 begin
-  if (AInstruccion is TEntradaSalida) then
+  if (AInstruction is TCommunication) then
 	begin
-    if formPropiedadesSalida.Execute(AInstruccion as TEntradaSalida) then
-      with AInstruccion as TEntradaSalida do
+    if formPropiedadesSalida.Execute(AInstruction as TCommunication) then
+      with AInstruction as TCommunication do
       begin
-        Caption := formPropiedadesSalida.Caption;
+        Comments := formPropiedadesSalida.Caption;
         BreakPoint := formPropiedadesSalida.BreckPoint;
-        MuestraCaption := formPropiedadesSalida.MuestraCaption;
-        MuestraTexto := formPropiedadesSalida.MuestraTexto;
-        Bloqueado := formPropiedadesSalida.Bloquear;
+        ShowComments := formPropiedadesSalida.ShowComments;
+        ShowParameters := formPropiedadesSalida.ShowParameters;
+        Locked := formPropiedadesSalida.Locked;
 
-        Parametros := formPropiedadesSalida.Parametros;
-        Dispositivo := formPropiedadesSalida.Dispositivo;
-        Archivo := formPropiedadesSalida.Archivo;
-        Retorno := formPropiedadesSalida.Retorno;
+        Parameters := formPropiedadesSalida.Parameters;
+        Device := formPropiedadesSalida.Device;
+        FilePath := formPropiedadesSalida.FilePath;
+        CarriageReturn := formPropiedadesSalida.CarriageReturn;
       end;
   end
-  else if not (AInstruccion is TNodo) then
-    if FormPropiedades.Execute(AInstruccion) then
-      with (AInstruccion) do
+  else if not (AInstruction is TNode) then
+    if FormPropiedades.Execute(AInstruction) then
+      with (AInstruction) do
       begin
-        Caption := FormPropiedades.Caption;
-        Texto := FormPropiedades.Texto;
+        Comments := FormPropiedades.Caption;
+        Parameters := FormPropiedades.Parameters;
         BreakPoint := FormPropiedades.BreckPoint;
-        MuestraCaption := FormPropiedades.MuestraCaption;
-        MuestraTexto := FormPropiedades.MuestraTexto;
-        Bloqueado := FormPropiedades.Bloquear;
+        ShowComments := FormPropiedades.ShowComments;
+        ShowParameters := FormPropiedades.ShowParameters;
+        Locked := FormPropiedades.Locked;
       end;
 end;
 
@@ -1556,22 +1556,22 @@ end;
 
 procedure TFormMain.btnNuevaVarClick(Sender: TObject);
 var
-  LInfoVariable : TInfoVariable;
-//  LValor : TValor;
+  LInfoVariable : TVariableInformation;
+//  LValor : TValue;
 begin
-	LInfoVariable := INFOVARIABLEVACIA;
+	LInfoVariable := DEFAULT_VARIABLE_INFORMATION;
 	if formPropiedadesVariables.Execute('New variable', LInfoVariable) then
     with LInfoVariable do
     begin
-			LInfoVariable.Nombre := formPropiedadesVariables.Nombre;
-			LInfoVariable.ValorPorDefecto := formPropiedadesVariables.ValorPorDefecto;
+			LInfoVariable.Name := formPropiedadesVariables.VariableName;
+			LInfoVariable.DefaultValue := formPropiedadesVariables.DefaultValue;
 	//    LValor := StringAValor(LVariable.ValorPorDefecto);
-			LInfoVariable.Filas := formPropiedadesVariables.Filas;
-			LInfoVariable.Columnas := formPropiedadesVariables.Columnas;
-			LInfoVariable.Tipo := formPropiedadesVariables.Tipo;
-      Variables.Registrar(LInfoVariable);
+			LInfoVariable.Rows := formPropiedadesVariables.Rows;
+			LInfoVariable.Columns := formPropiedadesVariables.Columns;
+			LInfoVariable.TypeNumber := formPropiedadesVariables.TypeNumber;
+      Variables.Add(LInfoVariable);
 
-  //    Variables.Asignar(Variables.Variable(LVariable.Nombre),LValor);
+  //    Variables.Assign(Variables.Variable(LVariable.Nombre),LValor);
   //    FreeValor(LValor);
 			Modificacion(Self);
 			ActualizarVariables;
@@ -1580,27 +1580,27 @@ end;
 
 procedure TFormMain.btnModificarVarClick(Sender: TObject);
 var
-  LInfoVariable : TInfoVariable;
+  LInfoVariable : TVariableInformation;
 
-//  LValor : TValor;
+//  LValor : TValue;
 begin
   if Variables.Count = 0 then
     Exit;
 
   with Variables.Variable(gridVariables.Row-1) do
   begin
-    LInfoVariable.Nombre := Nombre;
-    LInfoVariable.ValorPorDefecto := ValorPorDefecto;
-    LInfoVariable.Filas := Filas;
-    LInfoVariable.Columnas := Columnas;
-    LInfoVariable.Tipo := Tipo;
+    LInfoVariable.Name := Name;
+    LInfoVariable.DefaultValue := ValorPorDefecto;
+    LInfoVariable.Rows := Rows;
+    LInfoVariable.Columns := Columns;
+    LInfoVariable.TypeNumber := TypeNumber;
   end;
 
-	if formPropiedadesVariables.Execute('Variable ' + LInfoVariable.Nombre, LInfoVariable) then
+	if formPropiedadesVariables.Execute('Variable ' + LInfoVariable.Name, LInfoVariable) then
 	begin
 		with formPropiedadesVariables do
-      Variables.Modificar(gridVariables.Row-1,Nombre,ValorPorDefecto,Filas,Columnas,Tipo);
-//    Variables.Asignar(Variables.Variable(LVariable.Nombre),LValor);
+      Variables.Modify(gridVariables.Row-1,VariableName,DefaultValue,Rows,Columns,TypeNumber);
+//    Variables.Assign(Variables.Variable(LVariable.Nombre),LValor);
 //    FreeValor(LValor);
 		Modificacion(Self);
 		ActualizarVariables;
@@ -1612,7 +1612,7 @@ begin
 	if Variables.Count = 0 then
 		Exit;
 
-	Variables.Deregistrar(gridVariables.Row-1);
+	Variables.Remove(gridVariables.Row-1);
 	Modificacion(Self);
 	ActualizarVariables;
 end;
@@ -1621,7 +1621,7 @@ procedure TFormMain.ActualizarVariables;
 var
   j,k,l : integer;
 	LVariable : TVariable;
-	LValor : TValor;
+	LValor : TValue;
   s : string;
 begin
   if Not Self.Visible then
@@ -1641,48 +1641,48 @@ begin
 		for j := 0 to Variables.Count - 1 do
 		begin
 			LVariable := Variables.Variable(j);
-			gridVariables.Cells[0,j+1] := LVariable.Nombre;
-			if (LVariable.Filas=1)and(LVariable.Columnas=1) then
+			gridVariables.Cells[0,j+1] := LVariable.Name;
+			if (LVariable.Rows=1)and(LVariable.Columns=1) then
 			begin
 				try
-					LValor := LVariable.Valores(0,0);
-					gridVariables.Cells[1,j+1] := TValores.ValorAString(LValor);
+					LValor := LVariable.GetValues(0,0);
+					gridVariables.Cells[1,j+1] := TValues.ToString(LValor);
 				finally
-					TValores.FreeValor(LValor);
+					TValues.FreeValue(LValor);
 				end;
 			end
 			else
 			begin
 				s := '(';
-				for k := 0 to LVariable.Filas-1 do
+				for k := 0 to LVariable.Rows-1 do
 				begin
-					if (LVariable.Columnas=1)or(LVariable.Tipo=nCad) then
+					if (LVariable.Columns=1)or(LVariable.TypeNumber=nString) then
 					begin
 						try
-							LValor := LVariable.Valores(k,0);
-							S := S + TValores.ValorAString(LValor);
+							LValor := LVariable.GetValues(k,0);
+							S := S + TValues.ToString(LValor);
 						finally
-							TValores.FreeValor(LValor);
+							TValues.FreeValue(LValor);
 						end;
 					end
 					else
 					begin
 						S := S + '(';
-						for l := 0 to LVariable.Columnas-1 do
+						for l := 0 to LVariable.Columns-1 do
 						begin
 							try
-								LValor := LVariable.Valores(k,l);
-								S := S + TValores.ValorAString(LValor);
+								LValor := LVariable.GetValues(k,l);
+								S := S + TValues.ToString(LValor);
 							finally
-								TValores.FreeValor(LValor);
+								TValues.FreeValue(LValor);
 							end;
-							if l<LVariable.Columnas-1 then
-								S := S + SEPARADOR;
+							if l<LVariable.Columns-1 then
+								S := S + SEPARATOR;
 						end;
 						s := S + ')';
 					end;
-					if k<LVariable.Filas-1 then
-						S := S + SEPARADOR;
+					if k<LVariable.Rows-1 then
+						S := S + SEPARATOR;
 				end;
 				S := S + ')';
 				gridVariables.Cells[1,j+1] := S;
@@ -1796,13 +1796,13 @@ end;
 procedure TFormMain.btnAltoClick(Sender: TObject);
 var
 	j : integer;
-	LInstruccion : TInstruccion;
+	LInstruction : TInstruction;
 begin
 	for j := 0 to Seleccion.Count-1 do
 	begin
-		LInstruccion := TInstruccion(Seleccion.Items[j]);
-		if not(LInstruccion is TInicio) then
-			LInstruccion.BreakPoint := not LInstruccion.BreakPoint;
+		LInstruction := TInstruction(Seleccion.Items[j]);
+		if not(LInstruction is TBegin) then
+			LInstruction.BreakPoint := not LInstruction.BreakPoint;
 	end;
 end;
 

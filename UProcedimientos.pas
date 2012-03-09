@@ -5,95 +5,95 @@ interface
 uses Sysutils;
 
 type
-  TProcedimientoValor = procedure(p: String);
+  TProcedurePointer = procedure(p: String);
 
-	TProcedimiento = record
-		Nombre : String;
-		Valor : TProcedimientoValor;
+	TProcedure = record
+		ProcedureName : String;
+		ProcedurePointer : TProcedurePointer;
 	end;
 
-	TProcedimientos = class
+	TProcedures = class
 	private
-		FProcedimientos : array of TProcedimiento;
+		FProcedures : array of TProcedure;
 	public
 		constructor Create;
 		destructor Destroy; override;
 
-		procedure Registrar(ANombre: String; AValor: TProcedimientoValor);
-		procedure Deregistrar(ANombre: String); overload;
-		procedure Deregistrar(Index: Integer); overload;
-		procedure DeregistrarTodo;
+		procedure Add(ANombre: String; AValor: TProcedurePointer);
+		procedure Remove(ANombre: String); overload;
+		procedure Remove(Index: Integer); overload;
+		procedure Clean;
 
-		function Procedimiento(ANombre : String): TProcedimiento; overload;
-		function Procedimiento(Index : Integer): TProcedimiento; overload;
-		function EsProcedimiento(S: String): Boolean;
+		function GetProcedure(ANombre : String): TProcedure; overload;
+		function GetProcedure(Index : Integer): TProcedure; overload;
+		function IsProcedure(S: String): Boolean;
 
     function Count : Integer;
 	end;
 
 var
-	Procedimientos : TProcedimientos;
+	Procedures : TProcedures;
 
 const
-	PROCEDIMIENTO_VACIO : TProcedimiento = (Nombre : '';
-    Valor : Nil);
+	DEFAULT_PROCEDURE : TProcedure = (ProcedureName : '';
+    ProcedurePointer : Nil);
 
 implementation
 
 uses UFormCrt, UAnalizadores, UValores, UVariables, UArchivos, UTipos,
   UExtractores;
 
-{ TProcedimientos }
+{ TProcedures }
 
-function TProcedimientos.Count: Integer;
+function TProcedures.Count: Integer;
 begin
-  Result := Length(FProcedimientos);
+  Result := Length(FProcedures);
 end;
 
-constructor TProcedimientos.Create;
+constructor TProcedures.Create;
 begin
-  SetLength(FProcedimientos,0);
+  SetLength(FProcedures,0);
 end;
 
-procedure TProcedimientos.Deregistrar(ANombre: String);
+procedure TProcedures.Remove(ANombre: String);
 var
 	j : integer;
 begin
-	for j := High(FProcedimientos) downto Low(FProcedimientos) do
+	for j := High(FProcedures) downto Low(FProcedures) do
 	begin
-		if FProcedimientos[j].Nombre = ANombre  then
+		if FProcedures[j].ProcedureName = ANombre  then
 		begin
-			SetLength(FProcedimientos,Length(FProcedimientos)-1);
+			SetLength(FProcedures,Length(FProcedures)-1);
 			Break;
 		end;
 	end;
 end;
 
-procedure TProcedimientos.Deregistrar(Index: Integer);
+procedure TProcedures.Remove(Index: Integer);
 begin
-	SetLength(FProcedimientos,Length(FProcedimientos)-1);
+	SetLength(FProcedures,Length(FProcedures)-1);
 end;
 
-procedure TProcedimientos.DeregistrarTodo;
+procedure TProcedures.Clean;
 begin
-	while Length(FProcedimientos)>0 do
-		Deregistrar(0);
+	while Length(FProcedures)>0 do
+		Remove(0);
 end;
 
-destructor TProcedimientos.Destroy;
+destructor TProcedures.Destroy;
 begin
-	DeregistrarTodo;
+	Clean;
 	inherited;
 end;
 
-function TProcedimientos.EsProcedimiento(S: String): Boolean;
+function TProcedures.IsProcedure(S: String): Boolean;
 var
 	j : integer;
 begin
 	Result := False;
-	for j := Low(FProcedimientos) to High(FProcedimientos) do
+	for j := Low(FProcedures) to High(FProcedures) do
 	begin
-		if UpperCase(FProcedimientos[j].Nombre) = UpperCase(S) then
+		if UpperCase(FProcedures[j].ProcedureName) = UpperCase(S) then
 		begin
 			Result := True;
 			Break;
@@ -101,38 +101,38 @@ begin
 	end;
 end;
 
-function TProcedimientos.Procedimiento(Index: Integer): TProcedimiento;
+function TProcedures.GetProcedure(Index: Integer): TProcedure;
 begin
-	Result := FProcedimientos[Index];
+	Result := FProcedures[Index];
 end;
 
-function TProcedimientos.Procedimiento(ANombre: String): TProcedimiento;
+function TProcedures.GetProcedure(ANombre: String): TProcedure;
 var
 	j : integer;
 begin
-	for j := Low(FProcedimientos) to High(FProcedimientos) do
+	for j := Low(FProcedures) to High(FProcedures) do
 	begin
-		if UpperCase(FProcedimientos[j].Nombre) = UpperCase(ANombre) then
+		if UpperCase(FProcedures[j].ProcedureName) = UpperCase(ANombre) then
 		begin
-			Result := FProcedimientos[j];
+			Result := FProcedures[j];
 			Break;
 		end;
 	end;
 end;
 
-procedure TProcedimientos.Registrar(ANombre: String;
-  AValor: TProcedimientoValor);
+procedure TProcedures.Add(ANombre: String;
+  AValor: TProcedurePointer);
 begin
-	SetLength(FProcedimientos,Length(FProcedimientos)+1);
-  FProcedimientos[High(FProcedimientos)] := PROCEDIMIENTO_VACIO;
-	with FProcedimientos[High(FProcedimientos)] do
+	SetLength(FProcedures,Length(FProcedures)+1);
+  FProcedures[High(FProcedures)] := DEFAULT_PROCEDURE;
+	with FProcedures[High(FProcedures)] do
 	begin
-		Nombre := ANombre;
-		Valor := AValor;
+		ProcedureName := ANombre;
+		ProcedurePointer := AValor;
 	end;
 end;
 
-//----------- Procedimientos ---------------//
+//----------- Procedures ---------------//
 
 procedure ProcRandomize(p: String);
 begin
@@ -146,7 +146,7 @@ end;
 
 procedure ProcWrite(p: string);
 var
-	LValor : TValor;
+	LValue : TValue;
 	aux : string;
 begin
 	repeat
@@ -156,10 +156,10 @@ begin
 			raise Exception.Create('Sintax error!' + ' ' + 'Parameter expected.');
 
 		try
-			LValor := TAnalizadores.Expresion(aux);
-			formCrt.Write(TValores.ValorAString(LValor));
+			LValue := TAnalyzers.Expression(aux);
+			formCrt.Write(TValues.ToString(LValue));
 		finally
-			TValores.FreeValor(LValor);
+			TValues.FreeValue(LValue);
 		end;
 
 		Delete(p,1,Length(Aux)+2);
@@ -168,7 +168,7 @@ end;
 
 procedure ProcWriteln(p: string);
 var
-	LValor : TValor;
+	LValor : TValue;
 	aux : string;
 begin
 	repeat
@@ -178,10 +178,10 @@ begin
 			raise Exception.Create('Sintax error!' + ' ' + ' Parameter expected.');
 
 		try
-			LValor := TAnalizadores.Expresion(aux);
-			formCrt.Write(TValores.ValorAString(LValor));
+			LValor := TAnalyzers.Expression(aux);
+			formCrt.Write(TValues.ToString(LValor));
 		finally;
-			TValores.FreeValor(LValor);
+			TValues.FreeValue(LValor);
 		end;
 
 		Delete(p,1,Length(Aux)+2);
@@ -192,31 +192,31 @@ end;
 procedure ProcRead(p: string);
 var
 	LLectura : string;
-	LValor : TValor;
-	LTipo : TTipo;
+	LValor : TValue;
+	LTipo : TTypeNumber;
 	i : string;
 begin
 	LLectura := formCrt.Read;
 
-	i := TExtractores.ExtraerIdentificador(p);
-	LTipo := Variables.Variable(i).Tipo;
-	LValor := TValores.StringAValorDef(LLectura, LTipo);
-	Variables.Asignar(i+P,LValor);
+	i := TExtractors.ExtractIdentifier(p);
+	LTipo := Variables.Variable(i).TypeNumber;
+	LValor := TValues.ParseDef(LLectura, LTipo);
+	Variables.Assign(i+P,LValor);
 end;
 
 procedure ProcReadln(p: String);
 var
 	LLectura : string;
-	LValor : TValor;
-	LTipo : TTipo;
+	LValor : TValue;
+	LTipo : TTypeNumber;
 	i : string;
 begin
 	LLectura := formCrt.Read;
 
-	i := TExtractores.ExtraerIdentificador(p);
-	LTipo := Variables.Variable(i).Tipo;
-	LValor := TValores.StringAValorDef(LLectura, LTipo);
-	Variables.Asignar(i+P,LValor);
+	i := TExtractors.ExtractIdentifier(p);
+	LTipo := Variables.Variable(i).TypeNumber;
+	LValor := TValues.ParseDef(LLectura, LTipo);
+	Variables.Assign(i+P,LValor);
 	formCrt.Retorno;
 end;
 
@@ -224,7 +224,7 @@ procedure ProcWriteFile(p: string);
 var
 	aux : string;
 	LArchivo : TArchivo;
-	LValor : TValor;
+	LValor : TValue;
 begin
 	aux := Copy(p,1,Pos(#10#13,p)-1);
 	if not Archivos.EsArchivo(Aux) then
@@ -240,10 +240,10 @@ begin
 			raise Exception.Create('Sintax error!' + ' ' + ' Parameter expected.');
 
 		try
-			LValor := TAnalizadores.Expresion(aux);
-			LArchivo.Write(TValores.ValorAString(LValor));
+			LValor := TAnalyzers.Expression(aux);
+			LArchivo.Write(TValues.ToString(LValor));
 		finally
-			TValores.FreeValor(LValor);
+			TValues.FreeValue(LValor);
 		end;
 
 		Delete(p,1,Length(Aux)+2);
@@ -252,7 +252,7 @@ end;
 
 procedure ProcWriteFileln(p: string);
 var
-	LValor : TValor;
+	LValor : TValue;
 	aux : string;
 	LArchivo : TArchivo;
 begin
@@ -270,10 +270,10 @@ begin
 			raise Exception.Create('Sintax error!' + ' ' + 'Parameter expected.');
 
 		try
-			LValor := TAnalizadores.Expresion(aux);
-			LArchivo.Writeln(TValores.ValorAString(LValor));
+			LValor := TAnalyzers.Expression(aux);
+			LArchivo.Writeln(TValues.ToString(LValor));
 		finally
-			TValores.FreeValor(LValor);
+			TValues.FreeValue(LValor);
 		end;
 
 		Delete(p,1,Length(Aux)+2);
@@ -282,7 +282,7 @@ end;
 
 procedure ProcReadFile(p: string);
 var
-	LValor : TValor;
+	LValor : TValue;
 	LArchivo : TArchivo;
 	Aux : string;
 begin
@@ -294,14 +294,14 @@ begin
 	LArchivo := Archivos.Archivo(Aux);
 	Aux := Copy(P,1,Pos(#10#13,p)-1);
 	Delete(p,1,Pos(#10#13,p)+2);
-	LValor := Variables.Valor(Aux);
+	LValor := Variables.Parse(Aux);
 	LArchivo.Read(LValor);
-	Variables.Asignar(Aux,LValor);
+	Variables.Assign(Aux,LValor);
 end;
 
 procedure ProcReadFileln(p: String);
 var
-	LValor : TValor;
+	LValor : TValue;
 	LArchivo : TArchivo;
 	Aux : string;
 begin
@@ -312,44 +312,44 @@ begin
 
 	LArchivo := Archivos.Archivo(Aux);
 	Aux := Copy(P,1,Pos(#10#13,p)-1);
-	LValor := Variables.Valor(Aux);
+	LValor := Variables.Parse(Aux);
 	LArchivo.Readln(LValor);
-	Variables.Asignar(Aux,LValor);
+	Variables.Assign(Aux,LValor);
 end;
 
-//----------- Procedimientos ---------------//
+//----------- Procedures ---------------//
 
 procedure ProcedimientosPorDefecto;
 begin
-	Procedimientos.Registrar('CLS',ProcCLS);
-	Procedimientos.Registrar('LIMPIAR',ProcCLS);
-	Procedimientos.Registrar('WRITE',ProcWrite);
-	Procedimientos.Registrar('MOSTRAR',ProcWrite);
-	Procedimientos.Registrar('WRITELN',ProcWriteln);
-	Procedimientos.Registrar('MOSTRARRT',ProcWriteln);
-	Procedimientos.Registrar('READ',ProcRead);
-	Procedimientos.Registrar('LEER',ProcRead);
-	Procedimientos.Registrar('READLN',ProcReadln);
-	Procedimientos.Registrar('LEERRT',ProcReadln);
-	Procedimientos.Registrar('WRITEFILE',ProcWriteFile);
-	Procedimientos.Registrar('MOSTRARARCHIVO',ProcWriteFile);
-	Procedimientos.Registrar('WRITEFILELN',ProcWriteFileln);
-	Procedimientos.Registrar('MOSTRARARCHIVORT',ProcWriteFileln);
-	Procedimientos.Registrar('READFILE',ProcReadFile);
-	Procedimientos.Registrar('LEERARCHIVO',ProcReadFile);
-	Procedimientos.Registrar('READFILELN',ProcReadFileln);
-	Procedimientos.Registrar('LEERARCHIVORT',ProcReadFileln);
-	Procedimientos.Registrar('RANDOMIZE',ProcRandomize);
-	Procedimientos.Registrar('ALEATORIZAR',ProcRandomize);
+	Procedures.Add('CLS',ProcCLS);
+	Procedures.Add('LIMPIAR',ProcCLS);
+	Procedures.Add('WRITE',ProcWrite);
+	Procedures.Add('MOSTRAR',ProcWrite);
+	Procedures.Add('WRITELN',ProcWriteln);
+	Procedures.Add('MOSTRARRT',ProcWriteln);
+	Procedures.Add('READ',ProcRead);
+	Procedures.Add('LEER',ProcRead);
+	Procedures.Add('READLN',ProcReadln);
+	Procedures.Add('LEERRT',ProcReadln);
+	Procedures.Add('WRITEFILE',ProcWriteFile);
+	Procedures.Add('MOSTRARARCHIVO',ProcWriteFile);
+	Procedures.Add('WRITEFILELN',ProcWriteFileln);
+	Procedures.Add('MOSTRARARCHIVORT',ProcWriteFileln);
+	Procedures.Add('READFILE',ProcReadFile);
+	Procedures.Add('LEERARCHIVO',ProcReadFile);
+	Procedures.Add('READFILELN',ProcReadFileln);
+	Procedures.Add('LEERARCHIVORT',ProcReadFileln);
+	Procedures.Add('RANDOMIZE',ProcRandomize);
+	Procedures.Add('ALEATORIZAR',ProcRandomize);
 end;
 
 initialization
-	Procedimientos := TProcedimientos.Create;
+	Procedures := TProcedures.Create;
 
   ProcedimientosPorDefecto;
 
 finalization
-	Procedimientos.Free;
+	Procedures.Free;
 
 end.
-
+

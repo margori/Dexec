@@ -5,39 +5,39 @@ interface
 uses sysutils, UUtiles, classes, UValores, UTipos;
 
 type
-  TInfoVariable = record
-    Nombre : String;
-		ValorPorDefecto : String;
-		Filas, Columnas : Integer;
-		Tipo : TTipo;
+  TVariableInformation = record
+    Name : String;
+		DefaultValue : String;
+		Rows, Columns : Integer;
+		TypeNumber : TTypeNumber;
 	end;
 
 	TVariable = class
 	private
-		FNombre : String;
-		FValorPorDefecto : String;
-		FTipo : TTipo;
-		FPunteros : array of array of Pointer;
-		function GetFilas: Integer;
-		function GetColumnas: Integer;
-		procedure SetFilas(const Value: Integer);
-		procedure SetColumnas(const Value: Integer);
-		procedure SetTipo(const Value: integer);
+		FName : String;
+		FDefaultValue : String;
+		FTypeNumber : TTypeNumber;
+		FPointers : array of array of Pointer;
+		function GetRows: Integer;
+		function GetColumns: Integer;
+		procedure SetRows(const Value: Integer);
+		procedure SetColumns(const Value: Integer);
+		procedure SetTypeNumber(const Value: integer);
 
-		function ValoresP(i1,i2: integer): TValor;
+		function PrivateGetValues(i1,i2: integer): TValue;
 	public
 		constructor Create;
 		destructor Destroy; override;
 
-		property Nombre: String read FNombre write FNombre;
-		property ValorPorDefecto : String read FValorPorDefecto write FValorPorDefecto;
-		property Filas : Integer read GetFilas write SetFilas;
-		property Columnas : Integer read GetColumnas  write SetColumnas;
-		property Tipo : integer read FTipo write SetTipo;
+		property Name: String read FName write FName;
+		property ValorPorDefecto : String read FDefaultValue write FDefaultValue;
+		property Rows : Integer read GetRows write SetRows;
+		property Columns : Integer read GetColumns  write SetColumns;
+		property TypeNumber : integer read FTypeNumber write SetTypeNumber;
 
-		procedure Inicializar;
-		function Valores(i1,i2: integer): TValor;
-		function Info : TInfoVariable;
+		procedure Initialize;
+		function GetValues(i1,i2: integer): TValue;
+		function Information : TVariableInformation;
 	end;
 
 	TVariables = class
@@ -47,34 +47,34 @@ type
 		constructor Create;
 		destructor Destroy; override;
 
-		procedure Registrar(ANombre, AValorPorDefecto: String; AFilas, AColumnas : Integer; ATipo : TTipo); overload;
-		procedure Registrar(AInfoVariable : TInfoVariable); overload;
-		procedure Deregistrar(ANombre: String); overload;
-		procedure Deregistrar(Index: Integer); overload;
-		procedure DeregistrarTodo;
+		procedure Add(ANombre, AValorPorDefecto: String; AFilas, AColumnas : Integer; ATipo : TTypeNumber); overload;
+		procedure Add(AInfoVariable : TVariableInformation); overload;
+		procedure Remove(ANombre: String); overload;
+		procedure Remove(Index: Integer); overload;
+		procedure Clean;
 
-		procedure Inicializar;
+		procedure Initialize;
 
 		function Variable(S : String): TVariable; overload;
 		function Variable(Index : Integer): TVariable; overload;
-		function EsVariable(S: String): Boolean;
+		function IsVariable(S: String): Boolean;
 
-		function Valor(AExpresion: String): TValor;
+		function Parse(AExpresion: String): TValue;
 
 		function Count : Integer;
 
-		procedure Modificar(Index: Integer; ANombre, AValorPorDefecto: String;
-			AFilas,AColumnas: Integer; ATipo: Integer);
+		procedure Modify(Index: Integer; AName, ADefualtValue: String;
+			ARows,AColumns: Integer; ATypeNumber: Integer);
 
-		procedure Asignar(AExpresion : String; AValor: TValor); overload;
+		procedure Assign(AExpresion : String; AValor: TValue); overload;
 	end;
 
 var
 	Variables : TVariables;
 
 const
-  INFOVARIABLEVACIA : TInfoVariable = (
-    Nombre : ''; ValorPorDefecto : '';Filas : 1; Columnas : 1;Tipo : 0;  
+  DEFAULT_VARIABLE_INFORMATION : TVariableInformation = (
+    Name : ''; DefaultValue : '';Rows : 1; Columns : 1; TypeNumber : 0;
   );
 
 implementation
@@ -93,7 +93,7 @@ begin
 	FVariables := TList.Create;
 end;
 
-procedure TVariables.Deregistrar(ANombre: String);
+procedure TVariables.Remove(ANombre: String);
 var
 	j : integer;
   LVariable : TVariable;
@@ -101,15 +101,15 @@ begin
 	for j := FVariables.Count-1 downto 0 do
   begin
     LVariable := TVariable(FVariables.Items[j]);
-		if LVariable.Nombre = ANombre  then
+		if LVariable.Name = ANombre  then
 		begin
-			Deregistrar(j);
+			Remove(j);
 			Break;
 		end;
   end;
 end;
 
-procedure TVariables.Deregistrar(Index: Integer);
+procedure TVariables.Remove(Index: Integer);
 var
   LVariable : TVariable;
 begin
@@ -118,19 +118,19 @@ begin
   FVariables.Delete(Index);
 end;
 
-procedure TVariables.DeregistrarTodo;
+procedure TVariables.Clean;
 begin
 	while FVariables.Count>0 do
-		Deregistrar(0);
+		Remove(0);
 end;
 
 destructor TVariables.destroy;
 begin
-	DeregistrarTodo;
+	Clean;
 	inherited;
 end;
 
-function TVariables.EsVariable(S: String): Boolean;
+function TVariables.IsVariable(S: String): Boolean;
 var
 	j : integer;
   LVariable : TVariable;
@@ -139,7 +139,7 @@ begin
 	for j := 0 to FVariables.Count-1 do
 	begin
     LVariable := FVariables.Items[j];
-		if UpperCase(LVariable.Nombre) = UpperCase(S) then
+		if UpperCase(LVariable.Name) = UpperCase(S) then
 		begin
 			Result := True;
 			Break;
@@ -147,8 +147,8 @@ begin
 	end;
 end;
 
-procedure TVariables.Registrar(ANombre, AValorPorDefecto: String; AFilas,
-	AColumnas : Integer; ATipo : TTipo);
+procedure TVariables.Add(ANombre, AValorPorDefecto: String; AFilas,
+	AColumnas : Integer; ATipo : TTypeNumber);
 var
   LVariable : TVariable;
 begin
@@ -156,11 +156,11 @@ begin
 	FVariables.Add(LVariable);
 	with LVariable do
 	begin
-		Nombre := ANombre;
+		Name := ANombre;
     ValorPorDefecto := AValorPorDefecto;
-    Tipo := ATipo;
-    Filas := AFilas;
-    Columnas := AColumnas;
+    TypeNumber := ATipo;
+    Rows := AFilas;
+    Columns := AColumnas;
 	end;
 end;
 
@@ -173,7 +173,7 @@ begin
 	for j := 0 to FVariables.Count-1 do
 	begin
     LVariable := FVariables.Items[j];
-		if UpperCase(LVariable.Nombre) = UpperCase(S) then
+		if UpperCase(LVariable.Name) = UpperCase(S) then
 		begin
 			Result := FVariables[j];
 			Break;
@@ -186,7 +186,7 @@ begin
 	Result := FVariables[Index];
 end;
 
-procedure TVariables.Inicializar;
+procedure TVariables.Initialize;
 var
   j : Integer;
   LVariable : TVariable;
@@ -194,43 +194,43 @@ begin
   for j := 0 to FVariables.Count-1 do
   begin
     LVariable := FVariables.Items[j];
-    LVariable.Inicializar;
+    LVariable.Initialize;
   end;
 end;
 
-procedure TVariables.Modificar(Index: Integer; ANombre,
-  AValorPorDefecto: String; AFilas,AColumnas : Integer; ATipo: Integer);
+procedure TVariables.Modify(Index: Integer; AName,
+  ADefualtValue: String; ARows,AColumns : Integer; ATypeNumber: Integer);
 var
   LVariable : TVariable;
 begin
   LVariable := FVariables.Items[Index];
   with LVariable do
   begin
-    Nombre := ANombre;
-    ValorPorDefecto := AValorPorDefecto;
-		Tipo := ATipo;
-		Filas := AFilas;
-		Columnas := AColumnas;
+    Name := AName;
+    ValorPorDefecto := ADefualtValue;
+		TypeNumber := ATypeNumber;
+		Rows := ARows;
+		Columns := AColumns;
 	end;
 end;
 
-procedure TVariables.Registrar(AInfoVariable: TInfoVariable);
+procedure TVariables.Add(AInfoVariable: TVariableInformation);
 begin
 	with AInfoVariable do
-		Self.Registrar(Nombre,ValorPorDefecto,Filas,Columnas,Tipo);
+		Self.Add(Name,DefaultValue,Rows,Columns,TypeNumber);
 end;
 
-function TVariables.Valor(AExpresion: String): TValor;
+function TVariables.Parse(AExpresion: String): TValue;
 var
 	LIndex1,LIndex2 : Integer;
 	i : String;
 	LExpresion1,LExpresion2: String;
-	LValorIndex1, LValorIndex2 : TValor;
+	LValorIndex1, LValorIndex2 : TValue;
 	LVariable : TVariable;
 begin
 	LIndex1 := 0; LIndex2 := 0;
-	i := TExtractores.ExtraerIdentificador(AExpresion);
-	if not EsVariable(i) then
+	i := TExtractors.ExtractIdentifier(AExpresion);
+	if not IsVariable(i) then
 		raise Exception.Create('Sintax error!' + ' ' +' Unknown identifier.');
 
 	LVariable := Variables.Variable(i);
@@ -239,54 +239,54 @@ begin
 		if AExpresion[1]='(' then
 		begin
 			delete(AExpresion,1,1);
-			LExpresion1 := TExtractores.ExtraerExpresion(AExpresion);
+			LExpresion1 := TExtractors.ExtractExpression(AExpresion);
 			try
-				LValorIndex1 := TAnalizadores.Expresion(LExpresion1);
-				if LValorIndex1.Tipo <> nInt32 then
+				LValorIndex1 := TAnalyzers.Expression(LExpresion1);
+				if LValorIndex1.ValueType <> nInt32 then
 					raise Exception.Create('Sintax error!' + ' ' +' Integer number expected.');
-				LIndex1 := PInt32(LValorIndex1.Puntero)^;
+				LIndex1 := PInteger32(LValorIndex1.ValuePointer)^;
 			finally
-				TValores.FreeValor(LValorIndex1);
+				TValues.FreeValue(LValorIndex1);
 			end;
 
-			if (AExpresion[1]=')')and(AExpresion[1]<>SEPARADOR) then
+			if (AExpresion[1]=')')and(AExpresion[1]<>SEPARATOR) then
 				LIndex2 := 0
-			else if AExpresion[1]=SEPARADOR then
+			else if AExpresion[1]=SEPARATOR then
 			begin
 				Delete(AExpresion,1,1);
-				LExpresion2 := TExtractores.ExtraerExpresion(AExpresion);
+				LExpresion2 := TExtractors.ExtractExpression(AExpresion);
 				if AExpresion[1]<>')' then
 					Raise Exception.Create('Sintax error!' + ' ' +' ")" expected.');
 
 				try
-					LValorIndex2 := TAnalizadores.Expresion(LExpresion2);
-					if LValorIndex2.Tipo <> nInt32 then
+					LValorIndex2 := TAnalyzers.Expression(LExpresion2);
+					if LValorIndex2.ValueType <> nInt32 then
 						raise Exception.Create('Sintax error!' + ' ' +' Integer number expected.');
-					LIndex2 := PInt32(LValorIndex2.Puntero)^;
+					LIndex2 := PInteger32(LValorIndex2.ValuePointer)^;
 				finally
-					TValores.FreeValor(LValorIndex2);
+					TValues.FreeValue(LValorIndex2);
 				end;
 			end
-			else if AExpresion[1]<>SEPARADOR then
-				raise Exception.Create(Format('Sintax error!' + ' ' +' "%s" expected.',[SEPARADOR]));
+			else if AExpresion[1]<>SEPARATOR then
+				raise Exception.Create(Format('Sintax error!' + ' ' +' "%s" expected.',[SEPARATOR]));
 		end;
 	end;
 
-	Result := LVariable.Valores(LIndex1,LIndex2);
+	Result := LVariable.GetValues(LIndex1,LIndex2);
 end;
 
-procedure TVariables.Asignar(AExpresion: String; AValor: TValor);
+procedure TVariables.Assign(AExpresion: String; AValor: TValue);
 var
 	LIndex1,LIndex2 : Integer;
 	i : String;
 	LExpresion1,LExpresion2: String;
-	LValorIndex1, LValorIndex2 : TValor;
+	LValorIndex1, LValorIndex2 : TValue;
 	LVariable : TVariable;
-	LValor : TValor; // Este no se debe liberar.
+	LValor : TValue; // Este no se debe liberar.
 begin
 	LIndex1 := 0; LIndex2 := 0;
-	i := TExtractores.ExtraerIdentificador(AExpresion);
-	if not EsVariable(i) then
+	i := TExtractors.ExtractIdentifier(AExpresion);
+	if not IsVariable(i) then
 		raise Exception.Create('Sintax error!' + ' ' +' Unknown identifier.');
 
 	LVariable := Variables.Variable(i);
@@ -295,55 +295,55 @@ begin
 		if AExpresion[1]='(' then
 		begin
 			delete(AExpresion,1,1);
-			LExpresion1 := TExtractores.ExtraerExpresion(AExpresion);
+			LExpresion1 := TExtractors.ExtractExpression(AExpresion);
 			try
-				LValorIndex1 := TAnalizadores.Expresion(LExpresion1);
-				if LValorIndex1.Tipo <> nInt32 then
+				LValorIndex1 := TAnalyzers.Expression(LExpresion1);
+				if LValorIndex1.ValueType <> nInt32 then
 					raise Exception.Create('Sintax error!' + ' ' +' Integer number expected.');
-				LIndex1 := PInt32(LValorIndex1.Puntero)^;
+				LIndex1 := PInteger32(LValorIndex1.ValuePointer)^;
 			finally
-				TValores.FreeValor(LValorIndex1);
+				TValues.FreeValue(LValorIndex1);
 			end;
 
-			if (AExpresion[1]=')')and(AExpresion[1]<>SEPARADOR) then
+			if (AExpresion[1]=')')and(AExpresion[1]<>SEPARATOR) then
 				LIndex2 := 0
-			else if AExpresion[1]=SEPARADOR then
+			else if AExpresion[1]=SEPARATOR then
 			begin
 				Delete(AExpresion,1,1);
-				LExpresion2 := TExtractores.ExtraerExpresion(AExpresion);
+				LExpresion2 := TExtractors.ExtractExpression(AExpresion);
 				if AExpresion[1]<>')' then
 					Raise Exception.Create('Sintax error!' + ' ' +' ")" expected.');
 
 				try
-					LValorIndex2 := TAnalizadores.Expresion(LExpresion2);
-					if LValorIndex2.Tipo <> nInt32 then
+					LValorIndex2 := TAnalyzers.Expression(LExpresion2);
+					if LValorIndex2.ValueType <> nInt32 then
 						raise Exception.Create('Sintax error!' + ' ' +' Integer number expected.');
-					LIndex2 := PInt32(LValorIndex2.Puntero)^;
+					LIndex2 := PInteger32(LValorIndex2.ValuePointer)^;
 				finally
-					TValores.FreeValor(LValorIndex2);
+					TValues.FreeValue(LValorIndex2);
 				end;
 			end;
 		end;
 	end;
 
-	if LVariable.Tipo = nCad then
-		LValor := LVariable.ValoresP(LIndex1,0) // Esto evita la devolucion de un char
+	if LVariable.TypeNumber = nString then
+		LValor := LVariable.PrivateGetValues(LIndex1,0) // Esto evita la devolucion de un char
 	else
-		LValor := LVariable.ValoresP(LIndex1,LIndex2);
+		LValor := LVariable.PrivateGetValues(LIndex1,LIndex2);
 
 
-	if (LValor.Tipo = nInt32)and(AValor.Tipo=nInt32) then
-		PInt32(LValor.Puntero)^ := PInt32(AValor.Puntero)^
-	else if (LValor.Tipo = nExte)and(AValor.Tipo = nInt32) then
-		PExte(LValor.Puntero)^ := PInt32(AValor.Puntero)^
-	else if (LValor.Tipo= nExte)and(AValor.Tipo=nExte) then
-		PExte(LValor.Puntero)^ := PExte(AValor.Puntero)^
-	else if (AValor.Tipo=nCad)and(AValor.Tipo=nCad) then
+	if (LValor.ValueType = nInt32)and(AValor.ValueType=nInt32) then
+		PInteger32(LValor.ValuePointer)^ := PInteger32(AValor.ValuePointer)^
+	else if (LValor.ValueType = nExte)and(AValor.ValueType = nInt32) then
+		PExte(LValor.ValuePointer)^ := PInteger32(AValor.ValuePointer)^
+	else if (LValor.ValueType= nExte)and(AValor.ValueType=nExte) then
+		PExte(LValor.ValuePointer)^ := PExte(AValor.ValuePointer)^
+	else if (AValor.ValueType=nString)and(AValor.ValueType=nString) then
 	begin
 		if Lindex2 = 0 then
-			PCadena(LValor.Puntero)^ := PCadena(AValor.Puntero)^
+			PString(LValor.ValuePointer)^ := PString(AValor.ValuePointer)^
 		else
-			PCadena(LValor.Puntero)^[Lindex2] := PCadena(AValor.Puntero)^[1];
+			PString(LValor.ValuePointer)^[Lindex2] := PString(AValor.ValuePointer)^[1];
 	end
 	else
 		raise Exception.Create('Sintax error!' + ' ' +' Types missmatch.');
@@ -353,8 +353,8 @@ end;
 
 constructor TVariable.Create;
 begin
-	Filas := 0;
-	Columnas := 0;
+	Rows := 0;
+	Columns := 0;
 	inherited;
 end;
 
@@ -362,191 +362,191 @@ destructor TVariable.Destroy;
 var
   j,k: integer;
 begin
-  for j := 0 to Filas-1 do
-    for k := 0 to Columnas-1 do
-      if FPunteros[j,k]<> Nil then
-        FreeMem(FPunteros[j,k]);
+  for j := 0 to Rows-1 do
+    for k := 0 to Columns-1 do
+      if FPointers[j,k]<> Nil then
+        FreeMem(FPointers[j,k]);
   inherited;
 end;
 
-function TVariable.GetFilas: Integer;
+function TVariable.GetRows: Integer;
 begin
-  Result := Length(FPunteros);
+  Result := Length(FPointers);
 end;
 
-function TVariable.GetColumnas: Integer;
+function TVariable.GetColumns: Integer;
 begin
-	if Length(FPunteros)>0 then
-		Result := Length(FPunteros[0])
+	if Length(FPointers)>0 then
+		Result := Length(FPointers[0])
 	else
 		Result := 0;
 end;
 
-function TVariable.Info: TInfoVariable;
+function TVariable.Information: TVariableInformation;
 begin
-  Result.Nombre := Nombre;
-  Result.ValorPorDefecto := ValorPorDefecto;
-  Result.Filas := Filas;
-  Result.Columnas := Columnas;
-  Result.Tipo := Tipo;
+  Result.Name := Name;
+  Result.DefaultValue := ValorPorDefecto;
+  Result.Rows := Rows;
+  Result.Columns := Columns;
+  Result.TypeNumber := TypeNumber;
 end;
 
-procedure TVariable.Inicializar;
+procedure TVariable.Initialize;
 var
   j,k: integer;
-	LValor1,LValor2 : TValor;
+	LValor1,LValor2 : TValue;
 begin
 	try
-		LValor1 := TValores.StringAValor(ValorPorDefecto);
-		for j := 0 to Filas-1 do
-			for k := 0 to Columnas-1 do
+		LValor1 := TValues.Parse(ValorPorDefecto);
+		for j := 0 to Rows-1 do
+			for k := 0 to Columns-1 do
 			begin
-				LValor2.Tipo := Self.FTipo;
-				LValor2.Puntero := FPunteros[j,k];
-				TValores.Asignar(LValor2,LValor1);
+				LValor2.ValueType := Self.FTypeNumber;
+				LValor2.ValuePointer := FPointers[j,k];
+				TValues.Assign(LValor2,LValor1);
 			end;
 	finally
-		TValores.FreeValor(LValor1);
+		TValues.FreeValue(LValor1);
 	end;
 end;
 
-procedure TVariable.SetFilas(const Value: Integer);
+procedure TVariable.SetRows(const Value: Integer);
 var
   j,k: integer;
   LDim : integer;
 begin
-  if Value < Filas then
+  if Value < Rows then
   begin
-    for j := Value downto Filas-1 do
-			for k := 0 to Columnas-1 do
+    for j := Value downto Rows-1 do
+			for k := 0 to Columns-1 do
       begin
-        FreeMem(FPunteros[j,k]);
-        FPunteros[j,k] := nil;
+        FreeMem(FPointers[j,k]);
+        FPointers[j,k] := nil;
       end;
-    SetLength(FPunteros,Value);
+    SetLength(FPointers,Value);
   end
-  else if Value > Filas then
+  else if Value > Rows then
   begin
-    LDim := Filas;
-    SetLength(FPunteros,Value);
+    LDim := Rows;
+    SetLength(FPointers,Value);
     for j := LDim to Value-1 do
     begin
-      SetLength(FPunteros[j],Columnas);
-      for k := 0 to Columnas-1 do
+      SetLength(FPointers[j],Columns);
+      for k := 0 to Columns-1 do
       begin
-        GetMem(FPunteros[j,k], TTipos.SizeTipo(FTipo));
+        GetMem(FPointers[j,k], TTypes.SizeOfType(FTypeNumber));
 
-        case Tipo of
-          nInt32 : PInt32(FPunteros[j,k])^ := 0;
-          nExte : PExte(FPunteros[j,k])^ := 0.0;
-          nCad : PCadena(FPunteros[j,k])^ := '';
+        case TypeNumber of
+          nInt32 : PInteger32(FPointers[j,k])^ := 0;
+          nExte : PExte(FPointers[j,k])^ := 0.0;
+          nString : PString(FPointers[j,k])^ := '';
         end;
       end;
     end;
   end;
 end;
 
-procedure TVariable.SetColumnas(const Value: Integer);
+procedure TVariable.SetColumns(const Value: Integer);
 var
   j,k: integer;
   LDim : integer;
 begin
-  if Value < Columnas then
+  if Value < Columns then
   begin
-    for j := 0 to Filas-1 do
+    for j := 0 to Rows-1 do
     begin
-      for k := Columnas-1 to Value do
+      for k := Columns-1 to Value do
       begin
-        FreeMem(FPunteros[j,k]);
-        FPunteros[j,k] := nil;
+        FreeMem(FPointers[j,k]);
+        FPointers[j,k] := nil;
       end;
-      SetLength(FPunteros[j],Value);
+      SetLength(FPointers[j],Value);
     end;
   end
-  else if Value > Columnas then
+  else if Value > Columns then
   begin
-    LDim := Columnas;
-    for j := 0 to Filas-1 do
+    LDim := Columns;
+    for j := 0 to Rows-1 do
     begin
-      SetLength(FPunteros[j],Value);
+      SetLength(FPointers[j],Value);
       for k := LDim to Value-1 do
       begin
-        GetMem(FPunteros[j,k], TTipos.SizeTipo(FTipo));
+        GetMem(FPointers[j,k], TTypes.SizeOfType(FTypeNumber));
 
-        case Tipo of
-          nInt32 : PInt32(FPunteros[j,k])^ := 0;
-          nExte : PExte(FPunteros[j,k])^ := 0.0;
-          nCad : PCadena(FPunteros[j,k])^ := '';
+        case TypeNumber of
+          nInt32 : PInteger32(FPointers[j,k])^ := 0;
+          nExte : PExte(FPointers[j,k])^ := 0.0;
+          nString : PString(FPointers[j,k])^ := '';
         end;
       end;
     end;
   end;
 end;
 
-procedure TVariable.SetTipo(const Value: integer);
+procedure TVariable.SetTypeNumber(const Value: integer);
 var
   j,k: integer;
 begin
-  if FTipo <> Value then
+  if FTypeNumber <> Value then
   begin
-    for j := 0 to Filas-1 do
-      for k := 0 to Columnas-1 do
+    for j := 0 to Rows-1 do
+      for k := 0 to Columns-1 do
       begin
-        FreeMem(FPunteros[j,k]);
-        GetMem(FPunteros[j,k], TTipos.SizeTipo(FTipo));
+        FreeMem(FPointers[j,k]);
+        GetMem(FPointers[j,k], TTypes.SizeOfType(FTypeNumber));
         case Value of
-          nInt32 : PInt32(FPunteros[j,k])^ := 0;
-          nExte : PExte(FPunteros[j,k])^ := 0.0;
-          nCad : PCadena(FPunteros[j,k])^ := '';
+          nInt32 : PInteger32(FPointers[j,k])^ := 0;
+          nExte : PExte(FPointers[j,k])^ := 0.0;
+          nString : PString(FPointers[j,k])^ := '';
         end;
       end;
-    FTipo := Value;
+    FTypeNumber := Value;
   end;
 
 end;
 
-function TVariable.Valores(i1, i2: integer): TValor;
+function TVariable.GetValues(i1, i2: integer): TValue;
 begin
-	if (i1<0)or(i1>Filas-1) then
+	if (i1<0)or(i1>Rows-1) then
 		Raise Exception.Create('Row index out of range!');
-	if Self.Tipo = nCad then
+	if Self.TypeNumber = nString then
 	begin
-		if Length(PCadena(FPunteros[i1,0])^)< i2 then
+		if Length(PString(FPointers[i1,0])^)< i2 then
 			Raise Exception.Create('Character index out of range!');
 	end
-	else if (i2<0)or(i2>Columnas-1) then
+	else if (i2<0)or(i2>Columns-1) then
 		Raise Exception.Create('Column index out of range!');
 
-	Result := VALOR_VACIO;
-	TValores.SetValor(Result,Tipo);
-	case Tipo of
-		nInt32 : PInt32(Result.Puntero)^ := PInt32(FPunteros[i1,i2])^;
-		nCad :
+	Result := DEFAULT_VALUE;
+	TValues.SetValueType(Result,TypeNumber);
+	case TypeNumber of
+		nInt32 : PInteger32(Result.ValuePointer)^ := PInteger32(FPointers[i1,i2])^;
+		nString :
 			begin
 				if i2 = 0 then
-					PCadena(Result.Puntero)^ := PCadena(FPunteros[i1,i2])^
+					PString(Result.ValuePointer)^ := PString(FPointers[i1,i2])^
 				else
-					PCadena(Result.Puntero)^ := PCadena(FPunteros[i1,0])^[i2];
+					PString(Result.ValuePointer)^ := PString(FPointers[i1,0])^[i2];
 			end;
-		nExte : PExte(Result.Puntero)^ := PExte(FPunteros[i1,i2])^;
+		nExte : PExte(Result.ValuePointer)^ := PExte(FPointers[i1,i2])^;
 	else
 		raise Exception.Create('Type not supported!');
 	end;
 end;
 
-function TVariable.ValoresP(i1, i2: integer): TValor;
+function TVariable.PrivateGetValues(i1, i2: integer): TValue;
 begin
-	if (i1<0)or(i1>Filas-1) then
+	if (i1<0)or(i1>Rows-1) then
 		Raise Exception.Create('Row index out of range!');
-	if Self.Tipo = nCad then
+	if Self.TypeNumber = nString then
 	begin
-		if Length(PCadena(FPunteros[i1,0])^)< i2 then
+		if Length(PString(FPointers[i1,0])^)< i2 then
 			Raise Exception.Create('Character index out of range!');
 	end
-	else if (i2<0)or(i2>Columnas-1) then
+	else if (i2<0)or(i2>Columns-1) then
 		Raise Exception.Create('Column index out of range!');
-	Result.Tipo := Tipo;
-	Result.Puntero := FPunteros[i1,i2];
+	Result.ValueType := TypeNumber;
+	Result.ValuePointer := FPointers[i1,i2];
 end;
 
 initialization
@@ -556,4 +556,4 @@ finalization
 	Variables.Free;
 
 end.
-
+

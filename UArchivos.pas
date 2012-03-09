@@ -34,8 +34,8 @@ type
 
 		procedure Write(S: String);
 		procedure Writeln(S: String);
-		procedure Read(AValor : TValor);
-		procedure Readln(AValor : TValor);
+		procedure Read(AValue : TValue);
+		procedure Readln(AValue : TValue);
 	end;
 
 	TArchivos = class
@@ -133,15 +133,15 @@ begin
 	FAbierto := False;
 end;
 
-procedure TArchivo.Read(AValor: TValor);
+procedure TArchivo.Read(AValue: TValue);
 begin
   if not self.Abierto then
     raise Exception.Create('Cannot read on closed files!');
 
-	case AValor.Tipo of
-		nInt32: System.read(FArchivo,PInt32(AValor.Puntero)^);
-		nExte: System.read(FArchivo,PExte(AValor.Puntero)^);
-		nCad: System.read(FArchivo,PCadena(AValor.Puntero)^);
+	case AValue.ValueType of
+		nInt32: System.read(FArchivo,PInteger32(AValue.ValuePointer)^);
+		nExte: System.read(FArchivo,PExte(AValue.ValuePointer)^);
+		nString: System.read(FArchivo,PString(AValue.ValuePointer)^);
 {$IFDEF debug}
 	else
 		raise Exception.Create('Reading error!');
@@ -149,15 +149,15 @@ begin
 	end;
 end;
 
-procedure TArchivo.Readln(AValor: TValor);
+procedure TArchivo.Readln(AValue: TValue);
 begin
   if not self.Abierto then
     raise Exception.Create('Cannot read on closed files');
 
-	case AValor.Tipo of
-		nInt32: System.readln(FArchivo,PInt32(AValor.Puntero)^);
-		nExte: System.readln(FArchivo,PExte(AValor.Puntero)^);
-		nCad: System.readln(FArchivo,PCadena(AValor.Puntero)^);
+	case AValue.ValueType of
+		nInt32: System.readln(FArchivo,PInteger32(AValue.ValuePointer)^);
+		nExte: System.readln(FArchivo,PExte(AValue.ValuePointer)^);
+		nString: System.readln(FArchivo,PString(AValue.ValuePointer)^);
 {$IFDEF debug}
 	else
 		raise Exception.Create('Reading error!');
@@ -342,4 +342,4 @@ begin
 	Archivos.Free;
 end;
 
-end.
+end.

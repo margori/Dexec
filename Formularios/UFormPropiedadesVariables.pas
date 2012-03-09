@@ -36,23 +36,23 @@ type
 	private
 		FCanClose : Boolean;
 		procedure SetNombre(const Value: String);
-		procedure SetTipo(const Value: TTipo);
-		procedure SetValorPorDefecto(const Value: String);
-		function GetNombre: String;
-		function GetTipo: TTipo;
-		function GetValorPorDefecto: String;
-		function GetFilas: Integer;
-		function GetColumnas: Integer;
-		procedure SetFilas(const Value: Integer);
-		procedure SetColumnas(const Value: Integer);
+		procedure SetTypeNumber(const Value: TTypeNumber);
+		procedure SetDefaultValue(const Value: String);
+		function GetName: String;
+		function GetTypeNumber: TTypeNumber;
+		function GetDefaultValue: String;
+		function GetRows: Integer;
+		function GetColumns: Integer;
+		procedure SetRows(const Value: Integer);
+		procedure SetColumns(const Value: Integer);
 	public
-		function Execute(ACaption : String; AInfoVariable : TInfoVariable): boolean;
+		function Execute(ACaption : String; AInfoVariable : TVariableInformation): boolean;
 
-    property Nombre : String read GetNombre write SetNombre;
-    property Tipo : TTipo read GetTipo write SetTipo;
-    property ValorPorDefecto : String read GetValorPorDefecto write SetValorPorDefecto;
-    property Filas: Integer read GetFilas write SetFilas;
-    property Columnas: Integer read GetColumnas write SetColumnas;
+    property VariableName : String read GetName write SetName;
+    property TypeNumber : TTypeNumber read GetTypeNumber write SetTypeNumber;
+    property DefaultValue : String read GetDefaultValue write SetDefaultValue;
+    property Rows: Integer read GetRows write SetRows;
+    property Columns: Integer read GetColumns write SetColumns;
 	end;
 
 var
@@ -67,16 +67,16 @@ uses UValidadores;
 { TformPropiedadesVariables }
 
 function TformPropiedadesVariables.Execute(ACaption : String;
-  AInfoVariable: TInfoVariable): boolean;
+  AInfoVariable: TVariableInformation): boolean;
 var
   S : String;
 begin
 	Self.Caption := ACaption;
-	Nombre := AInfoVariable.Nombre;
-	Tipo := AInfoVariable.Tipo;
-	ValorPorDefecto := AInfoVariable.ValorPorDefecto;
-	Filas := AInfoVariable.Filas;
-	Columnas := AInfoVariable.Columnas;
+	VariableName := AInfoVariable.Name;
+	TypeNumber := AInfoVariable.TypeNumber;
+	DefaultValue := AInfoVariable.DefaultValue;
+	Rows := AInfoVariable.Rows;
+	Columns := AInfoVariable.Columns;
 
 	FCanClose := True;
 	Result := Self.ShowModal = mrOk;
@@ -84,33 +84,33 @@ begin
   if Result then
     if editValorDefecto.Text='' then
     begin
-      case Tipo of
+      case TypeNumber of
         nInt32: editValorDefecto.Text := '0';
         nExte: editValorDefecto.Text := '0';
-        nCad: editValorDefecto.Text := '""';
+        nString: editValorDefecto.Text := '""';
       else
 				raise Exception.Create('Not supported type!');
       end;
     end
     else
     begin
-      S := ValorPorDefecto;
-      if (Tipo = nCad)and(S[1]<>'"')and (S[Length(S)]<>'"') then
-        ValorPorDefecto := '"' + ValorPorDefecto + '"';
+      S := DefaultValue;
+      if (TypeNumber = nString)and(S[1]<>'"')and (S[Length(S)]<>'"') then
+        DefaultValue := '"' + DefaultValue + '"';
     end;
 end;
 
-function TformPropiedadesVariables.GetNombre: String;
+function TformPropiedadesVariables.GetName: String;
 begin
   Result := Trim(editNombre.Text);
 end;
 
-function TformPropiedadesVariables.GetTipo: TTipo;
+function TformPropiedadesVariables.GetTypeNumber: TTypeNumber;
 begin
 	if radioEntero.Checked then
 		Result := nInt32
 	else if radioCadena.Checked then
-		Result := nCad
+		Result := nString
 	else if radioReal.Checked then
 		Result := nExte
 {$ifdef debug}
@@ -120,7 +120,7 @@ begin
 	;
 end;
 
-function TformPropiedadesVariables.GetValorPorDefecto: String;
+function TformPropiedadesVariables.GetDefaultValue: String;
 begin
   Result := editValorDefecto.Text;
 end;
@@ -130,18 +130,18 @@ begin
   editNombre.Text := Value;
 end;
 
-procedure TformPropiedadesVariables.SetTipo(const Value: TTipo);
+procedure TformPropiedadesVariables.SetTypeNumber(const Value: TTypeNumber);
 begin
 	case Value of
 		nInt32: radioEntero.Checked := True;
-		nCad: radioCadena.Checked := True;
+		nString: radioCadena.Checked := True;
 		nExte: radioReal.Checked := True;
 	else
 		radioEntero.Checked := True;
 	end;
 end;
 
-procedure TformPropiedadesVariables.SetValorPorDefecto(
+procedure TformPropiedadesVariables.SetDefaultValue(
   const Value: String);
 begin
 	editValorDefecto.Text := Value;
@@ -152,23 +152,23 @@ begin
   editNombre.SetFocus;
 end;
 
-function TformPropiedadesVariables.GetFilas: Integer;
+function TformPropiedadesVariables.GetRows: Integer;
 begin
   Result := StrToInt(editFilas.Text);
 end;
 
-function TformPropiedadesVariables.GetColumnas: Integer;
+function TformPropiedadesVariables.GetColumns: Integer;
 begin
   Result := StrToInt(editColumnas.Text);
 end;
 
-procedure TformPropiedadesVariables.SetFilas(const Value: Integer);
+procedure TformPropiedadesVariables.SetRows(const Value: Integer);
 begin
 //  editFilas.Text := IntToStr(Value);
 	updownFilas.Position := Value;
 end;
 
-procedure TformPropiedadesVariables.SetColumnas(const Value: Integer);
+procedure TformPropiedadesVariables.SetColumns(const Value: Integer);
 begin
 //	editColumnas.Text := IntToStr(Value);
 	upDownColumnas.Position := Value;
@@ -204,7 +204,7 @@ end;
 
 procedure TformPropiedadesVariables.BitBtn1Click(Sender: TObject);
 begin
-	if not TValidadores.EsIdentificadorValido(Nombre) then
+	if not TValidadores.EsIdentificadorValido(VariableName) then
 	begin
 		FCanClose := False;
 		MessageDlg('Invalid identifier.',mtError,[mbOk],-1);

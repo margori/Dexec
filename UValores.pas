@@ -5,53 +5,53 @@ interface
 uses UTipos;
 
 type
-	TValor = record
-		Tipo: TTipo;
-		Puntero: Pointer;
+	TValue = record
+		ValueType: TTypeNumber;
+		ValuePointer: Pointer;
 	end;
 
-  TValores = class
+  TValues = class
   public
-    class function ValorAString(V: TValor): String;
-    class function StringAValor(S: String): TValor;
-    class function StringAValorDef(S: String; ATipo: TTipo): TValor;
+    class function ToString(AValue: TValue): String;
+    class function Parse(AString: String): TValue;
+    class function ParseDef(AString: String; AValueType: TTypeNumber): TValue;
 
-    class procedure SetValor(var AValor : TValor; ATipo : integer);
-    class procedure FreeValor(var V : TValor);
-    class function CopiarValor(V: TValor): TValor;
+    class procedure SetValueType(var AValue : TValue; AValueType : integer);
+    class procedure FreeValue(var AValue : TValue);
+    class function Clone(AValue: TValue): TValue;
 
-    class procedure Asignar(ADestino: TValor; AOrigen: TValor);
+    class procedure Assign(AOrigin: TValue; ADestination: TValue);
   end;
 
 const
-	VALOR_VACIO : Tvalor = (Tipo : 0;Puntero : Nil);
+	DEFAULT_VALUE : TValue = (ValueType : 0; ValuePointer: Nil);
 
 implementation
 
 uses Sysutils, UVariables, UEsTipo;
 
-class procedure TValores.Asignar(ADestino: TValor; AOrigen: TValor);
+class procedure TValues.Assign( AOrigin: TValue; ADestination: TValue);
 begin
-  if (ADestino.Tipo = nCad)and(AOrigen.Tipo = nCad) then
-    PCadena(ADestino.Puntero)^ := PCadena(AOrigen.Puntero)^
-  else if (ADestino.Tipo = nInt32)and(AOrigen.Tipo = nInt32) then
-    PInt32(ADestino.Puntero)^ := PInt32(AOrigen.Puntero)^
-  else if (ADestino.Tipo = nExte)and(AOrigen.Tipo = nInt32) then
-    PExte(ADestino.Puntero)^ := PInt32(AOrigen.Puntero)^
-  else if (ADestino.Tipo = nExte)and(AOrigen.Tipo = nExte) then
-    PExte(ADestino.Puntero)^ := PExte(AOrigen.Puntero)^
+  if (ADestination.ValueType = nString)and(AOrigin.ValueType = nString) then
+    PString(ADestination.ValuePointer)^ := PString(AOrigin.ValuePointer)^
+  else if (ADestination.ValueType = nInt32)and(AOrigin.ValueType = nInt32) then
+    PInteger32(ADestination.ValuePointer)^ := PInteger32(AOrigin.ValuePointer)^
+  else if (ADestination.ValueType = nExte)and(AOrigin.ValueType = nInt32) then
+    PExte(ADestination.ValuePointer)^ := PInteger32(AOrigin.ValuePointer)^
+  else if (ADestination.ValueType = nExte)and(AOrigin.ValueType = nExte) then
+    PExte(ADestination.ValuePointer)^ := PExte(AOrigin.ValuePointer)^
   else
 		raise Exception.Create('Not supported asignation!');
 end;
 
-class function TValores.CopiarValor(V: TValor): TValor;
+class function TValues.Clone(AValue: TValue): TValue;
 begin
-	Result := VALOR_VACIO;
-	SetValor(Result, V.Tipo);
-  case V.Tipo of
-		nInt32 : PInt32(Result.Puntero)^ := PInt32(V.Puntero)^;
-		nCad : PCadena(Result.Puntero)^ := PCadena(V.Puntero)^;
-		nExte : PExte(Result.Puntero)^ := PExte(V.Puntero)^;
+	Result := DEFAULT_VALUE;
+	SetValueType(Result, AValue.ValueType);
+  case AValue.ValueType of
+		nInt32 : PInteger32(Result.ValuePointer)^ := PInteger32(AValue.ValuePointer)^;
+		nString : PString(Result.ValuePointer)^ := PString(AValue.ValuePointer)^;
+		nExte : PExte(Result.ValuePointer)^ := PExte(AValue.ValuePointer)^;
 {$ifdef debug}
 	else
 		raise Exception.Create('Debug: Data type not supported!');
@@ -59,15 +59,15 @@ begin
 	end;
 end;
 
-class function TValores.ValorAString(V: TValor): String;
+class function TValues.ToString(AValue: TValue): String;
 begin
-  if V.Puntero = Nil then
+  if AValue.ValuePointer = Nil then
     Result := '-'
   else
-    case V.Tipo of
-      nInt32: Result := IntToStr(PInt32(V.Puntero)^);
-      nExte: Result := FloatToStr(PExte(V.Puntero)^);
-      nCad : Result := PCadena(V.Puntero)^;
+    case AValue.ValueType of
+      nInt32: Result := IntToStr(PInteger32(AValue.ValuePointer)^);
+      nExte: Result := FloatToStr(PExte(AValue.ValuePointer)^);
+      nString : Result := PString(AValue.ValuePointer)^;
 {$ifdef debug}
 		else
 			raise Exception.Create('Debug: Data type error!');
@@ -75,60 +75,60 @@ begin
 		end;
 end;
 
-class function TValores.StringAValor(S: String): TValor;
+class function TValues.Parse(AString: String): TValue;
 begin
-	Result := VALOR_VACIO;
-	S := Trim(s);
-  if TEsTipo.Entero(S) then
+	Result := DEFAULT_VALUE;
+	AString := Trim(AString);
+  if TEsTipo.Entero(AString) then
   begin
-    SetValor(Result, nInt32);
-    PInt32(Result.Puntero)^ := StrToInt(S);
+    SetValueType(Result, nInt32);
+    PInteger32(Result.ValuePointer)^ := StrToInt(AString);
   end
-  else if TEsTipo.Real(S) then
+  else if TEsTipo.Real(AString) then
   begin
-    SetValor(Result, nExte);
-    PExte(Result.Puntero)^ := StrToFloat(S);
+    SetValueType(Result, nExte);
+    PExte(Result.ValuePointer)^ := StrToFloat(AString);
   end
-	else if TEsTipo.Cadena(S) then
+	else if TEsTipo.Cadena(AString) then
 	begin
-		SetValor(Result, nCad);
-		PCadena(Result.Puntero)^ := Copy(S,2,Length(S)-2);
+		SetValueType(Result, nString);
+		PString(Result.ValuePointer)^ := Copy(AString,2,Length(AString)-2);
 	end
 	else
 		raise Exception.Create('String unconvertible to value!');
 end;
 
-class function TValores.StringAValorDef(S: String; ATipo : TTipo): TValor;
+class function TValues.ParseDef(AString: String; AValueType : TTypeNumber): TValue;
 begin
-	Result := VALOR_VACIO;
-	case ATipo of
+	Result := DEFAULT_VALUE;
+	case AValueType of
 		nInt32:
 			begin
-				SetValor(Result, nInt32);
+				SetValueType(Result, nInt32);
 				try
-					PInt32(Result.Puntero)^ := StrToInt(S);
+					PInteger32(Result.ValuePointer)^ := StrToInt(AString);
 				except
-					FreeValor(Result);
+					FreeValue(Result);
 					raise Exception.Create('Convertion error to integer type!');
 				end;
 			end;
 		nExte:
 			begin
-				SetValor(Result, nExte);
+				SetValueType(Result, nExte);
 				try
-					PExte(Result.Puntero)^ := StrToFloat(S);
+					PExte(Result.ValuePointer)^ := StrToFloat(AString);
 				except
-					FreeValor(Result);
+					FreeValue(Result);
 					raise Exception.Create('Convertion error to real type!');
 				end;
 			end;
-		nCad:
+		nString:
 			begin
-				SetValor(Result, nCad);
+				SetValueType(Result, nString);
 				try
-					PCadena(Result.Puntero)^ := S;
+					PString(Result.ValuePointer)^ := AString;
 				except
-					FreeValor(Result);
+					FreeValue(Result);
 					raise;
 				end;
 			end;
@@ -137,36 +137,36 @@ begin
 	end;
 end;
 
-class procedure TValores.SetValor(var AValor : TValor; ATipo : integer);
+class procedure TValues.SetValueType(var AValue : TValue; AValueType : integer);
 begin
-	if AValor.Tipo <> Atipo then
+	if AValue.ValueType <> AValueType then
 	begin
-		FreeValor(AValor);
-		GetMem(AValor.Puntero, TTipos.SizeTipo(ATipo));
+		FreeValue(AValue);
+		GetMem(AValue.ValuePointer, TTypes.SizeOfType(AValueType));
 
-		case ATipo of
-			nInt32 : PInt32(AValor.Puntero)^ := 0;
-			nExte : PExte(AValor.Puntero)^ := 0.0;
-			nCad : PCadena(AValor.Puntero)^ := '';
+		case AValueType of
+			nInt32 : PInteger32(AValue.ValuePointer)^ := 0;
+			nExte : PExte(AValue.ValuePointer)^ := 0.0;
+			nString : PString(AValue.ValuePointer)^ := '';
 {$ifdef debug}
 		else
 			raise Exception.Create('Debug: Not supported type!');
 {$endif}
 		end;
-		AValor.tipo := ATipo;
+		AValue.ValueType := AValueType;
 	end;
 end;
 
-class procedure TValores.FreeValor(var V : TValor);
+class procedure TValues.FreeValue(var AValue : TValue);
 begin
-	if (V.Puntero <> nil) then
+	if (AValue.ValuePointer <> nil) then
 	begin
 {$ifdef DEBUG}
 //		FillChar(V, SizeTipo(V.Tipo), 0);
 {$endif}
-		FreeMem(V.Puntero);
-		V.Puntero := Nil;
+		FreeMem(AValue.ValuePointer);
+		AValue.ValuePointer := Nil;
 	end;
 end;
 
-end.
+end.

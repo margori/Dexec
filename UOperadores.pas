@@ -5,714 +5,714 @@ interface
 uses UValores;
 
 type
-  TOperacion = function(AValor1,AValor2 : TValor): TValor;
+  TOperation = function(AValue1,AValue2 : TValue): TValue;
 
-	TOperador = record
-		Cadena: String;
-		Nivel : integer;
-    Operacion : TOperacion;
-    Unario : boolean;
-    Binario : boolean;
+	TOperator = record
+		OperatorString: String;
+		Level : integer;
+    Operation : TOperation;
+    IsUnary : boolean;
+    IsBinary : boolean;
 	end;
 
 var
-	Operadores : array[1..16] of TOperador;
-	CaractOperadores : set of char;
+	Operators : array[1..16] of TOperator;
+	OperatorChars : set of char;
 
-function EsOperador(S: String): Boolean;
-function EsOperadorUnario(S: String): Boolean;
-function EsOperadorBinario(S: String): Boolean;
-function OperadorNivel(S: string): Integer;
-function Evaluar(Operador: String; AValor1,AValor2 : TValor): TValor;
+function IsOperator(S: String): Boolean;
+function IsUnaryOperator(S: String): Boolean;
+function IsBinaryOperator(S: String): Boolean;
+function GetOperatorLevel(S: string): Integer;
+function Evaluate(AOperator: String; AValue1,AValue2 : TValue): TValue;
 
 implementation
 
 uses UTipos, Sysutils;
 
-function EsOperadorUnario(S: String): Boolean;
+function IsUnaryOperator(S: String): Boolean;
 var
   j : integer;
 begin
   Result := False;
-  for j := Low(Operadores) to High(Operadores) do
-    if Operadores[j].Cadena = S then
+  for j := Low(Operators) to High(Operators) do
+    if Operators[j].OperatorString = S then
     begin
-      Result := Operadores[j].Unario;
+      Result := Operators[j].IsUnary;
       Break;
     end;
 end;
 
-function EsOperadorBinario(S: String): Boolean;
+function IsBinaryOperator(S: String): Boolean;
 var
   j : integer;
 begin
   Result := False;
-  for j := Low(Operadores) to High(Operadores) do
-    if Operadores[j].Cadena = S then
+  for j := Low(Operators) to High(Operators) do
+    if Operators[j].OperatorString = S then
     begin
-      Result := Operadores[j].Binario;
+      Result := Operators[j].IsBinary;
       Break;
     end;
 end;
 
-function EsOperador(S: String): Boolean;
+function IsOperator(S: String): Boolean;
 var
   j : integer;
 begin
   Result := False;
-  for j := Low(Operadores) to High(Operadores) do
-    if Operadores[j].Cadena = S then
+  for j := Low(Operators) to High(Operators) do
+    if Operators[j].OperatorString = S then
     begin
       Result := True;
       Break;
     end;
 end;
 
-function OperadorNivel(S: string): Integer;
+function GetOperatorLevel(S: string): Integer;
 var
 	j : integer;
 begin
 	Result := 0;
-	for j := Low(Operadores) to High(Operadores) do
-		if s = Operadores[j].Cadena then
+	for j := Low(Operators) to High(Operators) do
+		if s = Operators[j].OperatorString then
 		begin
-			Result := Operadores[j].Nivel;
+			Result := Operators[j].Level;
 			Break;
 		end;
 end;
 
-function Evaluar(Operador: String; AValor1,AValor2 : TValor): TValor;
+function Evaluate(AOperator: String; AValue1,AValue2 : TValue): TValue;
 var
   j : integer;
 begin
-	Result := VALOR_VACIO;
+	Result := DEFAULT_VALUE;
 
-  for j := 1 to High(Operadores) do
+  for j := 1 to High(Operators) do
   begin
-    if Operador = Operadores[j].Cadena then
+    if AOperator = Operators[j].OperatorString then
     begin
-			Result := Operadores[j].Operacion(AValor1,AValor2);
+			Result := Operators[j].Operation(AValue1,AValue2);
       Exit;
     end;
   end;
 end;
 
-//---------  Operadores --------------//
-function OperadorNot(AValor1,AValor2 : TValor): TValor;
+//---------  Operators --------------//
+function OperatorNot(AValue1,AValue2 : TValue): TValue;
 begin
-  if (AValor1.Tipo = nIndef)and(AValor2.Tipo = nInt32) then
+  if (AValue1.ValueType = nIndef)and(AValue2.ValueType = nInt32) then
   begin
-  	TValores.SetValor(Result, nInt32);
-		PInt32(Result.Puntero)^ := not PInt32(AValor2.Puntero)^;
+  	TValues.SetValueType(Result, nInt32);
+		PInteger32(Result.ValuePointer)^ := not PInteger32(AValue2.ValuePointer)^;
   end
   else
 		raise Exception.Create('Types missmatch!');
 end;
 
-function OperadorAnd(AValor1,AValor2 : TValor): TValor;
+function OperatorAnd(AValue1,AValue2 : TValue): TValue;
 begin
-  if (AValor1.Tipo = nInt32)and(AValor2.Tipo = nInt32) then
+  if (AValue1.ValueType = nInt32)and(AValue2.ValueType = nInt32) then
   begin
-  	TValores.SetValor(Result, nInt32);
-		PInt32(Result.Puntero)^ := PInt32(AValor1.Puntero)^ and PInt32(AValor2.Puntero)^;
+  	TValues.SetValueType(Result, nInt32);
+		PInteger32(Result.ValuePointer)^ := PInteger32(AValue1.ValuePointer)^ and PInteger32(AValue2.ValuePointer)^;
 	end
   else
 		raise Exception.Create('Types missmatch!');
 end;
 
-function OperadorOr(AValor1,AValor2 : TValor): TValor;
+function OperatorOr(AValue1,AValue2 : TValue): TValue;
 begin
-	if (AValor1.Tipo = nInt32)and(AValor2.Tipo = nInt32) then
+	if (AValue1.ValueType = nInt32)and(AValue2.ValueType = nInt32) then
 	begin
-		TValores.SetValor(Result, nInt32);
-		PInt32(Result.Puntero)^ := PInt32(AValor1.Puntero)^ or PInt32(AValor2.Puntero)^;
+		TValues.SetValueType(Result, nInt32);
+		PInteger32(Result.ValuePointer)^ := PInteger32(AValue1.ValuePointer)^ or PInteger32(AValue2.ValuePointer)^;
 	end
 	else
 		raise Exception.Create('Types missmatch!');
 end;
 
-function OperadorXor(AValor1,AValor2 : TValor): TValor;
+function OperatorXor(AValue1,AValue2 : TValue): TValue;
 begin
-  if (AValor1.Tipo = nInt32)and(AValor2.Tipo = nInt32) then
+  if (AValue1.ValueType = nInt32)and(AValue2.ValueType = nInt32) then
   begin
-  	TValores.SetValor(Result, nInt32);
-		PInt32(Result.Puntero)^ := PInt32(AValor1.Puntero)^ xor PInt32(AValor2.Puntero)^;
+  	TValues.SetValueType(Result, nInt32);
+		PInteger32(Result.ValuePointer)^ := PInteger32(AValue1.ValuePointer)^ xor PInteger32(AValue2.ValuePointer)^;
   end
   else
 		raise Exception.Create('Types missmatch!');
 end;
 
-function OperadorIgual(AValor1,AValor2 : TValor): TValor;
+function OperatorEqual(AValue1,AValue2 : TValue): TValue;
 begin
-	if (AValor1.Tipo = nInt32)and(AValor2.Tipo = nInt32) then
+	if (AValue1.ValueType = nInt32)and(AValue2.ValueType = nInt32) then
 	begin
-		TValores.SetValor(Result, nInt32);
-		if PInt32(AValor1.Puntero)^ = PInt32(AValor2.Puntero)^ then
-			PInt32(Result.Puntero)^ := -1
+		TValues.SetValueType(Result, nInt32);
+		if PInteger32(AValue1.ValuePointer)^ = PInteger32(AValue2.ValuePointer)^ then
+			PInteger32(Result.ValuePointer)^ := -1
 		else
-			PInt32(Result.Puntero)^ := 0;
+			PInteger32(Result.ValuePointer)^ := 0;
 	end
-	else if (AValor1.Tipo = nCad)and(AValor2.Tipo = nCad) then
+	else if (AValue1.ValueType = nString)and(AValue2.ValueType = nString) then
   begin
-		TValores.SetValor(Result, nInt32);
-    if PCadena(AValor1.Puntero)^ = PCadena(AValor2.Puntero)^ then
-      PInt32(Result.Puntero)^ := -1
+		TValues.SetValueType(Result, nInt32);
+    if PString(AValue1.ValuePointer)^ = PString(AValue2.ValuePointer)^ then
+      PInteger32(Result.ValuePointer)^ := -1
     else
-      PInt32(Result.Puntero)^ := 0;
+      PInteger32(Result.ValuePointer)^ := 0;
   end
-  else if (AValor1.Tipo = nInt32)and(AValor2.Tipo = nExte) then
+  else if (AValue1.ValueType = nInt32)and(AValue2.ValueType = nExte) then
   begin
-		TValores.SetValor(Result, nInt32);
-		if PInt32(AValor1.Puntero)^ = PExte(AValor2.Puntero)^ then
-      PInt32(Result.Puntero)^ := -1
+		TValues.SetValueType(Result, nInt32);
+		if PInteger32(AValue1.ValuePointer)^ = PExte(AValue2.ValuePointer)^ then
+      PInteger32(Result.ValuePointer)^ := -1
     else
-      PInt32(Result.Puntero)^ := 0;
+      PInteger32(Result.ValuePointer)^ := 0;
   end
-  else if (AValor1.Tipo = nExte)and(AValor2.Tipo = nInt32) then
+  else if (AValue1.ValueType = nExte)and(AValue2.ValueType = nInt32) then
   begin
-		TValores.SetValor(Result, nInt32);
-    if PExte(AValor1.Puntero)^ = PInt32(AValor2.Puntero)^ then
-      PInt32(Result.Puntero)^ := -1
+		TValues.SetValueType(Result, nInt32);
+    if PExte(AValue1.ValuePointer)^ = PInteger32(AValue2.ValuePointer)^ then
+      PInteger32(Result.ValuePointer)^ := -1
     else
-      PInt32(Result.Puntero)^ := 0;
+      PInteger32(Result.ValuePointer)^ := 0;
   end
-  else if (AValor1.Tipo = nExte)and(AValor2.Tipo = nExte) then
+  else if (AValue1.ValueType = nExte)and(AValue2.ValueType = nExte) then
   begin
-		TValores.SetValor(Result, nInt32);
-    if PExte(AValor1.Puntero)^ = PExte(AValor2.Puntero)^ then
-      PInt32(Result.Puntero)^ := -1
+		TValues.SetValueType(Result, nInt32);
+    if PExte(AValue1.ValuePointer)^ = PExte(AValue2.ValuePointer)^ then
+      PInteger32(Result.ValuePointer)^ := -1
     else
-      PInt32(Result.Puntero)^ := 0;
+      PInteger32(Result.ValuePointer)^ := 0;
   end
   else
 		raise Exception.Create('Types missmatch!');
 end;
 
-function OperadorMenor(AValor1,AValor2 : TValor): TValor;
+function OperatorLess(AValue1,AValue2 : TValue): TValue;
 begin
-  if (AValor1.Tipo = nInt32)and(AValor2.Tipo = nInt32) then
+  if (AValue1.ValueType = nInt32)and(AValue2.ValueType = nInt32) then
   begin
-		TValores.SetValor(Result, nInt32);
-    if PInt32(AValor1.Puntero)^ < PInt32(AValor2.Puntero)^ then
-      PInt32(Result.Puntero)^ := -1
+		TValues.SetValueType(Result, nInt32);
+    if PInteger32(AValue1.ValuePointer)^ < PInteger32(AValue2.ValuePointer)^ then
+      PInteger32(Result.ValuePointer)^ := -1
     else
-      PInt32(Result.Puntero)^ := 0;
+      PInteger32(Result.ValuePointer)^ := 0;
   end
-  else if (AValor1.Tipo = nCad)and(AValor2.Tipo = nCad) then
+  else if (AValue1.ValueType = nString)and(AValue2.ValueType = nString) then
   begin
-		TValores.SetValor(Result, nInt32);
-    if PCadena(AValor1.Puntero)^ < PCadena(AValor2.Puntero)^ then
-      PInt32(Result.Puntero)^ := -1
+		TValues.SetValueType(Result, nInt32);
+    if PString(AValue1.ValuePointer)^ < PString(AValue2.ValuePointer)^ then
+      PInteger32(Result.ValuePointer)^ := -1
     else
-      PInt32(Result.Puntero)^ := 0;
+      PInteger32(Result.ValuePointer)^ := 0;
   end
-  else if (AValor1.Tipo = nInt32)and(AValor2.Tipo = nExte) then
+  else if (AValue1.ValueType = nInt32)and(AValue2.ValueType = nExte) then
   begin
-		TValores.SetValor(Result, nInt32);
-		if PInt32(AValor1.Puntero)^ < PExte(AValor2.Puntero)^ then
-			PInt32(Result.Puntero)^ := -1
+		TValues.SetValueType(Result, nInt32);
+		if PInteger32(AValue1.ValuePointer)^ < PExte(AValue2.ValuePointer)^ then
+			PInteger32(Result.ValuePointer)^ := -1
 		else
-			PInt32(Result.Puntero)^ := 0;
+			PInteger32(Result.ValuePointer)^ := 0;
 	end
-	else if (AValor1.Tipo = nExte)and(AValor2.Tipo = nInt32) then
+	else if (AValue1.ValueType = nExte)and(AValue2.ValueType = nInt32) then
 	begin
-		TValores.SetValor(Result, nInt32);
-		if PExte(AValor1.Puntero)^ < PInt32(AValor2.Puntero)^ then
-			PInt32(Result.Puntero)^ := -1
+		TValues.SetValueType(Result, nInt32);
+		if PExte(AValue1.ValuePointer)^ < PInteger32(AValue2.ValuePointer)^ then
+			PInteger32(Result.ValuePointer)^ := -1
 		else
-			PInt32(Result.Puntero)^ := 0;
+			PInteger32(Result.ValuePointer)^ := 0;
 	end
-	else if (AValor1.Tipo = nExte)and(AValor2.Tipo = nExte) then
+	else if (AValue1.ValueType = nExte)and(AValue2.ValueType = nExte) then
 	begin
-		TValores.SetValor(Result, nInt32);
-		if PExte(AValor1.Puntero)^ < PExte(AValor2.Puntero)^ then
-			PInt32(Result.Puntero)^ := -1
+		TValues.SetValueType(Result, nInt32);
+		if PExte(AValue1.ValuePointer)^ < PExte(AValue2.ValuePointer)^ then
+			PInteger32(Result.ValuePointer)^ := -1
 		else
-			PInt32(Result.Puntero)^ := 0;
+			PInteger32(Result.ValuePointer)^ := 0;
 	end
 	else
 		raise Exception.Create('Types missmatch!');
 end;
 
-function OperadorMayor(AValor1,AValor2 : TValor): TValor;
+function OperatorGreater(AValue1,AValue2 : TValue): TValue;
 begin
-  if (AValor1.Tipo = nInt32)and(AValor2.Tipo = nInt32) then
+  if (AValue1.ValueType = nInt32)and(AValue2.ValueType = nInt32) then
   begin
-		TValores.SetValor(Result, nInt32);
-    if PInt32(AValor1.Puntero)^ > PInt32(AValor2.Puntero)^ then
-      PInt32(Result.Puntero)^ := -1
+		TValues.SetValueType(Result, nInt32);
+    if PInteger32(AValue1.ValuePointer)^ > PInteger32(AValue2.ValuePointer)^ then
+      PInteger32(Result.ValuePointer)^ := -1
     else
-      PInt32(Result.Puntero)^ := 0;
+      PInteger32(Result.ValuePointer)^ := 0;
   end
-  else if (AValor1.Tipo = nCad)and(AValor2.Tipo = nCad) then
+  else if (AValue1.ValueType = nString)and(AValue2.ValueType = nString) then
   begin
-		TValores.SetValor(Result, nInt32);
-    if PCadena(AValor1.Puntero)^ > PCadena(AValor2.Puntero)^ then
-      PInt32(Result.Puntero)^ := -1
+		TValues.SetValueType(Result, nInt32);
+    if PString(AValue1.ValuePointer)^ > PString(AValue2.ValuePointer)^ then
+      PInteger32(Result.ValuePointer)^ := -1
     else
-      PInt32(Result.Puntero)^ := 0;
+      PInteger32(Result.ValuePointer)^ := 0;
   end
-  else if (AValor1.Tipo = nInt32)and(AValor2.Tipo = nExte) then
+  else if (AValue1.ValueType = nInt32)and(AValue2.ValueType = nExte) then
   begin
-		TValores.SetValor(Result, nInt32);
-		if PInt32(AValor1.Puntero)^ > PExte(AValor2.Puntero)^ then
-      PInt32(Result.Puntero)^ := -1
+		TValues.SetValueType(Result, nInt32);
+		if PInteger32(AValue1.ValuePointer)^ > PExte(AValue2.ValuePointer)^ then
+      PInteger32(Result.ValuePointer)^ := -1
     else
-      PInt32(Result.Puntero)^ := 0;
+      PInteger32(Result.ValuePointer)^ := 0;
 	end
-  else if (AValor1.Tipo = nExte)and(AValor2.Tipo = nInt32) then
+  else if (AValue1.ValueType = nExte)and(AValue2.ValueType = nInt32) then
   begin
-		TValores.SetValor(Result, nInt32);
-    if PExte(AValor1.Puntero)^ > PInt32(AValor2.Puntero)^ then
-      PInt32(Result.Puntero)^ := -1
+		TValues.SetValueType(Result, nInt32);
+    if PExte(AValue1.ValuePointer)^ > PInteger32(AValue2.ValuePointer)^ then
+      PInteger32(Result.ValuePointer)^ := -1
     else
-      PInt32(Result.Puntero)^ := 0;
+      PInteger32(Result.ValuePointer)^ := 0;
   end
-  else if (AValor1.Tipo = nExte)and(AValor2.Tipo = nExte) then
+  else if (AValue1.ValueType = nExte)and(AValue2.ValueType = nExte) then
   begin
-		TValores.SetValor(Result, nInt32);
-    if PExte(AValor1.Puntero)^ > PExte(AValor2.Puntero)^ then
-      PInt32(Result.Puntero)^ := -1
+		TValues.SetValueType(Result, nInt32);
+    if PExte(AValue1.ValuePointer)^ > PExte(AValue2.ValuePointer)^ then
+      PInteger32(Result.ValuePointer)^ := -1
     else
-      PInt32(Result.Puntero)^ := 0;
+      PInteger32(Result.ValuePointer)^ := 0;
   end
   else
 		raise Exception.Create('Types missmatch!');
 end;
 
-function OperadorMenorIgual(AValor1,AValor2 : TValor): TValor;
+function OperatorLessOrEqual(AValue1,AValue2 : TValue): TValue;
 begin
-  if (AValor1.Tipo = nInt32)and(AValor2.Tipo = nInt32) then
+  if (AValue1.ValueType = nInt32)and(AValue2.ValueType = nInt32) then
 	begin
-		TValores.SetValor(Result, nInt32);
-    if PInt32(AValor1.Puntero)^ <= PInt32(AValor2.Puntero)^ then
-      PInt32(Result.Puntero)^ := -1
+		TValues.SetValueType(Result, nInt32);
+    if PInteger32(AValue1.ValuePointer)^ <= PInteger32(AValue2.ValuePointer)^ then
+      PInteger32(Result.ValuePointer)^ := -1
     else
-      PInt32(Result.Puntero)^ := 0;
+      PInteger32(Result.ValuePointer)^ := 0;
   end
-  else if (AValor1.Tipo = nCad)and(AValor2.Tipo = nCad) then
+  else if (AValue1.ValueType = nString)and(AValue2.ValueType = nString) then
   begin
-		TValores.SetValor(Result, nInt32);
-    if PCadena(AValor1.Puntero)^ <= PCadena(AValor2.Puntero)^ then
-      PInt32(Result.Puntero)^ := -1
+		TValues.SetValueType(Result, nInt32);
+    if PString(AValue1.ValuePointer)^ <= PString(AValue2.ValuePointer)^ then
+      PInteger32(Result.ValuePointer)^ := -1
     else
-      PInt32(Result.Puntero)^ := 0;
+      PInteger32(Result.ValuePointer)^ := 0;
   end
-  else if (AValor1.Tipo = nInt32)and(AValor2.Tipo = nExte) then
+  else if (AValue1.ValueType = nInt32)and(AValue2.ValueType = nExte) then
   begin
-		TValores.SetValor(Result, nInt32);
-		if PInt32(AValor1.Puntero)^ <= PExte(AValor2.Puntero)^ then
-      PInt32(Result.Puntero)^ := -1
+		TValues.SetValueType(Result, nInt32);
+		if PInteger32(AValue1.ValuePointer)^ <= PExte(AValue2.ValuePointer)^ then
+      PInteger32(Result.ValuePointer)^ := -1
     else
-      PInt32(Result.Puntero)^ := 0;
+      PInteger32(Result.ValuePointer)^ := 0;
   end
-  else if (AValor1.Tipo = nExte)and(AValor2.Tipo = nInt32) then
+  else if (AValue1.ValueType = nExte)and(AValue2.ValueType = nInt32) then
 	begin
-		TValores.SetValor(Result, nInt32);
-    if PExte(AValor1.Puntero)^ <= PInt32(AValor2.Puntero)^ then
-      PInt32(Result.Puntero)^ := -1
+		TValues.SetValueType(Result, nInt32);
+    if PExte(AValue1.ValuePointer)^ <= PInteger32(AValue2.ValuePointer)^ then
+      PInteger32(Result.ValuePointer)^ := -1
     else
-      PInt32(Result.Puntero)^ := 0;
+      PInteger32(Result.ValuePointer)^ := 0;
   end
-  else if (AValor1.Tipo = nExte)and(AValor2.Tipo = nExte) then
+  else if (AValue1.ValueType = nExte)and(AValue2.ValueType = nExte) then
   begin
-		TValores.SetValor(Result, nInt32);
-    if PExte(AValor1.Puntero)^ <= PExte(AValor2.Puntero)^ then
-      PInt32(Result.Puntero)^ := -1
+		TValues.SetValueType(Result, nInt32);
+    if PExte(AValue1.ValuePointer)^ <= PExte(AValue2.ValuePointer)^ then
+      PInteger32(Result.ValuePointer)^ := -1
     else
-      PInt32(Result.Puntero)^ := 0;
-  end
-  else
-		raise Exception.Create('Types missmatch!');
-end;
-
-function OperadorMayorIgual(AValor1,AValor2 : TValor): TValor;
-begin
-  if (AValor1.Tipo = nInt32)and(AValor2.Tipo = nInt32) then
-  begin
-		TValores.SetValor(Result, nInt32);
-		if PInt32(AValor1.Puntero)^ >= PInt32(AValor2.Puntero)^ then
-      PInt32(Result.Puntero)^ := -1
-    else
-      PInt32(Result.Puntero)^ := 0;
-  end
-  else if (AValor1.Tipo = nCad)and(AValor2.Tipo = nCad) then
-  begin
-		TValores.SetValor(Result, nInt32);
-    if PCadena(AValor1.Puntero)^ >= PCadena(AValor2.Puntero)^ then
-      PInt32(Result.Puntero)^ := -1
-    else
-      PInt32(Result.Puntero)^ := 0;
-  end
-  else if (AValor1.Tipo = nInt32)and(AValor2.Tipo = nExte) then
-  begin
-		TValores.SetValor(Result, nInt32);
-		if PInt32(AValor1.Puntero)^ >= PExte(AValor2.Puntero)^ then
-      PInt32(Result.Puntero)^ := -1
-    else
-      PInt32(Result.Puntero)^ := 0;
-  end
-  else if (AValor1.Tipo = nExte)and(AValor2.Tipo = nInt32) then
-  begin
-		TValores.SetValor(Result, nInt32);
-		if PExte(AValor1.Puntero)^ >= PInt32(AValor2.Puntero)^ then
-      PInt32(Result.Puntero)^ := -1
-    else
-      PInt32(Result.Puntero)^ := 0;
-  end
-  else if (AValor1.Tipo = nExte)and(AValor2.Tipo = nExte) then
-  begin
-		TValores.SetValor(Result, nInt32);
-    if PExte(AValor1.Puntero)^ >= PExte(AValor2.Puntero)^ then
-      PInt32(Result.Puntero)^ := -1
-    else
-      PInt32(Result.Puntero)^ := 0;
+      PInteger32(Result.ValuePointer)^ := 0;
   end
   else
 		raise Exception.Create('Types missmatch!');
 end;
 
-function OperadorDistinto(AValor1,AValor2 : TValor): TValor;
+function OperatorGreaterOrEqual(AValue1,AValue2 : TValue): TValue;
 begin
-  if (AValor1.Tipo = nInt32)and(AValor2.Tipo = nInt32) then
+  if (AValue1.ValueType = nInt32)and(AValue2.ValueType = nInt32) then
   begin
-		TValores.SetValor(Result, nInt32);
-    if PInt32(AValor1.Puntero)^ <> PInt32(AValor2.Puntero)^ then
-      PInt32(Result.Puntero)^ := -1
+		TValues.SetValueType(Result, nInt32);
+		if PInteger32(AValue1.ValuePointer)^ >= PInteger32(AValue2.ValuePointer)^ then
+      PInteger32(Result.ValuePointer)^ := -1
+    else
+      PInteger32(Result.ValuePointer)^ := 0;
+  end
+  else if (AValue1.ValueType = nString)and(AValue2.ValueType = nString) then
+  begin
+		TValues.SetValueType(Result, nInt32);
+    if PString(AValue1.ValuePointer)^ >= PString(AValue2.ValuePointer)^ then
+      PInteger32(Result.ValuePointer)^ := -1
+    else
+      PInteger32(Result.ValuePointer)^ := 0;
+  end
+  else if (AValue1.ValueType = nInt32)and(AValue2.ValueType = nExte) then
+  begin
+		TValues.SetValueType(Result, nInt32);
+		if PInteger32(AValue1.ValuePointer)^ >= PExte(AValue2.ValuePointer)^ then
+      PInteger32(Result.ValuePointer)^ := -1
+    else
+      PInteger32(Result.ValuePointer)^ := 0;
+  end
+  else if (AValue1.ValueType = nExte)and(AValue2.ValueType = nInt32) then
+  begin
+		TValues.SetValueType(Result, nInt32);
+		if PExte(AValue1.ValuePointer)^ >= PInteger32(AValue2.ValuePointer)^ then
+      PInteger32(Result.ValuePointer)^ := -1
+    else
+      PInteger32(Result.ValuePointer)^ := 0;
+  end
+  else if (AValue1.ValueType = nExte)and(AValue2.ValueType = nExte) then
+  begin
+		TValues.SetValueType(Result, nInt32);
+    if PExte(AValue1.ValuePointer)^ >= PExte(AValue2.ValuePointer)^ then
+      PInteger32(Result.ValuePointer)^ := -1
+    else
+      PInteger32(Result.ValuePointer)^ := 0;
+  end
+  else
+		raise Exception.Create('Types missmatch!');
+end;
+
+function OperatorDistinct(AValue1,AValue2 : TValue): TValue;
+begin
+  if (AValue1.ValueType = nInt32)and(AValue2.ValueType = nInt32) then
+  begin
+		TValues.SetValueType(Result, nInt32);
+    if PInteger32(AValue1.ValuePointer)^ <> PInteger32(AValue2.ValuePointer)^ then
+      PInteger32(Result.ValuePointer)^ := -1
 		else
-      PInt32(Result.Puntero)^ := 0;
+      PInteger32(Result.ValuePointer)^ := 0;
   end
-  else if (AValor1.Tipo = nCad)and(AValor2.Tipo = nCad) then
+  else if (AValue1.ValueType = nString)and(AValue2.ValueType = nString) then
   begin
-		TValores.SetValor(Result, nInt32);
-    if PCadena(AValor1.Puntero)^ <> PCadena(AValor2.Puntero)^ then
-      PInt32(Result.Puntero)^ := -1
+		TValues.SetValueType(Result, nInt32);
+    if PString(AValue1.ValuePointer)^ <> PString(AValue2.ValuePointer)^ then
+      PInteger32(Result.ValuePointer)^ := -1
     else
-      PInt32(Result.Puntero)^ := 0;
+      PInteger32(Result.ValuePointer)^ := 0;
   end
-  else if (AValor1.Tipo = nInt32)and(AValor2.Tipo = nExte) then
+  else if (AValue1.ValueType = nInt32)and(AValue2.ValueType = nExte) then
   begin
-		TValores.SetValor(Result, nInt32);
-		if PInt32(AValor1.Puntero)^ <> PExte(AValor2.Puntero)^ then
-      PInt32(Result.Puntero)^ := -1
+		TValues.SetValueType(Result, nInt32);
+		if PInteger32(AValue1.ValuePointer)^ <> PExte(AValue2.ValuePointer)^ then
+      PInteger32(Result.ValuePointer)^ := -1
     else
-      PInt32(Result.Puntero)^ := 0;
+      PInteger32(Result.ValuePointer)^ := 0;
   end
-  else if (AValor1.Tipo = nExte)and(AValor2.Tipo = nInt32) then
+  else if (AValue1.ValueType = nExte)and(AValue2.ValueType = nInt32) then
   begin
-		TValores.SetValor(Result, nInt32);
-    if PExte(AValor1.Puntero)^ <> PInt32(AValor2.Puntero)^ then
-      PInt32(Result.Puntero)^ := -1
+		TValues.SetValueType(Result, nInt32);
+    if PExte(AValue1.ValuePointer)^ <> PInteger32(AValue2.ValuePointer)^ then
+      PInteger32(Result.ValuePointer)^ := -1
 		else
-      PInt32(Result.Puntero)^ := 0;
+      PInteger32(Result.ValuePointer)^ := 0;
   end
-  else if (AValor1.Tipo = nExte)and(AValor2.Tipo = nExte) then
+  else if (AValue1.ValueType = nExte)and(AValue2.ValueType = nExte) then
   begin
-		TValores.SetValor(Result, nInt32);
-    if PExte(AValor1.Puntero)^ <> PExte(AValor2.Puntero)^ then
-      PInt32(Result.Puntero)^ := -1
+		TValues.SetValueType(Result, nInt32);
+    if PExte(AValue1.ValuePointer)^ <> PExte(AValue2.ValuePointer)^ then
+      PInteger32(Result.ValuePointer)^ := -1
     else
-      PInt32(Result.Puntero)^ := 0;
+      PInteger32(Result.ValuePointer)^ := 0;
   end
   else
 		raise Exception.Create('Types missmatch!');
 end;
 
-function OperadorSuma(AValor1,AValor2 : TValor): TValor;
+function OperatorAddition(AValue1,AValue2 : TValue): TValue;
 begin
-  if (AValor1.Tipo = nInt32)and(AValor2.Tipo = nInt32) then
+  if (AValue1.ValueType = nInt32)and(AValue2.ValueType = nInt32) then
   begin
-		TValores.SetValor(Result, nInt32);
-		PInt32(Result.Puntero)^ := PInt32(AValor1.Puntero)^ + PInt32(AValor2.Puntero)^;
+		TValues.SetValueType(Result, nInt32);
+		PInteger32(Result.ValuePointer)^ := PInteger32(AValue1.ValuePointer)^ + PInteger32(AValue2.ValuePointer)^;
   end
-  else if (AValor1.Tipo = nCad)and(AValor2.Tipo = nCad) then
+  else if (AValue1.ValueType = nString)and(AValue2.ValueType = nString) then
   begin
-		TValores.SetValor(Result, nCad);
-		PCadena(Result.Puntero)^ := PCadena(AValor1.Puntero)^ + PCadena(AValor2.Puntero)^;
+		TValues.SetValueType(Result, nString);
+		PString(Result.ValuePointer)^ := PString(AValue1.ValuePointer)^ + PString(AValue2.ValuePointer)^;
   end
-  else if (AValor1.Tipo = nInt32)and(AValor2.Tipo = nExte) then
+  else if (AValue1.ValueType = nInt32)and(AValue2.ValueType = nExte) then
   begin
-		TValores.SetValor(Result, nExte);
-		PExte(Result.Puntero)^ := PInt32(AValor1.Puntero)^ + PExte(AValor2.Puntero)^;
+		TValues.SetValueType(Result, nExte);
+		PExte(Result.ValuePointer)^ := PInteger32(AValue1.ValuePointer)^ + PExte(AValue2.ValuePointer)^;
   end
-  else if (AValor1.Tipo = nExte)and(AValor2.Tipo = nInt32) then
+  else if (AValue1.ValueType = nExte)and(AValue2.ValueType = nInt32) then
   begin
-		TValores.SetValor(Result, nExte);
-		PExte(Result.Puntero)^ := PExte(AValor1.Puntero)^ + PInt32(AValor2.Puntero)^;
+		TValues.SetValueType(Result, nExte);
+		PExte(Result.ValuePointer)^ := PExte(AValue1.ValuePointer)^ + PInteger32(AValue2.ValuePointer)^;
 	end
-	else if (AValor1.Tipo = nExte)and(AValor2.Tipo = nExte) then
+	else if (AValue1.ValueType = nExte)and(AValue2.ValueType = nExte) then
 	begin
-		TValores.SetValor(Result, nExte);
-		PExte(Result.Puntero)^ := PExte(AValor1.Puntero)^ + PExte(AValor2.Puntero)^;
+		TValues.SetValueType(Result, nExte);
+		PExte(Result.ValuePointer)^ := PExte(AValue1.ValuePointer)^ + PExte(AValue2.ValuePointer)^;
 	end
 	else
 		raise Exception.Create('Types missmatch!');
 end;
 
-function OperadorResta(AValor1,AValor2 : TValor): TValor;
+function OperatorSubtraction(AValue1,AValue2 : TValue): TValue;
 begin
-	if (AValor1.Tipo = nIndef)and(AValor2.Tipo = nInt32) then
+	if (AValue1.ValueType = nIndef)and(AValue2.ValueType = nInt32) then
   begin
-		TValores.SetValor(Result, nInt32);
-		PInt32(Result.Puntero)^ := - PInt32(AValor2.Puntero)^;
+		TValues.SetValueType(Result, nInt32);
+		PInteger32(Result.ValuePointer)^ := - PInteger32(AValue2.ValuePointer)^;
   end
-  else if (AValor1.Tipo = nIndef)and(AValor2.Tipo = nExte) then
+  else if (AValue1.ValueType = nIndef)and(AValue2.ValueType = nExte) then
   begin
-		TValores.SetValor(Result, nExte);
-		PExte(Result.Puntero)^ := - PExte(AValor2.Puntero)^;
+		TValues.SetValueType(Result, nExte);
+		PExte(Result.ValuePointer)^ := - PExte(AValue2.ValuePointer)^;
   end
-  else if (AValor1.Tipo = nInt32)and(AValor2.Tipo = nInt32) then
+  else if (AValue1.ValueType = nInt32)and(AValue2.ValueType = nInt32) then
   begin
-		TValores.SetValor(Result, nInt32);
-		PInt32(Result.Puntero)^ := PInt32(AValor1.Puntero)^ - PInt32(AValor2.Puntero)^;
+		TValues.SetValueType(Result, nInt32);
+		PInteger32(Result.ValuePointer)^ := PInteger32(AValue1.ValuePointer)^ - PInteger32(AValue2.ValuePointer)^;
   end
-  else if (AValor1.Tipo = nInt32)and(AValor2.Tipo = nExte) then
+  else if (AValue1.ValueType = nInt32)and(AValue2.ValueType = nExte) then
   begin
-		TValores.SetValor(Result, nExte);
-		PExte(Result.Puntero)^ := PInt32(AValor1.Puntero)^ - PExte(AValor2.Puntero)^;
+		TValues.SetValueType(Result, nExte);
+		PExte(Result.ValuePointer)^ := PInteger32(AValue1.ValuePointer)^ - PExte(AValue2.ValuePointer)^;
 	end
-  else if (AValor1.Tipo = nExte)and(AValor2.Tipo = nInt32) then
+  else if (AValue1.ValueType = nExte)and(AValue2.ValueType = nInt32) then
   begin
-		TValores.SetValor(Result, nExte);
-		PExte(Result.Puntero)^ := PExte(AValor1.Puntero)^ - PInt32(AValor2.Puntero)^;
+		TValues.SetValueType(Result, nExte);
+		PExte(Result.ValuePointer)^ := PExte(AValue1.ValuePointer)^ - PInteger32(AValue2.ValuePointer)^;
 	end
-  else if (AValor1.Tipo = nExte)and(AValor2.Tipo = nExte) then
+  else if (AValue1.ValueType = nExte)and(AValue2.ValueType = nExte) then
   begin
-		TValores.SetValor(Result, nExte);
-		PExte(Result.Puntero)^ := PExte(AValor1.Puntero)^ - PExte(AValor2.Puntero)^;
+		TValues.SetValueType(Result, nExte);
+		PExte(Result.ValuePointer)^ := PExte(AValue1.ValuePointer)^ - PExte(AValue2.ValuePointer)^;
   end
 	else
 		raise Exception.Create('Types missmatch!');
 end;
 
-function OperadorMultiplicacion(AValor1,AValor2 : TValor): TValor;
+function OperatorMultiplication(AValue1,AValue2 : TValue): TValue;
 begin
-	if (AValor1.Tipo = nInt32)and(AValor2.Tipo = nInt32) then
+	if (AValue1.ValueType = nInt32)and(AValue2.ValueType = nInt32) then
 	begin
-		TValores.SetValor(Result, nInt32);
-		PInt32(Result.Puntero)^ := PInt32(AValor1.Puntero)^ * PInt32(AValor2.Puntero)^;
+		TValues.SetValueType(Result, nInt32);
+		PInteger32(Result.ValuePointer)^ := PInteger32(AValue1.ValuePointer)^ * PInteger32(AValue2.ValuePointer)^;
 	end
-	else if (AValor1.Tipo = nInt32)and(AValor2.Tipo = nExte) then
+	else if (AValue1.ValueType = nInt32)and(AValue2.ValueType = nExte) then
 	begin
-		TValores.SetValor(Result, nExte);
-		PExte(Result.Puntero)^ := PInt32(AValor1.Puntero)^ * PExte(AValor2.Puntero)^;
+		TValues.SetValueType(Result, nExte);
+		PExte(Result.ValuePointer)^ := PInteger32(AValue1.ValuePointer)^ * PExte(AValue2.ValuePointer)^;
   end
-  else if (AValor1.Tipo = nExte)and(AValor2.Tipo = nInt32) then
+  else if (AValue1.ValueType = nExte)and(AValue2.ValueType = nInt32) then
   begin
-		TValores.SetValor(Result, nExte);
-		PExte(Result.Puntero)^ := PExte(AValor1.Puntero)^ * PInt32(AValor2.Puntero)^;
+		TValues.SetValueType(Result, nExte);
+		PExte(Result.ValuePointer)^ := PExte(AValue1.ValuePointer)^ * PInteger32(AValue2.ValuePointer)^;
   end
-  else if (AValor1.Tipo = nExte)and(AValor2.Tipo = nExte) then
+  else if (AValue1.ValueType = nExte)and(AValue2.ValueType = nExte) then
   begin
-		TValores.SetValor(Result, nExte);
-		PExte(Result.Puntero)^ := PExte(AValor1.Puntero)^ * PExte(AValor2.Puntero)^;
+		TValues.SetValueType(Result, nExte);
+		PExte(Result.ValuePointer)^ := PExte(AValue1.ValuePointer)^ * PExte(AValue2.ValuePointer)^;
 	end
 	else
 		raise Exception.Create('Types missmatch!');
 end;
 
-function OperadorDivision(AValor1,AValor2 : TValor): TValor;
+function OperatorDivision(AValue1,AValue2 : TValue): TValue;
 begin
-  if (AValor1.Tipo = nInt32)and(AValor2.Tipo = nInt32) then
+  if (AValue1.ValueType = nInt32)and(AValue2.ValueType = nInt32) then
   begin
-		TValores.SetValor(Result, nExte);
-		PExte(Result.Puntero)^ := PInt32(AValor1.Puntero)^ / PInt32(AValor2.Puntero)^;
+		TValues.SetValueType(Result, nExte);
+		PExte(Result.ValuePointer)^ := PInteger32(AValue1.ValuePointer)^ / PInteger32(AValue2.ValuePointer)^;
   end
-  else if (AValor1.Tipo = nInt32)and(AValor2.Tipo = nExte) then
+  else if (AValue1.ValueType = nInt32)and(AValue2.ValueType = nExte) then
   begin
-		TValores.SetValor(Result, nExte);
-		PExte(Result.Puntero)^ := PInt32(AValor1.Puntero)^ / PExte(AValor2.Puntero)^;
+		TValues.SetValueType(Result, nExte);
+		PExte(Result.ValuePointer)^ := PInteger32(AValue1.ValuePointer)^ / PExte(AValue2.ValuePointer)^;
   end
-	else if (AValor1.Tipo = nExte)and(AValor2.Tipo = nInt32) then
+	else if (AValue1.ValueType = nExte)and(AValue2.ValueType = nInt32) then
   begin
-		TValores.SetValor(Result, nExte);
-		PExte(Result.Puntero)^ := PExte(AValor1.Puntero)^ / PInt32(AValor2.Puntero)^;
+		TValues.SetValueType(Result, nExte);
+		PExte(Result.ValuePointer)^ := PExte(AValue1.ValuePointer)^ / PInteger32(AValue2.ValuePointer)^;
   end
-  else if (AValor1.Tipo = nExte)and(AValor2.Tipo = nExte) then
+  else if (AValue1.ValueType = nExte)and(AValue2.ValueType = nExte) then
   begin
-		TValores.SetValor(Result, nExte);
-		PExte(Result.Puntero)^ := PExte(AValor1.Puntero)^ / PExte(AValor2.Puntero)^;
+		TValues.SetValueType(Result, nExte);
+		PExte(Result.ValuePointer)^ := PExte(AValue1.ValuePointer)^ / PExte(AValue2.ValuePointer)^;
 	end
 	else
 		raise Exception.Create('Types missmatch!');
 end;
 
-function OperadorDivisionEntera(AValor1,AValor2 : TValor): TValor;
+function OperatorIntegerDivision(AValue1,AValue2 : TValue): TValue;
 begin
-  if (AValor1.Tipo = nInt32)and(AValor2.Tipo = nInt32) then
+  if (AValue1.ValueType = nInt32)and(AValue2.ValueType = nInt32) then
   begin
-		TValores.SetValor(Result, nInt32);
-		PInt32(Result.Puntero)^ := PInt32(AValor1.Puntero)^ div PInt32(AValor2.Puntero)^;
+		TValues.SetValueType(Result, nInt32);
+		PInteger32(Result.ValuePointer)^ := PInteger32(AValue1.ValuePointer)^ div PInteger32(AValue2.ValuePointer)^;
   end
   else
 		raise Exception.Create('Types missmatch!');
 end;
 
-function OperadorModulo(AValor1,AValor2 : TValor): TValor;
+function OperatorModule(AValue1,AValue2 : TValue): TValue;
 begin
-	if (AValor1.Tipo = nInt32)and(AValor2.Tipo = nInt32) then
+	if (AValue1.ValueType = nInt32)and(AValue2.ValueType = nInt32) then
 	begin
-		TValores.SetValor(Result, nInt32);
-		PInt32(Result.Puntero)^ := PInt32(AValor1.Puntero)^ mod PInt32(AValor2.Puntero)^;
+		TValues.SetValueType(Result, nInt32);
+		PInteger32(Result.ValuePointer)^ := PInteger32(AValue1.ValuePointer)^ mod PInteger32(AValue2.ValuePointer)^;
 	end
 	else
 		raise Exception.Create('Types missmatch!');
 end;
-//---------  Operadores --------------//
+//---------  Operators --------------//
 
 var
 	j,k :integer;
 initialization
 begin
-  with Operadores[1] do
+  with Operators[1] do
   begin
-    Cadena := 'not';
-    Nivel:= 1;
-    Operacion:= OperadorNot;
-		Unario := True;
-    Binario := False;
+    OperatorString := 'not';
+    Level:= 1;
+    Operation:= OperatorNot;
+		IsUnary := True;
+    IsBinary := False;
 	end;
 
-  with Operadores[2] do
+  with Operators[2] do
   begin
-    Cadena := 'and';
-    Nivel:= 2;
-    Operacion:= OperadorAnd;
-    Unario := False;
-    Binario := True;
+    OperatorString := 'and';
+    Level:= 2;
+    Operation:= OperatorAnd;
+    IsUnary := False;
+    IsBinary := True;
   end;
 
-  with Operadores[3] do
+  with Operators[3] do
   begin
-    Cadena := 'or';
-    Nivel:= 2;
-    Operacion:= OperadorOr;
-    Unario := False;
-    Binario := True;
+    OperatorString := 'or';
+    Level:= 2;
+    Operation:= OperatorOr;
+    IsUnary := False;
+    IsBinary := True;
   end;
 
-  with Operadores[4] do
+  with Operators[4] do
   begin
-		Cadena := 'xor';
-    Nivel:= 2;
-		Operacion:= OperadorXor;
-    Unario := False;
-    Binario := True;
+		OperatorString := 'xor';
+    Level:= 2;
+		Operation:= OperatorXor;
+    IsUnary := False;
+    IsBinary := True;
   end;
 
-  with Operadores[5] do
+  with Operators[5] do
   begin
-    Cadena := '=';
-    Nivel:= 3;
-    Operacion:= OperadorIgual;
-    Unario := False;
-    Binario := True;
+    OperatorString := '=';
+    Level:= 3;
+    Operation:= OperatorEqual;
+    IsUnary := False;
+    IsBinary := True;
   end;
 
-  with Operadores[6] do
+  with Operators[6] do
   begin
-    Cadena := '<>';
-    Nivel:= 3;
-    Operacion:= OperadorDistinto;
-    Unario := False;
-    Binario := True;
+    OperatorString := '<>';
+    Level:= 3;
+    Operation:= OperatorDistinct;
+    IsUnary := False;
+    IsBinary := True;
   end;
 
-  with Operadores[7] do // Este operador debe estar antes que el <
+  with Operators[7] do // Este Operator debe estar antes que el <
 	begin
-    Cadena := '<=';
-    Nivel:= 3;
-    Operacion:= OperadorMenorIgual;
-    Unario := False;
-    Binario := True;
+    OperatorString := '<=';
+    Level:= 3;
+    Operation:= OperatorLessOrEqual;
+    IsUnary := False;
+    IsBinary := True;
   end;
 
-  with Operadores[8] do // Este operador debe estar antes que el >
+  with Operators[8] do // Este Operator debe estar antes que el >
   begin
-    Cadena := '>=';
-    Nivel:= 3;
-    Operacion:= OperadorMayorIgual;
-    Unario := False;
-    Binario := True;
+    OperatorString := '>=';
+    Level:= 3;
+    Operation:= OperatorGreaterOrEqual;
+    IsUnary := False;
+    IsBinary := True;
   end;
 
-  with Operadores[9] do
+  with Operators[9] do
   begin
-    Cadena := '<';
-    Nivel:= 3;
-    Operacion:= OperadorMenor;
-		Unario := False;
-    Binario := True;
+    OperatorString := '<';
+    Level:= 3;
+    Operation:= OperatorLess;
+		IsUnary := False;
+    IsBinary := True;
 	end;
 
-  with Operadores[10] do
+  with Operators[10] do
   begin
-    Cadena := '>';
-    Nivel:= 3;
-    Operacion:= OperadorMayor;
-    Unario := False;
-    Binario := True;
+    OperatorString := '>';
+    Level:= 3;
+    Operation:= OperatorGreater;
+    IsUnary := False;
+    IsBinary := True;
   end;
 
-  with Operadores[11] do
+  with Operators[11] do
   begin
-    Cadena := '+';
-    Nivel:= 4;
-    Operacion:= OperadorSuma;
-    Unario := False;
-    Binario := True;
+    OperatorString := '+';
+    Level:= 4;
+    Operation:= OperatorAddition;
+    IsUnary := False;
+    IsBinary := True;
   end;
 
-  with Operadores[12] do
+  with Operators[12] do
   begin
-		Cadena := '-';
-    Nivel:= 4;
-		Operacion:= OperadorResta;
-    Unario := True;
-    Binario := True;
+		OperatorString := '-';
+    Level:= 4;
+		Operation:= OperatorSubtraction;
+    IsUnary := True;
+    IsBinary := True;
   end;
 
-  with Operadores[13] do
+  with Operators[13] do
   begin
-    Cadena := '*';
-    Nivel:= 5;
-    Operacion:= OperadorMultiplicacion;
-    Unario := False;
-    Binario := True;
+    OperatorString := '*';
+    Level:= 5;
+    Operation:= OperatorMultiplication;
+    IsUnary := False;
+    IsBinary := True;
   end;
 
-  with Operadores[14] do
+  with Operators[14] do
   begin
-    Cadena := '/';
-    Nivel:= 5;
-    Operacion:= OperadorDivision;
-    Unario := False;
-    Binario := True;
+    OperatorString := '/';
+    Level:= 5;
+    Operation:= OperatorDivision;
+    IsUnary := False;
+    IsBinary := True;
   end;
 
-  with Operadores[15] do
+  with Operators[15] do
 	begin
-    Cadena := '\';
-    Nivel:= 5;
-    Operacion:= OperadorDivisionEntera;
-    Unario := False;
-    Binario := True;
+    OperatorString := '\';
+    Level:= 5;
+    Operation:= OperatorIntegerDivision;
+    IsUnary := False;
+    IsBinary := True;
   end;
 
-  with Operadores[16] do
+  with Operators[16] do
   begin
-    Cadena := '%';
-    Nivel:= 5;
-    Operacion:= OperadorModulo;
-    Unario := False;
-    Binario := True;
+    OperatorString := '%';
+    Level:= 5;
+    Operation:= OperatorModule;
+    IsUnary := False;
+    IsBinary := True;
   end;
 
-	CaractOperadores := [];
-	for j := Low(Operadores) to High(Operadores) do
-		for k := 1 to Length(Operadores[j].Cadena) do
-			if not(Operadores[j].Cadena[k] in CaractOperadores) then
-				CaractOperadores := CaractOperadores + [Operadores[j].Cadena[k]];
+	OperatorChars := [];
+	for j := Low(Operators) to High(Operators) do
+		for k := 1 to Length(Operators[j].OperatorString) do
+			if not(Operators[j].OperatorString[k] in OperatorChars) then
+				OperatorChars := OperatorChars + [Operators[j].OperatorString[k]];
 end;
 
-end.
+end.

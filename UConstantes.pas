@@ -4,18 +4,18 @@ interface
 uses Graphics;
 
 const
-	LETRAS = ['A'..'Z','a'..'z'];
-	DIGITOS = ['0'..'9'];
-	NUMEROSENTEROS = Digitos + ['.','+','-'];
-	NUMEROSREALES = NumerosEnteros + ['E'];
-	VALIDOS = Letras + Digitos + ['_','.'];
-	IDENTIFICADORES = Letras + Digitos + ['_'];
+	LETTERS = ['A'..'Z','a'..'z'];
+	DIGITS = ['0'..'9'];
+	INTEGER_CHARS = DIGITS + ['.','+','-'];
+	REAL_CHARS = INTEGER_CHARS + ['E'];
+	ALLOWED_CHARS = LETTERS + DIGITS + ['_','.'];
+	IDENTIFIER_CHARS = LETTERS + DIGITS + ['_'];
 
-  SEPARADOR = ';';
+  SEPARATOR = ';';
 
-  PUNTA_ENT_SAL = 15;
+  COMMUNICATION_ARROW_WIDTH = 15;
 
-resourcestring // Declaracion de nombres de tipos
+resourcestring // Name of types
 	NameIndef = 'Indefinido';
 
 	NameInteg = 'Entero';
@@ -45,15 +45,17 @@ resourcestring // Declaracion de nombres de tipos
 //	NameSCpx = 'Complejo de precisión simple';
 
 const
-	BORDE = 9;
-  BORDE_PANTALLA = 20;
-	COLOR_ERROR = clRed;
-	COLOR_EJECUCION = clSilver;
+	BORDER = 9;
+  BORDER_SCREEN = 20;
+
+  COLOR_ERROR = clRed;
+	COLOR_EXECUTING = clSilver;
 	COLOR_BREAK_POINT = clYellow;
-	COLOR_OBJETO = clWhite;
-  GRILLAX = 5;
-  GRILLAY = 5;
+	COLOR_OBJECT = clWhite;
+
+  GRID_X = 5;
+  GRID_Y = 5;
 
 implementation
 
-end.
+end.

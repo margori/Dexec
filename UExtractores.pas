@@ -3,40 +3,40 @@ unit UExtractores;
 interface
 
 type
-  TExtractores = class
-    class function ExtraerOperando(var S: String): String;
-    class function ExtraerOperador(var S: string): String;
-    class function ExtraerParametros(var S: String): String;
-    class function ExtraerIdentificador(var S: String): String;
-    class function ExtraerExpresion(var S : String): String;
+  TExtractors = class
+    class function ExtractOperand(var S: String): String;
+    class function ExtractOperator(var S: string): String;
+    class function ExtractParameters(var S: String): String;
+    class function ExtractIdentifier(var S: String): String;
+    class function ExtractExpression(var S : String): String;
   end;
 
 implementation
 
 uses UConstantes, Sysutils, UOperadores;
 
-class function TExtractores.ExtraerOperando(var S: String): String;
+class function TExtractors.ExtractOperand(var S: String): String;
 var
-	Control : string;
+	LControl : string;
 begin
 	Result := '';
 	while S<>'' do
 	begin
 		if S[1] = '"' then
 		begin
-			if Copy(Control,Length(Control),1) <> '"' then
-				Control := Control + '""';
-		end else if (S[1] = '(')and((Control='') or (Copy(Control,Length(Control),1) <> '"')) then
-			Control := Control + '(';
+			if Copy(LControl,Length(LControl),1) <> '"' then
+				LControl := LControl + '""';
+		end else if (S[1] = '(')and((LControl='') or (Copy(LControl,Length(LControl),1) <> '"')) then
+			LControl := LControl + '(';
 
-		if (s[1] in Validos)or(Control<>'') then
+		if (s[1] in ALLOWED_CHARS)or(LControl<>'') then
     		begin
 			Result := Result + S[1];
 
-			if (S[1] = '"')and (Copy(Control,Length(Control),1) = '"') then
-        			Control := copy(Control,1,Length(Control)-1)
-      			else if (S[1] = ')')and (Copy(Control,Length(Control),1) = '(') then
-        			Control := Copy(Control,1,Length(Control)-1);
+			if (S[1] = '"')and (Copy(LControl,Length(LControl),1) = '"') then
+        			LControl := copy(LControl,1,Length(LControl)-1)
+      			else if (S[1] = ')')and (Copy(LControl,Length(LControl),1) = '(') then
+        			LControl := Copy(LControl,1,Length(LControl)-1);
     			end
 		else
 			Break;
@@ -44,10 +44,10 @@ begin
     		Delete(s,1,1);
 	end;
 
-  	if Control<>'' then
+  	if LControl<>'' then
 		raise Exception.Create('Sintax error!');
 
-  	if EsOperador(Result) then
+  	if IsOperator(Result) then
   	begin
     		S := Result + S;
     		Result := '';
@@ -56,18 +56,18 @@ begin
     		S := Trim(S);
 end;
 
-class function TExtractores.ExtraerOperador(var S: string): String;
+class function TExtractors.ExtractOperator(var S: string): String;
 var
 	j : integer;
 begin
   s := trim(s);
   Result := '';
-  for j := Low(Operadores) to High(Operadores) do
+  for j := Low(Operators) to High(Operators) do
   begin
-    if Copy(s,1,Length(OPeradores[j].Cadena))=OPeradores[j].Cadena then
+    if Copy(s,1,Length(Operators[j].OperatorString))=Operators[j].OperatorString then
     begin
-      Result := OPeradores[j].Cadena;
-      delete(s,1,Length(OPeradores[j].Cadena));
+      Result := Operators[j].OperatorString;
+      delete(s,1,Length(Operators[j].OperatorString));
       s := trim(s);
       break;
     end;
@@ -75,17 +75,17 @@ begin
 
 end;
 
-class function TExtractores.ExtraerIdentificador(var S: String): String;
+class function TExtractors.ExtractIdentifier(var S: String): String;
 var j: integer;
 begin
 	S := trim(S);
 	result := '';
 	for j := 1 to Length(S) do
 	begin
-		if (Result = '') and ((S[j] in Letras)) then
+		if (Result = '') and ((S[j] in LETTERS)) then
 			Result := Result + S[j]
-		else if (Result <> '') and ((S[j] in Letras) or (S[j] in Digitos) or
-			(S[j] in Validos)) then
+		else if (Result <> '') and ((S[j] in LETTERS) or (S[j] in DIGITS) or
+			(S[j] in ALLOWED_CHARS)) then
 			Result := Result + S[j]
 		else
 			Break;
@@ -93,7 +93,7 @@ begin
   S := Trim(Copy(S,Length(Result)+1,Length(S)));
 end;
 
-class function TExtractores.ExtraerParametros(var S: String): String;
+class function TExtractors.ExtractParameters(var S: String): String;
 var
   e : String;
 begin
@@ -106,10 +106,10 @@ begin
 		Delete(s,1,1);
 		Result := '';
 		repeat
-			e := ExtraerExpresion(s);
+			e := ExtractExpression(s);
 			Result := Result + e + #10#13;
 
-			if (S[1]= SEPARADOR) then
+			if (S[1]= SEPARATOR) then
 				Delete(S,1,1)
 			else if (S[1]<>')') then
         raise Exception.Create('Sintax error! ";" o ")" missed.');
@@ -119,19 +119,19 @@ begin
 
 end;
 
-class function TExtractores.ExtraerExpresion(var S : String): String;
+class function TExtractors.ExtractExpression(var S : String): String;
 var
-  LOperando : string;
-  LOperador : string;
-  LListo : Boolean;
+  LOperand : string;
+  LOperator : string;
+  LReady : Boolean;
 begin
   Result := '';
-  LListo := false;
+  LReady := false;
   repeat
-    LOperador := ExtraerOperador(S);
-    if (LOperador<>'') then
-      if EsOperadorUnario(LOperador) then
-        Result := Result + ' ' + LOperador
+    LOperator := ExtractOperator(S);
+    if (LOperator<>'') then
+      if IsUnaryOperator(LOperator) then
+        Result := Result + ' ' + LOperator
       else
       begin
         S := Result + S;
@@ -139,8 +139,8 @@ begin
         Break;
       end;
 
-    LOperando := ExtraerOperando(S);
-    if LOperando='' then
+    LOperand := ExtractOperand(S);
+    if LOperand='' then
     begin
       S := Result + S;
       Result := '';
@@ -148,18 +148,18 @@ begin
     end;
 
     if Result = '' then
-      Result := LOperando
+      Result := LOperand
     else
-      Result := Result + ' ' + LOperando;
+      Result := Result + ' ' + LOperand;
 
-    LOperador := ExtraerOperador(S);
-    if LOperador<>'' then
+    LOperator := ExtractOperator(S);
+    if LOperator<>'' then
     begin
-      Result := Result + ' ' + LOperador;
-      LListo := False;
+      Result := Result + ' ' + LOperator;
+      LReady := False;
     end else
-      LListo := True;
-  until LListo;
+      LReady := True;
+  until LReady;
 end;
 
-end.
+end.

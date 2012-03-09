@@ -8,26 +8,26 @@ uses
   SysUtils, Classes, Controls, Graphics, Types, Messages, LMessages, UUtiles, Math, Forms;
 
 type
-  TDispositivo = (diPantalla,diArchivo);
+  TDevice = (deScreen,deFile);
 
-	TDireccion = (dIndefinida,dNorte,dSur,dEste,dOeste,dHorizontal,dVertical);
+	TDirection = (deUnknown,diNorth,diSouth,diEast,diWest,diHorizontal,diVertical);
 
-	TFlecha = class;
-	TSegmento = class;
-	TUnion = class;
-	TInstruccion = class;
-	TSentencia = class;
-	TCondicion = class;
+	TArrow = class;
+	TSegment = class;
+	TJoin = class;
+	TInstruction = class;
+	TSentence = class;
+	TCondition = class;
 
-	TUnionEvent = procedure(Sender: TObject;AUnion : TUnion) of object;
+	TJoinEvent = procedure(Sender: TObject;AUnion : TJoin) of object;
 
-	TSegmento = class(TGraphicControl)
+	TSegment = class(TGraphicControl)
 	private
 		FPen: TPen;
-		FArrastrando: boolean;
-		FPos : TPoint;
-		FDireccion: TDireccion;
-		FAncho: Integer;
+		FDragging: boolean;
+		FPosition : TPoint;
+		FDirection: TDirection;
+		FWidth: Integer;
 
 		FX1: integer;
 		FX2: integer;
@@ -35,13 +35,13 @@ type
 		FY2: integer;
 
 		procedure SetPen(const Value: TPen);
-		procedure SetDireccion(const Value: TDireccion);
-		function GetFlecha: TFlecha;
+		procedure SetDirection(const Value: TDirection);
+		function GetArrow: TArrow;
 		procedure SetX1(const Value: integer);
 		procedure SetY1(const Value: integer);
 		procedure SetX2(const Value: integer);
 		procedure SetY2(const Value: integer);
-		procedure ActualizarLimites;
+		procedure UpdateLimits;
 	protected
 		procedure Paint; override;
 
@@ -54,47 +54,47 @@ type
 		constructor Create(AOwner: TComponent; AParent: TWinControl);
 		destructor Destroy; override;
 
-		procedure Actualizar(Sender: TObject);
+		procedure Update(Sender: TObject);
 	published
-		property Flecha : TFlecha read GetFlecha;
-		property Direccion: TDireccion read FDireccion write SetDireccion;
+		property Arrow : TArrow read GetArrow;
+		property Direction: TDirection read FDirection write SetDirection;
 		property Pen: TPen read FPen write SetPen;
-		property Arrastrando: boolean read FArrastrando;
+		property Dragging: boolean read FDragging;
 		property X1: integer read FX1 write SetX1;
 		property X2: integer read FX2 write SetX2;
 		property Y1: integer read FY1 write SetY1;
 		property Y2: integer read FY2 write SetY2;
-		property Ancho : Integer read FAncho write FAncho default 5;
+		property Width : Integer read FWidth write FWidth default 5;
 
 		property OnMouseDown;
 		property OnMouseUp;
 		property OnMouseMove;
 	end;
 
-	TFlecha = class(TComponent)
+	TArrow = class(TComponent)
 	private
-    FPuntos: array of TPoint;
-		FSegmentos: TList;
-		FLargoMinimo: Integer;
-		FUnionDesde: TUnion;
-		FUnionHasta: Tunion;
+    FPoints: array of TPoint;
+		FSegments: TList;
+		FMinimalLenght: Integer;
+		FFromJoin: TJoin;
+		FToJoin: TJoin;
 		FParent: TWinControl;
 		FOnDestroy: TNotifyEvent;
 		FOnDestroy2: TNotifyEvent;
-    FOnModificar: TNotifyEvent;
+    FOnModify: TNotifyEvent;
     FX1: integer;
     FY1: integer;
     FX2: integer;
     FY2: integer;
 
-		procedure SetUnionDesde(const Value: TUnion);
-		procedure SetUnionHasta(const Value: Tunion);
+		procedure SetFromJoin(const Value: TJoin);
+		procedure SetToJoin(const Value: TJoin);
 		procedure SetX1(const Value: integer);
 		procedure SetX2(const Value: integer);
 		procedure SetY1(const Value: integer);
 		procedure SetY2(const Value: integer);
-		function GetD1: TDireccion;
-		function GetD2: TDireccion;
+		function GetD1: TDirection;
+		function GetD2: TDirection;
 
 		procedure SetParent(const Value: TWinControl);
 	protected
@@ -102,50 +102,49 @@ type
 		constructor Create(AOwner: TComponent; AParent: TWinControl);
 		destructor Destroy; override;
 
-		function GetAnterior(ASegmento: TSegmento): TSegmento;
-		function GetSiguiente(ASegmento: TSegmento): TSegmento;
+		function GetPrevious(ASegment: TSegment): TSegment;
+		function GetNext(ASegment: TSegment): TSegment;
 
-		procedure MoverSegmento(ASegmento : TSegmento; DX,DY: Integer;
-			ACrearInicial: Boolean = true; ACrearFinal: Boolean = true);
+		procedure MoveSegment(ASegment : TSegment; DX,DY: Integer;
+			ACreateBegin: Boolean = true; ACreateEnding: Boolean = true);
 
 		procedure Reset;
-		procedure Reducir;
+		procedure Reduce;
 		procedure Repaint;
 
-    procedure Mostrar;
-		procedure Ocultar;
+    procedure Show;
+		procedure Hide;
 
-		procedure DesplazarTodo(DX,DY: Integer);
+		procedure MoveAll(DX,DY: Integer);
 	published
 		property Parent: TWinControl read FParent write SetParent;
-		property LargoMinimo: Integer read FLargoMinimo write FLargoMinimo default 20;
-		property Segmentos: TList read FSegmentos;
+		property MinimalLength: Integer read FMinimalLenght write FMinimalLenght default 20;
+		property Segments: TList read FSegments;
 		property X1 : integer read FX1 write SetX1;
 		property Y1 : integer read FY1 write SetY1;
-		property D1 : TDireccion read GetD1;
+		property D1 : TDirection read GetD1;
 		property X2 : integer read FX2 write SetX2;
 		property Y2 : integer read FY2 write SetY2;
-		property D2 : TDireccion read GetD2;
+		property D2 : TDirection read GetD2;
 
-		property UnionDesde: TUnion read FUnionDesde write SetUnionDesde;
-		property UnionHasta: Tunion read FUnionHasta write SetUnionHasta;
+		property FromJoin: TJoin read FFromJoin write SetFromJoin;
+		property ToJoin: TJoin read FToJoin write SetToJoin;
 
 		property OnDestroy : TNotifyEvent read FOnDestroy write FOnDestroy;
 		property OnDestroy2 : TNotifyEvent read FOnDestroy2 write FOnDestroy2;
 
-    property OnModificar : TNotifyEvent read FOnModificar write FOnModificar;
+    property OnModify : TNotifyEvent read FOnModify write FOnModify;
 	end;
 
-	TUnion = class(TGraphicControl)
+	TJoin = class(TGraphicControl)
 	private
-		FDirecccion: TDireccion;
-		FFlecha: TFlecha;
-		FInstruccion: TInstruccion;
-		FAceptaEntrada: Boolean;
-		FAceptaSalida: Boolean;
-		FMouseEnControl: Boolean;
-		FMouseEnUnion: Boolean;
-//		FArrastrando: Boolean;
+		FDirection: TDirection;
+		FArrow: TArrow;
+		FInstruction: TInstruction;
+		FAcceptEntry: Boolean;
+		FAcceptExit: Boolean;
+		FMouseInControl: Boolean;
+		FMouseInJoin: Boolean;
     FSelected: Boolean;
     FOnSelect: TNotifyEvent;
     FX1: Integer;
@@ -153,29 +152,29 @@ type
     FX2: Integer;
     FY2: Integer;
 
-		procedure SetFlecha(const Value: TFlecha);
+		procedure SetArrow(const Value: TArrow);
 		function GetRect: TRect;
 		procedure SetX1(const Value: Integer);
 		procedure SetY1(const Value: Integer);
-		procedure SetDirecccion(Value: TDireccion);
+		procedure SetDirection(Value: TDirection);
 
 		procedure CMMouseEnter(var Message: TMessage); message CM_MOUSEENTER;
 		procedure CMMouseLeave(var Message: TMessage); message CM_MOUSELEAVE;
-		procedure SetMouseEnControl(const Value: Boolean);
-		procedure SetMouseEnUnion(const Value: Boolean);
+		procedure SetMouseInControl(const Value: Boolean);
+		procedure SetMouseInJoin(const Value: Boolean);
     procedure SetSelected(const Value: Boolean);
 	protected
-		procedure NuevaPosicion;
+		procedure NewPosition;
 		procedure Paint; override;
 
 		procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
 
-		function EstaMouseEnUnion(X,Y: Integer): Boolean;
+		function EstaMouseInJoin(X,Y: Integer): Boolean;
 	public
-		constructor Create(AOwner: TComponent; AParent: TWinControl; AInstruccion: TInstruccion);
+		constructor Create(AOwner: TComponent; AParent: TWinControl; AInstruction: TInstruction);
 		destructor Destroy; override;
 
-		procedure OnDestroyFlecha(Sender: TObject);
+		procedure OnDestroyArrow(Sender: TObject);
 
   	property Rect: TRect read GetRect;
   published
@@ -186,14 +185,14 @@ type
 		property X2: Integer read FX2;
 		property Y2: Integer read FY2;
 
-		property MouseEnControl : Boolean read FMouseEnControl write SetMouseEnControl;
-		property MouseEnUnion : Boolean read FMouseEnUnion write SetMouseEnUnion;
+		property MouseInControl : Boolean read FMouseInControl write SetMouseInControl;
+		property MouseInJoin : Boolean read FMouseInJoin write SetMouseInJoin;
 
-		property Direcccion: TDireccion read FDirecccion write SetDirecccion;
-		property Flecha: TFlecha read FFlecha write SetFlecha;
-		property Instruccion: TInstruccion read FInstruccion write FInstruccion;
-		property AceptaEntrada : Boolean read FAceptaEntrada write FAceptaEntrada;
-		property AceptaSalida : Boolean read FAceptaSalida write FAceptaSalida;
+		property Direction: TDirection read FDirection write SetDirection;
+		property Arrow: TArrow read FArrow write SetArrow;
+		property Instruction: TInstruction read FInstruction write FInstruction;
+		property AcceptEntry : Boolean read FAcceptEntry write FAcceptEntry;
+		property AcceptExit : Boolean read FAcceptExit write FAcceptExit;
 
     property MouseCapture;
 		property OnMouseDown;
@@ -202,81 +201,83 @@ type
     property OnSelect : TNotifyEvent read FOnSelect write FOnSelect;
 	end;
 
-	TInstruccion = class(TGraphicControl)
+	TInstruction = class(TGraphicControl)
 	private
-		FMouseEnZonaTamano: Boolean;
-		FMouseEnTamano: Boolean;
-		FMouseEnControl: Boolean;
+		FMouseInResizeZone: Boolean;
+		FMouseInResize: Boolean;
+		FMouseInControl: Boolean;
+		FMouseInObject: Boolean;
 		FSelected: Boolean;
-		FPuedeMover: Boolean;
-		FMouseEnObjeto: Boolean;
-		FPuedeUnionEste: Boolean;
-		FPuedeTamano: Boolean;
-		FPuedeUnionOeste: Boolean;
-		FPuedeUnionNorte: Boolean;
-		FOnSelect: TNotifyEvent;
-		FOnUnionMouseDown: TMouseEvent;
-		FOnUnionMouseUp: TMouseEvent;
+		FCanMove: Boolean;
+		FCanEastJoin: Boolean;
+		FCanResize: Boolean;
+		FCanWest: Boolean;
+		FCanNorthJoin: Boolean;
 		FBreakPoint: Boolean;
-		FTexto: String;
-    FCaption: String;
-    FMuestraCaption: Boolean;
-    FMuestraTexto: Boolean;
-    FBloqueado: Boolean;
-    FEjecutando: Boolean;
-    FOnDestroy: TNotifyEvent;
-    FOnModificar: TNotifyEvent;
+		FParameters: String;
+    FComments: String;
+    FShowComments: Boolean;
+    FShowParameters: Boolean;
+    FLocked: Boolean;
+    FRunning: Boolean;
     FX: Integer;
     FY: Integer;
-    FAncho: Integer;
-    FAlto: integer;
-    FOnUnionMouseMove: TMouseMoveEvent;
+    FWidth: Integer;
+    FHeight: integer;
     FError: Boolean;
+
+ 		FOnSelect: TNotifyEvent;
+		FOnUnionMouseDown: TMouseEvent;
+		FOnUnionMouseUp: TMouseEvent;
+    FOnUnionMouseMove: TMouseMoveEvent;
+    FOnDestroy: TNotifyEvent;
+    FOnModify: TNotifyEvent;
 
 		procedure CMMouseEnter(var Message: TMessage); message CM_MOUSEENTER;
 		procedure CMMouseLeave(var Message: TMessage); message CM_MOUSELEAVE;
-		procedure SetMouseEnControl(const Value: Boolean);
-		procedure SetMouseEnObjeto(const Value: Boolean);
-		procedure SetMouseEnZonaTamano(const Value: Boolean);
-		procedure SetMouseEnTamano(const Value: Boolean);
-		procedure SetPuedeTamano(const Value: Boolean);
+		procedure SetMouseInControl(const Value: Boolean);
+		procedure SetMouseInObject(const Value: Boolean);
+		procedure SetMouseInResizeZone(const Value: Boolean);
+		procedure SetMouseInResize(const Value: Boolean);
 
-		procedure SetPuedeUnionEste(const Value: Boolean);
-		procedure SetUnionEste(const Value: TUnion);
+    procedure SetCanResize(const Value: Boolean);
 
-		procedure SetPuedeUnionNorte(const Value: Boolean);
-		procedure SetUnionNorte(const Value: TUnion);
+		procedure SetCanEastJoin(const Value: Boolean);
+		procedure SetEastJoin(const Value: TJoin);
 
-		procedure SetPuedeUnionOeste(const Value: Boolean);
-		procedure SetUnionOeste(const Value: TUnion);
+		procedure SetCanNorthJoin(const Value: Boolean);
+		procedure SetNorthJoin(const Value: TJoin);
 
-		procedure SetPuedeUnionSur(const Value: Boolean);
-		procedure SetUnionSur(const Value: TUnion);
+		procedure SetCanWestJoin(const Value: Boolean);
+		procedure SetWestJoin(const Value: TJoin);
+
+		procedure SetCanSouthJoin(const Value: Boolean);
+		procedure SetSouthJoin(const Value: TJoin);
 
 		procedure SetSelected(const Value: Boolean);
 		procedure SetBreakPoint(const Value: Boolean);
-		procedure SetEjecutando(const Value: Boolean);
+		procedure SetExecuting(const Value: Boolean);
 		procedure SetError(const Value: Boolean);
-		procedure SetCaption(const Value: String);
-		procedure SetTexto(const Value: String);
-		procedure SetMuestraCaption(const Value: Boolean);
-		procedure SetMuestraTexto(const Value: Boolean);
+		procedure SetComments(const Value: String);
+		procedure SetParameters(const Value: String);
+		procedure SetShowComments(const Value: Boolean);
+		procedure SetShowParameters(const Value: Boolean);
 
 		procedure SetX(const Value: Integer);
 		procedure SetY(const Value: Integer);
-		procedure SetAlto(const Value: integer);
-		procedure SetAncho(const Value: Integer);
+		procedure SetHeight(const Value: integer);
+		procedure SetWidth(const Value: Integer);
 
-		procedure UnionEventos(AUnion : TUnion);
+		procedure SetJoinEvents(AJoin : TJoin);
 		procedure SetOnUnionMouseDown(const Value: TMouseEvent);
 		procedure SetOnUnionMouseMove(const Value: TMouseMoveEvent);
 		procedure SetOnUnionMouseUp(const Value: TMouseEvent);
 	protected
-		FPuedeUnionSur: Boolean;
-		FUnionEste: TUnion;
-		FUnionSur: TUnion;
-		FUnionNorte: TUnion;
-		FUnionOeste: TUnion;
+		FCanSouthJoin: Boolean;
+		FEastJoin: TJoin;
+		FSouthJoin: TJoin;
+		FNorthJoin: TJoin;
+		FWestJoin: TJoin;
 
 		procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
 			X, Y: Integer); override;
@@ -284,60 +285,60 @@ type
 		procedure MouseUp(Button: TMouseButton; Shift: TShiftState;
 			X, Y: Integer); override;
 
-		procedure PaintTamano; virtual;
-		procedure PaintObjeto; virtual; abstract;
-		procedure PaintTexto; virtual;
+		procedure PaintResize; virtual;
+		procedure PaintObject; virtual; abstract;
+		procedure PaintText; virtual;
 		procedure PrePaint; virtual;
 		procedure PostPaint; virtual;
 		procedure Paint; override;
 
-		procedure NuevaPosicion; virtual;
+		procedure NewPosition; virtual;
 
-		function EstaMouseEnTamano(X,Y: Integer): Boolean; virtual;
-		function EstaMouseEnObjeto(X,Y: Integer): Boolean; virtual; abstract;
+		function IsMouseInResize(X,Y: Integer): Boolean; virtual;
+		function IsMouseInObject(X,Y: Integer): Boolean; virtual; abstract;
 
-		procedure DarCapacidades; virtual; abstract;
+		procedure SetCapacities; virtual; abstract;
 	public
 		constructor Create(AOwner: TComponent; AParent: TWinControl); virtual;
 		destructor Destroy; override;
 
 		procedure SetBounds(ALeft, ATop, AWidth, AHeight: Integer); override;
 
-		function Ejecutar : TInstruccion; virtual; abstract;
+		function Execute : TInstruction; virtual; abstract;
 	published
 		property X: Integer read FX write SetX;
 		property Y: Integer read FY write SetY;
-		property Ancho : Integer read FAncho write SetAncho;
-		property Alto : integer read FAlto write SetAlto;
+		property Width : Integer read FWidth write SetWidth;
+		property Height : integer read FHeight write SetHeight;
 
-		property Caption: String read FCaption write SetCaption;
-		property MuestraCaption: Boolean read FMuestraCaption write SetMuestraCaption;
-		property Texto: String read FTexto write SetTexto;
-		property MuestraTexto: Boolean read FMuestraTexto write SetMuestraTexto;
-		property Bloqueado: Boolean read FBloqueado write FBloqueado;
+		property Comments: String read FComments write SetComments;
+		property ShowComments: Boolean read FShowComments write SetShowComments;
+		property Parameters: String read FParameters write SetParameters;
+		property ShowParameters: Boolean read FShowParameters write SetShowParameters;
+		property Locked: Boolean read FLocked write FLocked;
 
 		property Selected: Boolean read FSelected write SetSelected;
 		property BreakPoint: Boolean read FBreakPoint write SetBreakPoint;
-		property Ejecutando: Boolean read FEjecutando write SetEjecutando;
+		property Executing: Boolean read FRunning write SetExecuting;
 		property Error: Boolean read FError write SetError;
 
-		property MouseEnControl : Boolean read FMouseEnControl write SetMouseEnControl;
-		property MouseEnObjeto : Boolean read FMouseEnObjeto write SetMouseEnObjeto;
+		property MouseInControl : Boolean read FMouseInControl write SetMouseInControl;
+		property MouseInObject : Boolean read FMouseInObject write SetMouseInObject;
 
-		property MouseEnTamano: Boolean read FMouseEnTamano write SetMouseEnTamano;
-		property MouseEnZonaTamano: Boolean read FMouseEnZonaTamano write SetMouseEnZonaTamano;
+		property MouseInResize: Boolean read FMouseInResize write SetMouseInResize;
+		property MouseInResizeZone: Boolean read FMouseInResizeZone write SetMouseInResizeZone;
 
-		property PuedeMover: Boolean read FPuedeMover write FPuedeMover;
-		property PuedeTamano: Boolean read FPuedeTamano write SetPuedeTamano;
-		property PuedeUnionNorte: Boolean read FPuedeUnionNorte write SetPuedeUnionNorte;
-		property PuedeUnionEste: Boolean read FPuedeUnionEste write SetPuedeUnionEste;
-		property PuedeUnionSur: Boolean read FPuedeUnionSur write SetPuedeUnionSur;
-		property PuedeUnionOeste: Boolean read FPuedeUnionOeste write SetPuedeUnionOeste;
+		property CanMove: Boolean read FCanMove write FCanMove;
+		property CanResize: Boolean read FCanResize write SetCanResize;
+		property CanNorthJoin: Boolean read FCanNorthJoin write SetCanNorthJoin;
+		property CanEastJoin: Boolean read FCanEastJoin write SetCanEastJoin;
+		property CanSouthJoin: Boolean read FCanSouthJoin write SetCanSouthJoin;
+		property CanWestJoin: Boolean read FCanWest write SetCanWestJoin;
 
-		property UnionNorte: TUnion read FUnionNorte write SetUnionNorte;
-		property UnionEste: TUnion read FUnionEste write SetUnionEste;
-		property UnionSur: TUnion read FUnionSur write SetUnionSur;
-		property UnionOeste: TUnion read FUnionOeste write SetUnionOeste;
+		property NorthJoin: TJoin read FNorthJoin write SetNorthJoin;
+		property EastJoin: TJoin read FEastJoin write SetEastJoin;
+		property SouthJoin: TJoin read FSouthJoin write SetSouthJoin;
+		property WestJoin: TJoin read FWestJoin write SetWestJoin;
 
 		property OnSelect : TNotifyEvent read FOnSelect write FOnSelect;
 		property OnUnionMouseDown : TMouseEvent read FOnUnionMouseDown write SetOnUnionMouseDown;
@@ -348,138 +349,136 @@ type
     property OnMouseDown;
     property OnMouseUp;
 		property OnDestroy: TNotifyEvent read FOnDestroy write FOnDestroy;
-    property OnModificar : TNotifyEvent read FOnModificar write FOnModificar;
+    property OnModify : TNotifyEvent read FOnModify write FOnModify;
 	end;
 
-	TSentencia = class(TInstruccion)
+	TSentence = class(TInstruction)
 	private
 	protected
-		function EstaMouseEnObjeto(AX,AY: Integer): Boolean; override;
+		function IsMouseInObject(AX,AY: Integer): Boolean; override;
 
-		procedure DarCapacidades; override;
+		procedure SetCapacities; override;
 
-		procedure PaintObjeto; override;
+		procedure PaintObject; override;
 	public
 		constructor Create(AOwner: TComponent; AParent: TWinControl); override;
 
-		function Ejecutar: TInstruccion; override;
+		function Execute: TInstruction; override;
 	published
-		property Entrada: TUnion read FUnionNorte;
-		property Salida: TUnion read FUnionSur;
+		property Entry: TJoin read FNorthJoin;
+		property Exit: TJoin read FSouthJoin;
 	end;
 
-  TEntradaSalida = class(TSentencia)
+  TCommunication = class(TSentence)
 	private
-    FRetorno: Boolean;
-    FDispositivo: TDispositivo;
-    FArchivo: String;
-		FParametros: String;
-		procedure SetDispositivo(const Value: TDispositivo);
-		procedure SetRetorno(const Value: Boolean);
-		procedure SetArchivo(const Value: String);
-		procedure SetParametros(const Value: String);
+    FCarriageReturn: Boolean;
+    FDevice: TDevice;
+    FFilePath: String;
+		procedure SetDevice(const Value: TDevice);
+		procedure SetCarriageReturn(const Value: Boolean);
+		procedure SetFilePath(const Value: String);
+		procedure SetParameters(const Value: String);
 
-		procedure Actualizar; virtual; abstract;
+		procedure Update; virtual; abstract;
 	protected
 	public
 		constructor Create(AOwner: TComponent; AParent: TWinControl); override;
 	published
-		property Parametros : String read FParametros write SetParametros;
-		property Dispositivo : TDispositivo read FDispositivo write SetDispositivo;
-		property Retorno : Boolean read FRetorno write SetRetorno;
-		property Archivo: String read FArchivo write SetArchivo;
+		property Device : TDevice read FDevice write SetDevice;
+		property CarriageReturn : Boolean read FCarriageReturn write SetCarriageReturn;
+		property FilePath: String read FFilePath write SetFilePath;
 	end;
 
-	TEntrada = class(TEntradaSalida)
+	TInput = class(TCommunication)
 	private
 	protected
-		procedure Actualizar; override;
+		procedure Update; override;
 
-		function EstaMouseEnObjeto(AX,AY: Integer): Boolean; override;
+		function IsMouseInObject(AX,AY: Integer): Boolean; override;
 
-		procedure PaintObjeto; override;
+		procedure PaintObject; override;
 	public
 		constructor Create(AOwner: TComponent; AParent: TWinControl); override;
 		destructor Destroy; override;
 	published
 	end;
 
-	TSalida = class(TEntradaSalida)
+	TOutput = class(TCommunication)
 	private
 	protected
-    procedure Actualizar; override;
+    procedure Update; override;
 
-		function EstaMouseEnObjeto(AX,AY: Integer): Boolean; override;
+		function IsMouseInObject(AX,AY: Integer): Boolean; override;
 
-		procedure PaintObjeto; override;
+		procedure PaintObject; override;
 	public
     constructor Create(AOwner: TComponent; AParent: TWinControl);
     destructor Destroy; override;
 	published
 	end;
 
-	TCondicion = class(TInstruccion)
+	TCondition = class(TInstruction)
 	private
 	protected
-		procedure PaintObjeto; override;
+		procedure PaintObject; override;
 
-		function EstaMouseEnObjeto(AX,AY: Integer): Boolean; override;
+		function IsMouseInObject(AX,AY: Integer): Boolean; override;
 
-		procedure DarCapacidades; override;
+		procedure SetCapacities; override;
 	public
 		constructor Create(AOwner: TComponent; AParent: TWinControl); override;
-		function Ejecutar: TInstruccion; override;
+		function Execute: TInstruction; override;
 	published
-		property Entrada: TUnion read FUnionNorte;
-		property Verdadero: TUnion read FUnionSur;
-		property Falso: TUnion read FUnionEste;
+		property Entrada: TJoin read FNorthJoin;
+		property Verdadero: TJoin read FSouthJoin;
+		property Falso: TJoin read FEastJoin;
 	end;
 
-	TNodo = class(TInstruccion)
+	TNode = class(TInstruction)
 	private
 	protected
-		procedure DarCapacidades; override;
+		procedure SetCapacities; override;
 
-		procedure PaintObjeto; override;
-		function EstaMouseEnObjeto(AX,AY: Integer): Boolean; override;
+		procedure PaintObject; override;
+		function IsMouseInObject(AX,AY: Integer): Boolean; override;
 	public
 		constructor Create(AOwner: TComponent; AParent: TWinControl); override;
 
-		function Ejecutar: TInstruccion; Override;
+		function Execute: TInstruction; Override;
 	published
-		property Salida: TUnion read FUnionSur write FUnionSur;
-		property EntradaNorte: TUnion read FUnionNorte write FUnionNorte;
-		property EntradaEste: TUnion read FUnionEste write FUnionEste;
-		property EntradaOeste: TUnion read FUnionOeste write FUnionOeste;
+		property Salida: TJoin read FSouthJoin write FSouthJoin;
+		property EntradaNorte: TJoin read FNorthJoin write FNorthJoin;
+		property EntradaEste: TJoin read FEastJoin write FEastJoin;
+		property EntradaOeste: TJoin read FWestJoin write FWestJoin;
 	end;
 
-	TInicio = class(TInstruccion)
+	TBegin = class(TInstruction)
 	private
 	protected
-		procedure DarCapacidades; override;
+		procedure SetCapacities; override;
 
-		procedure PaintObjeto; override;
-		function EstaMouseEnObjeto(AX,AY: Integer): Boolean; override;
+		procedure PaintObject; override;
+		function IsMouseInObject(AX,AY: Integer): Boolean; override;
 	public
 		constructor Create(AOwner: TComponent; AParent: TWinControl); override;
 
-		function Ejecutar: TInstruccion; override;
+		function Execute: TInstruction; override;
 	published
-		property Salida: TUnion read FUnionSur write FUnionSur;
+		property ExitJoin: TJoin read FSouthJoin write FSouthJoin;
 	end;
 
-	TFin = class(TInstruccion)
+	TEnd = class(TInstruction)
 	private
 	protected
-		procedure DarCapacidades; override;
+		procedure SetCapacities; override;
 
-		procedure PaintObjeto; override;
-		function EstaMouseEnObjeto(AX,AY: Integer): Boolean; override;
+		procedure PaintObject; override;
+		function IsMouseInObject(AX,AY: Integer): Boolean; override;
 	public
 		constructor Create(AOwner: TComponent; AParent: TWinControl); override;
-		function Ejecutar: TInstruccion; override;
+		function Execute: TInstruction; override;
 	published
-		property Entrada: TUnion read FUnionNorte write FUnionNorte;
+		property Entrada: TJoin read FNorthJoin write FNorthJoin;
 	end;
 
 	TDragger = class(TGraphicControl)
@@ -493,7 +492,7 @@ type
 		procedure SetY1(const Value: Integer);
 		procedure SetY2(const Value: Integer);
 
-		procedure ActualizarLimites;
+		procedure UpdateLimites;
 	protected
 		procedure Paint; override;
 	public
@@ -508,9 +507,9 @@ type
 	end;
 
 var
-	GOnSegmentoMouseDown: TMouseEvent;
-	GOnSegmentoMouseUp: TMouseEvent;
-	GOnSegmentoMouseMove: TMouseMoveEvent;
+	GOnSegmentMouseDown: TMouseEvent;
+	GOnSegmentMouseUp: TMouseEvent;
+	GOnSegmentMouseMove: TMouseMoveEvent;
 
 procedure Register;
 
@@ -520,41 +519,39 @@ uses UAnalizadores, UConstantes;
 
 procedure Register;
 begin
-	RegisterComponents('Dexec', [TInstruccion,TSentencia,TCondicion,
-		TFlecha, TUnion]);
+	RegisterComponents('Dexec', [TInstruction,TSentence,TCondition,
+		TArrow, TJoin]);
 end;
 
-{ TInstruccion }
+{ TInstruction }
 
-procedure TInstruccion.CMMouseLeave(var Message: TMessage);
+procedure TInstruction.CMMouseLeave(var Message: TMessage);
 begin
-	MouseEnControl := False;
-	MouseEnObjeto := False;
-	MouseEnTamano := False;
+	MouseInControl := False;
+	MouseInObject := False;
+	MouseInResize := False;
 end;
 
-constructor TInstruccion.Create(AOwner: TComponent; AParent: TWinControl);
+constructor TInstruction.Create(AOwner: TComponent; AParent: TWinControl);
 begin
 	inherited Create(AOwner);
 	Parent := AParent;
 	ControlStyle := ControlStyle + [csReplicatable];
 	Self.Width := 141;
-  FAncho := 141;
 	Self.Height := 41;
-  FAlto := 41;
-	Bloqueado := False;
+	Locked := False;
 
-	DarCapacidades;
+	SetCapacities;
 end;
 
-procedure TInstruccion.MouseMove(Shift: TShiftState; X, Y: Integer);
+procedure TInstruction.MouseMove(Shift: TShiftState; X, Y: Integer);
 begin
 	inherited;
-	MouseEnTamano := EstaMouseEnTamano(X,Y);
-	MouseEnObjeto := Not MouseEnTamano and EstaMouseEnObjeto(X,Y);
+	MouseInResize := IsMouseInResize(X,Y);
+	MouseInObject := Not MouseInResize and IsMouseInObject(X,Y);
 end;
 
-procedure TInstruccion.MouseUp(Button: TMouseButton; Shift: TShiftState; X,
+procedure TInstruction.MouseUp(Button: TMouseButton; Shift: TShiftState; X,
 	Y: Integer);
 begin
 	inherited;
@@ -565,7 +562,7 @@ begin
 //	end;
 end;
 
-procedure TInstruccion.PrePaint;
+procedure TInstruction.PrePaint;
 begin
 {$IFDEF FULLDEBUG}
   with canvas do
@@ -578,11 +575,11 @@ begin
 	// Por ahora no es necesario hacer nada
 end;
 
-procedure TInstruccion.PostPaint;
+procedure TInstruction.PostPaint;
 begin
 end;
 
-procedure TInstruccion.SetSelected(const Value: Boolean);
+procedure TInstruction.SetSelected(const Value: Boolean);
 begin
 	if FSelected<>Value then
 	begin
@@ -595,46 +592,46 @@ begin
 	end;
 end;
 
-procedure TInstruccion.CMMouseEnter(var Message: TMessage);
+procedure TInstruction.CMMouseEnter(var Message: TMessage);
 begin
-	MouseEnControl := True;
+	MouseInControl := True;
 end;
 
-procedure TInstruccion.SetMouseEnControl(const Value: Boolean);
+procedure TInstruction.SetMouseInControl(const Value: Boolean);
 begin
-	if FMouseEnControl<>Value then
+	if FMouseInControl<>Value then
 	begin
-		FMouseEnControl := Value;
+		FMouseInControl := Value;
 		Invalidate;
 	end;
 end;
 
-function TInstruccion.EstaMouseEnTamano(X, Y: Integer): Boolean;
+function TInstruction.IsMouseInResize(X, Y: Integer): Boolean;
 begin
-	Result := PuedeTamano and
+	Result := CanResize and
 		TUtiles.PuntoEnRect(X,Y,
-      TUtiles.RectCentradoEn(Self.Width-BORDE div 2,Self.Height-BORDE div 2,BORDE));
+      TUtiles.RectCentradoEn(Self.Width-BORDER div 2,Self.Height-BORDER div 2,BORDER));
 end;
 
-procedure TInstruccion.SetMouseEnZonaTamano(const Value: Boolean);
+procedure TInstruction.SetMouseInResizeZone(const Value: Boolean);
 begin
-	if FMouseEnZonaTamano<>Value then
+	if FMouseInResizeZone<>Value then
 	begin
-		FMouseEnZonaTamano := Value;
+		FMouseInResizeZone := Value;
 	end;
 end;
 
-procedure TInstruccion.SetMouseEnTamano(const Value: Boolean);
+procedure TInstruction.SetMouseInResize(const Value: Boolean);
 begin
-	if FMouseEnTamano<>Value then
+	if FMouseInResize<>Value then
 	begin
-		FMouseEnTamano := Value;
+		FMouseInResize := Value;
 	end;
 end;
 
-procedure TInstruccion.PaintTamano;
+procedure TInstruction.PaintResize;
 begin
-	if MouseEnControl and PuedeTamano and not Bloqueado then
+	if MouseInControl and CanResize and not Locked then
 		with Self.Canvas do
 		begin
 			Pen.Color := clBlack;
@@ -642,162 +639,162 @@ begin
 			Brush.Color := clBlue;
 			Brush.Style := bsSolid;
 
-			Rectangle(TUtiles.RectCentradoEn(Self.Width-BORDE div 2,Self.Height-BORDE div 2,BORDE));
+			Rectangle(TUtiles.RectCentradoEn(Self.Width-BORDER div 2,Self.Height-BORDER div 2,BORDER));
 		end;
 end;
 
-procedure TInstruccion.SetMouseEnObjeto(const Value: Boolean);
+procedure TInstruction.SetMouseInObject(const Value: Boolean);
 begin
-	if FMouseEnObjeto<>Value then
+	if FMouseInObject<>Value then
 	begin
-		FMouseEnObjeto := Value;
+		FMouseInObject := Value;
 	end;
 end;
 
-procedure TInstruccion.Paint;
+procedure TInstruction.Paint;
 begin
 	inherited;
 	PrePaint;
-	PaintObjeto;
-	PaintTexto;
-	PaintTamano;
+	PaintObject;
+	PaintText;
+	PaintResize;
 	PostPaint;
 end;
 
-procedure TInstruccion.SetPuedeTamano(const Value: Boolean);
+procedure TInstruction.SetCanResize(const Value: Boolean);
 begin
-	FPuedeTamano := Value;
+	FCanResize := Value;
 end;
 
-procedure TInstruccion.SetPuedeUnionEste(const Value: Boolean);
+procedure TInstruction.SetCanEastJoin(const Value: Boolean);
 begin
-	if FPuedeUnionEste<>Value then
+	if FCanEastJoin<>Value then
 	begin
-		FPuedeUnionEste := Value;
-		if FPuedeUnionEste and (UnionEste=Nil) then
+		FCanEastJoin := Value;
+		if FCanEastJoin and (EastJoin=Nil) then
 		begin
-			UnionEste := TUnion.Create(Self,Parent,Self);
-			UnionEste.Direcccion := dEste;
-      UnionEventos(UnionEste);
-			NuevaPosicion;
+			EastJoin := TJoin.Create(Self,Parent,Self);
+			EastJoin.Direction := diEast;
+      SetJoinEvents(EastJoin);
+			NewPosition;
 		end;
-		if not FPuedeUnionEste and (UnionEste<>Nil) then
+		if not FCanEastJoin and (EastJoin<>Nil) then
 		begin
-			UnionEste.Free;
-			UnionEste := Nil;
-		end;
-	end;
-end;
-
-procedure TInstruccion.SetPuedeUnionOeste(const Value: Boolean);
-begin
-	if FPuedeUnionOeste<>Value then
-	begin
-		FPuedeUnionOeste := Value;
-		if FPuedeUnionOeste and (UnionOeste=Nil) then
-		begin
-			UnionOeste := TUnion.Create(Self,Parent,Self);
-			UnionOeste.Direcccion := dOeste;
-      UnionEventos(UnionOeste);
-			NuevaPosicion;
-		end;
-		if not FPuedeUnionOeste and (UnionOeste<>Nil) then
-		begin
-			UnionOeste.Free;
-			UnionOeste := Nil;
+			EastJoin.Free;
+			EastJoin := Nil;
 		end;
 	end;
 end;
 
-procedure TInstruccion.SetPuedeUnionSur(const Value: Boolean);
+procedure TInstruction.SetCanWestJoin(const Value: Boolean);
 begin
-	if FPuedeUnionSur<>Value then
+	if FCanWest<>Value then
 	begin
-		FPuedeUnionSur := Value;
-		if FPuedeUnionSur and (UnionSur=Nil) then
+		FCanWest := Value;
+		if FCanWest and (WestJoin=Nil) then
 		begin
-			UnionSur := TUnion.Create(Self,Parent,Self);
-			UnionSur.Direcccion := dSur;
-      UnionEventos(UnionSur);
-			NuevaPosicion;
+			WestJoin := TJoin.Create(Self,Parent,Self);
+			WestJoin.Direction := diWest;
+      SetJoinEvents(WestJoin);
+			NewPosition;
 		end;
-		if not FPuedeUnionSur and (UnionSur<>Nil) then
+		if not FCanWest and (WestJoin<>Nil) then
 		begin
-			UnionSur.Free;
-			UnionSur := Nil;
-		end;
-	end;
-end;
-
-procedure TInstruccion.SetPuedeUnionNorte(const Value: Boolean);
-begin
-	if FPuedeUnionNorte<>Value then
-	begin
-		FPuedeUnionNorte := Value;
-		if FPuedeUnionNorte and (UnionNorte=Nil) then
-		begin
-			UnionNorte := TUnion.Create(Self,Parent,Self);
-			UnionNorte.Direcccion := dNorte;
-      UnionEventos(UnionNorte);
-			NuevaPosicion;
-		end;
-		if not FPuedeUnionNorte and (UnionNorte<>Nil) then
-		begin
-			UnionNorte.Free;
-			UnionNorte := Nil;
+			WestJoin.Free;
+			WestJoin := Nil;
 		end;
 	end;
 end;
 
-procedure TInstruccion.SetUnionEste(const Value: TUnion);
+procedure TInstruction.SetCanSouthJoin(const Value: Boolean);
 begin
-	if FUnionEste<>Value then
-		FUnionEste := Value;
-end;
-
-procedure TInstruccion.SetUnionNorte(const Value: TUnion);
-begin
-	if FUnionNorte<>Value then
-		FUnionNorte := Value;
-end;
-
-procedure TInstruccion.SetUnionOeste(const Value: TUnion);
-begin
-	if FUnionOeste<>Value then
-		FUnionOeste := Value;
-end;
-
-procedure TInstruccion.SetUnionSur(const Value: TUnion);
-begin
-	if FUnionSur<>Value then
-		FUnionSur := Value;
-end;
-
-procedure TInstruccion.NuevaPosicion;
-begin
-	if PuedeUnionNorte then
+	if FCanSouthJoin<>Value then
 	begin
-		UnionNorte.X1 := X;
-		UnionNorte.Y1 := Y - Self.Alto div 2 - 1;
-	end;
-	if PuedeUnionEste then
-	begin
-		UnionEste.X1 := X + Self.Ancho div 2 + 1;
-		UnionEste.Y1 := Y;
-	end;
-	if PuedeUnionSur then
-	begin
-		UnionSur.X1 := X;
-		UnionSur.Y1 := Y + Self.Alto div 2 + 1;
-	end;
-	if PuedeUnionOeste then
-	begin
-		UnionOeste.X1 := X - Self.Ancho div 2 - 1;
-		UnionOeste.Y1 := Y;
+		FCanSouthJoin := Value;
+		if FCanSouthJoin and (SouthJoin=Nil) then
+		begin
+			SouthJoin := TJoin.Create(Self,Parent,Self);
+			SouthJoin.Direction := diSouth;
+      SetJoinEvents(SouthJoin);
+			NewPosition;
+		end;
+		if not FCanSouthJoin and (SouthJoin<>Nil) then
+		begin
+			SouthJoin.Free;
+			SouthJoin := Nil;
+		end;
 	end;
 end;
 
-procedure TInstruccion.SetBreakPoint(const Value: Boolean);
+procedure TInstruction.SetCanNorthJoin(const Value: Boolean);
+begin
+	if FCanNorthJoin<>Value then
+	begin
+		FCanNorthJoin := Value;
+		if FCanNorthJoin and (NorthJoin=Nil) then
+		begin
+			NorthJoin := TJoin.Create(Self,Parent,Self);
+			NorthJoin.Direction := diNorth;
+      SetJoinEvents(NorthJoin);
+			NewPosition;
+		end;
+		if not FCanNorthJoin and (NorthJoin<>Nil) then
+		begin
+			NorthJoin.Free;
+			NorthJoin := Nil;
+		end;
+	end;
+end;
+
+procedure TInstruction.SetEastJoin(const Value: TJoin);
+begin
+	if FEastJoin<>Value then
+		FEastJoin := Value;
+end;
+
+procedure TInstruction.SetNorthJoin(const Value: TJoin);
+begin
+	if FNorthJoin<>Value then
+		FNorthJoin := Value;
+end;
+
+procedure TInstruction.SetWestJoin(const Value: TJoin);
+begin
+	if FWestJoin<>Value then
+		FWestJoin := Value;
+end;
+
+procedure TInstruction.SetSouthJoin(const Value: TJoin);
+begin
+	if FSouthJoin<>Value then
+		FSouthJoin := Value;
+end;
+
+procedure TInstruction.NewPosition;
+begin
+	if CanNorthJoin then
+	begin
+		NorthJoin.X1 := X;
+		NorthJoin.Y1 := Y - Self.Height div 2 - 1;
+	end;
+	if CanEastJoin then
+	begin
+		EastJoin.X1 := X + Self.Width div 2 + 1;
+		EastJoin.Y1 := Y;
+	end;
+	if CanSouthJoin then
+	begin
+		SouthJoin.X1 := X;
+		SouthJoin.Y1 := Y + Self.Height div 2 + 1;
+	end;
+	if CanWestJoin then
+	begin
+		WestJoin.X1 := X - Self.Width div 2 - 1;
+		WestJoin.Y1 := Y;
+	end;
+end;
+
+procedure TInstruction.SetBreakPoint(const Value: Boolean);
 begin
 	if Value <> FBreakPoint then
 	begin
@@ -806,58 +803,58 @@ begin
 	end;
 end;
 
-procedure TInstruccion.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
+procedure TInstruction.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
 begin
   inherited;
-	if Assigned(FOnModificar) then
-    OnModificar(Self);
+	if Assigned(FOnModify) then
+    OnModify(Self);
 end;
 
-procedure TInstruccion.SetCaption(const Value: String);
+procedure TInstruction.SetComments(const Value: String);
 begin
-	if FCaption <> Value then
+	if FComments <> Value then
 	begin
-		FCaption := Value;
-    if Assigned(FOnModificar) then
-      OnModificar(Self);
+		FComments := Value;
+    if Assigned(FOnModify) then
+      OnModify(Self);
 		Invalidate;
 	end;
 end;
 
-procedure TInstruccion.SetTexto(const Value: String);
+procedure TInstruction.SetParameters(const Value: String);
 begin
-	if FTexto <> Value then
+	if FParameters <> Value then
 	begin
-		FTexto := Value;
-    if Assigned(FOnModificar) then
-      OnModificar(Self);
+		FParameters := Value;
+    if Assigned(FOnModify) then
+      OnModify(Self);
 		Invalidate;
 	end;
 end;
 
-procedure TInstruccion.SetMuestraCaption(const Value: Boolean);
+procedure TInstruction.SetShowComments(const Value: Boolean);
 begin
-	if FMuestraCaption <> Value then
+	if FShowComments <> Value then
 	begin
-		FMuestraCaption := Value;
-    if Assigned(FOnModificar) then
-      OnModificar(Self);
+		FShowComments := Value;
+    if Assigned(FOnModify) then
+      OnModify(Self);
 		Invalidate;
 	end;
 end;
 
-procedure TInstruccion.SetMuestraTexto(const Value: Boolean);
+procedure TInstruction.SetShowParameters(const Value: Boolean);
 begin
-	if FMuestraTexto <> Value then
+	if FShowParameters <> Value then
 	begin
-		FMuestraTexto := Value;
-    if Assigned(FOnModificar) then
-      OnModificar(Self);
+		FShowParameters := Value;
+    if Assigned(FOnModify) then
+      OnModify(Self);
 		Invalidate;
 	end;
 end;
 
-procedure TInstruccion.PaintTexto;
+procedure TInstruction.PaintText;
 var h,b1,b2: integer;
 begin
 	with Canvas do
@@ -869,122 +866,122 @@ begin
 		Font.Color := clBlack;
 
 		h := TextHeight('m');
-		if MuestraCaption and MuestraTexto then
+		if ShowComments and ShowParameters then
 		begin
-			b1 := TextWidth(Caption);
-			TextOut((Self.Width - b1) div 2,Self.Height div 2 - h,Caption);
-			b2 := TextWidth(Texto);
-			TextOut((Self.Width - b2) div 2,Self.Height div 2,Texto);
+			b1 := TextWidth(Comments);
+			TextOut((Self.Width - b1) div 2,Self.Height div 2 - h,Comments);
+			b2 := TextWidth(Parameters);
+			TextOut((Self.Width - b2) div 2,Self.Height div 2,Parameters);
 		end
-		else if MuestraCaption then
+		else if ShowComments then
 		begin
-			b1 := TextWidth(Caption);
-			TextOut((Self.Width - b1) div 2,(Self.Height - h) div 2,Caption);
+			b1 := TextWidth(Comments);
+			TextOut((Self.Width - b1) div 2,(Self.Height - h) div 2,Comments);
 		end
-		else if MuestraTexto then
+		else if ShowParameters then
 		begin
-			b2 := TextWidth(Texto);
-			TextOut((Self.Width - b2) div 2,(Self.Height - h) div 2,Texto);
+			b2 := TextWidth(Parameters);
+			TextOut((Self.Width - b2) div 2,(Self.Height - h) div 2,Parameters);
 		end;
 	end;
 end;
 
-procedure TInstruccion.SetEjecutando(const Value: Boolean);
+procedure TInstruction.SetExecuting(const Value: Boolean);
 begin
-	if Value <> FEjecutando then
+	if Value <> FRunning then
 	begin
-		FEjecutando := Value;
+		FRunning := Value;
 		Invalidate;
 	end;
 end;
 
-destructor TInstruccion.Destroy;
+destructor TInstruction.Destroy;
 begin
   if Assigned(FOnDestroy) then
     FOnDestroy(Self);
   inherited;
 end;
 
-procedure TInstruccion.MouseDown(Button: TMouseButton; Shift: TShiftState;
+procedure TInstruction.MouseDown(Button: TMouseButton; Shift: TShiftState;
 			X, Y: Integer);
 begin
   inherited;
-//  FArrastrandoTamano := MouseEnTamano and PuedeTamano;
-//  FArrastrandoObjeto := not FArrastrandoTamano and MouseEnObjeto
-//    and PuedeMover;
+//  FArrastrandoTamano := MouseInResize and CanTamano;
+//  FArrastrandoObjeto := not FArrastrandoTamano and MouseInObject
+//    and CanMover;
 end;
 
-procedure TInstruccion.SetX(const Value: Integer);
+procedure TInstruction.SetX(const Value: Integer);
 var
 	LValue : Integer;
 	LScrollBox : TScrollBox;
 begin
-	LValue := Value div GRILLAX * GRILLAX;
+	LValue := Value div GRID_X * GRID_X;
 	if FX<>LValue then
 	begin
 		FX := LValue;
 		if Self.Parent is TScrollBox then
 		begin
 			LScrollBox := Self.Parent as TScrollBox;
-			Left := LValue - FAncho div 2 - LScrollBox.HorzScrollBar.Position;
+			Left := LValue - FWidth div 2 - LScrollBox.HorzScrollBar.Position;
 		end
 		else
-			Left := LValue - FAncho div 2;
-		NuevaPosicion;
+			Left := LValue - FWidth div 2;
+		NewPosition;
 	end;
 end;
 
-procedure TInstruccion.SetY(const Value: Integer);
+procedure TInstruction.SetY(const Value: Integer);
 var
 	LValue : integer;
 	LScrollBox : TScrollBox;
 begin
-	LValue := Value div GRILLAY * GRILLAY;
+	LValue := Value div GRID_Y * GRID_Y;
 	if FY<>LValue then
 	begin
 		FY := LValue;
 		if Self.Parent is TScrollBox then
 		begin
 			LScrollBox := Self.Parent as TScrollBox;
-			Top := LValue - FAlto div 2 - LScrollBox.VertScrollBar.Position;
+			Top := LValue - FHeight div 2 - LScrollBox.VertScrollBar.Position;
 		end
 		else
-			Top := LValue - FAlto div 2;
-		NuevaPosicion;
+			Top := LValue - FHeight div 2;
+		NewPosition;
 	end;
 end;
 
-procedure TInstruccion.SetAlto(const Value: integer);
+procedure TInstruction.SetHeight(const Value: integer);
 var
   LValue : Integer;
 begin
-	if FAlto<>Value then
+	if FHeight<>Value then
 	begin
 		LValue := Value div 2 * 2 + 1;
-		Top := Top - (LValue - FAlto) div 2;
-		Self.Height := LValue;
-		FAlto := LValue;
-		NuevaPosicion;
+		Top := Top - (LValue - FHeight) div 2;
+		inherited Height := LValue;
+		FHeight := LValue;
+		NewPosition;
 	end;
 end;
 
-procedure TInstruccion.SetAncho(const Value: Integer);
+procedure TInstruction.SetWidth(const Value: Integer);
 var
   LValue : Integer;
 begin
-	if FAncho<>Value then
+	if FWidth<>Value then
 	begin
 		LValue := Value div 2 * 2 + 1;
-		Left := Left - (LValue - FAncho) div 2;
-		Self.Width := LValue;
-		FAncho := LValue;
-		NuevaPosicion;
+		Left := Left - (LValue - FWidth) div 2;
+	  inherited	Width := LValue;
+		FWidth := LValue;
+		NewPosition;
 	end;
 end;
 
-procedure TInstruccion.UnionEventos(AUnion: TUnion);
+procedure TInstruction.SetJoinEvents(AJoin: TJoin);
 begin
-  with AUnion do
+  with AJoin do
   begin
     OnMouseMove := OnUnionMouseMove;
     OnMouseDown := OnUnionMouseDown;
@@ -992,46 +989,46 @@ begin
   end;
 end;
 
-procedure TInstruccion.SetOnUnionMouseDown(const Value: TMouseEvent);
+procedure TInstruction.SetOnUnionMouseDown(const Value: TMouseEvent);
 begin
-  if PuedeUnionNorte then
-    UnionNorte.OnMouseDown := Value;
-  if PuedeUnionEste then
-    UnionEste.OnMouseDown := Value;
-  if PuedeUnionSur then
-    UnionSur.OnMouseDown := Value;
-  if PuedeUnionOeste then
-    UnionOeste.OnMouseDown := Value;
+  if CanNorthJoin then
+    NorthJoin.OnMouseDown := Value;
+  if CanEastJoin then
+    EastJoin.OnMouseDown := Value;
+  if CanSouthJoin then
+    SouthJoin.OnMouseDown := Value;
+  if CanWestJoin then
+    WestJoin.OnMouseDown := Value;
   FOnUnionMouseDown := Value;
 end;
 
-procedure TInstruccion.SetOnUnionMouseMove(const Value: TMouseMoveEvent);
+procedure TInstruction.SetOnUnionMouseMove(const Value: TMouseMoveEvent);
 begin
-  if PuedeUnionNorte then
-    UnionNorte.OnMouseMove := Value;
-  if PuedeUnionEste then
-    UnionEste.OnMouseMove := Value;
-  if PuedeUnionSur then
-    UnionSur.OnMouseMove := Value;
-  if PuedeUnionOeste then
-    UnionOeste.OnMouseMove := Value;
+  if CanNorthJoin then
+    NorthJoin.OnMouseMove := Value;
+  if CanEastJoin then
+    EastJoin.OnMouseMove := Value;
+  if CanSouthJoin then
+    SouthJoin.OnMouseMove := Value;
+  if CanWestJoin then
+    WestJoin.OnMouseMove := Value;
   FOnUnionMouseMove := Value;
 end;
 
-procedure TInstruccion.SetOnUnionMouseUp(const Value: TMouseEvent);
+procedure TInstruction.SetOnUnionMouseUp(const Value: TMouseEvent);
 begin
-  if PuedeUnionNorte then
-    UnionNorte.OnMouseUp := Value;
-  if PuedeUnionEste then
-    UnionEste.OnMouseUp := Value;
-  if PuedeUnionSur then
-    UnionSur.OnMouseUp := Value;
-  if PuedeUnionOeste then
-    UnionOeste.OnMouseUp := Value;
+  if CanNorthJoin then
+    NorthJoin.OnMouseUp := Value;
+  if CanEastJoin then
+    EastJoin.OnMouseUp := Value;
+  if CanSouthJoin then
+    SouthJoin.OnMouseUp := Value;
+  if CanWestJoin then
+    WestJoin.OnMouseUp := Value;
   FOnUnionMouseUp := Value;
 end;
 
-procedure TInstruccion.SetError(const Value: Boolean);
+procedure TInstruction.SetError(const Value: Boolean);
 begin
 	if Value <> FError then
 	begin
@@ -1042,34 +1039,34 @@ end;
 
 { TSentencia }
 
-constructor TSentencia.Create(AOwner: TComponent; AParent: TWinControl);
+constructor TSentence.Create(AOwner: TComponent; AParent: TWinControl);
 begin
 	inherited;
-	MuestraCaption := False;
-	MuestraTexto := True;
+	ShowComments := False;
+	ShowParameters := True;
 end;
 
-function TSentencia.EstaMouseEnObjeto(AX, AY: Integer): Boolean;
+function TSentence.IsMouseInObject(AX, AY: Integer): Boolean;
 begin
 	Result := (AX>=0)and(AX<=Self.Width)and(AY>=0)and(AY<=Self.Height);
 end;
 
-procedure TSentencia.DarCapacidades;
+procedure TSentence.SetCapacities;
 begin
-	PuedeMover := True;
-	PuedeTamano := True;
-	PuedeUnionNorte := True;
-	PuedeUnionEste := False;
-	PuedeUnionSur := True;
-	PuedeUnionOeste := False;
+	CanMove := True;
+	CanResize := True;
+	CanNorthJoin := True;
+	CanEastJoin := False;
+	CanSouthJoin := True;
+	CanWestJoin := False;
 
-	Entrada.AceptaEntrada := True;
-	Entrada.AceptaSalida := False;
-	Salida.AceptaEntrada := False;
-	Salida.AceptaSalida := True;
+	Entry.AcceptEntry := True;
+	Entry.AcceptExit := False;
+	Exit.AcceptEntry := False;
+	Exit.AcceptExit := True;
 end;
 
-procedure TSentencia.PaintObjeto;
+procedure TSentence.PaintObject;
 begin
 	with Canvas do
 	begin
@@ -1081,27 +1078,27 @@ begin
 
 		if Error then
 			Brush.Color := COLOR_ERROR
-		else if Ejecutando then
-			Brush.Color := COLOR_EJECUCION
+		else if Executing then
+			Brush.Color := COLOR_EXECUTING
 		else if BreakPoint then
 			Brush.Color := COLOR_BREAK_POINT
 		else
-			Brush.Color := COLOR_OBJETO;
+			Brush.Color := COLOR_OBJECT;
 
 		Brush.Style := bsSolid;
 		Rectangle(0,0,self.Width,self.Height);
 	end;
 end;
 
-function TSentencia.Ejecutar: TInstruccion;
+function TSentence.Execute: TInstruction;
 begin
 	Self.Error := False;
 	try
-		TAnalizadores.Sentencia(Self.Texto);
-		if not assigned(Salida.Flecha) then
+		TAnalyzers.Sentence(Self.Parameters);
+		if not assigned(Exit.Arrow) then
 			raise Exception.Create('Exit arrow expected!')
 		else
-			Result := Salida.Flecha.UnionHasta.Instruccion;
+			Result := Exit.Arrow.ToJoin.Instruction;
 	except
 		Self.Error := True;
 		raise;
@@ -1110,12 +1107,12 @@ end;
 
 { TCondicion }
 
-procedure TCondicion.PaintObjeto;
+procedure TCondition.PaintObject;
 const
 	N1 = 15;
 	N2 = 15;
 var
-	LPuntos : array[0..3] of TPoint;
+	LPoints : array[0..3] of TPoint;
 begin
 	with Self.Canvas do
 	begin
@@ -1127,56 +1124,56 @@ begin
 
 		if Error then
 			Brush.Color := COLOR_ERROR
-		else if Ejecutando then
-			Brush.Color := COLOR_EJECUCION
+		else if Executing then
+			Brush.Color := COLOR_EXECUTING
 		else if BreakPoint then
 			Brush.Color := COLOR_BREAK_POINT
 		else
-			Brush.Color := COLOR_OBJETO;
+			Brush.Color := COLOR_OBJECT;
 
 		Brush.Style := bsSolid;
 
     // Rombo principal
-		LPuntos[0] := Point(0,Self.Height div 2);
-		LPuntos[1] := Point(Self.Width div 2,0);
-		LPuntos[2] := Point(Self.Width-1,Self.Height div 2);
-		LPuntos[3] := Point(Self.Width div 2,Self.Height-1);
-		Polygon(LPuntos);
+		LPoints[0] := Point(0,Self.Height div 2);
+		LPoints[1] := Point(Self.Width div 2,0);
+		LPoints[2] := Point(Self.Width-1,Self.Height div 2);
+		LPoints[3] := Point(Self.Width div 2,Self.Height-1);
+		Polygon(LPoints);
 
     // Draw true triangle in green
     Pen.Width := 1;
 		Brush.Color := RGBToColor(0,196,0);
-		LPuntos[0] := Point(Self.Width div 2,Self.Height-1);
+		LPoints[0] := Point(Self.Width div 2,Self.Height-1);
 		if Self.Width > Self.Height then
-			LPuntos[1] := Point(Self.Width div 2 - N1, Self.Height - N1 * Self.Height div Self.Width - 1)
+			LPoints[1] := Point(Self.Width div 2 - N1, Self.Height - N1 * Self.Height div Self.Width - 1)
 		else
-			LPuntos[1] := Point(Self.Width * (Self.Height - 2 * N1) div (Self.Height * 2), Self.Height - N1);
+			LPoints[1] := Point(Self.Width * (Self.Height - 2 * N1) div (Self.Height * 2), Self.Height - N1);
 
 		if Self.Width > Self.Height then
-			LPuntos[2] := Point(Self.Width div 2 + N1, Self.Height - N1 * Self.Height div Self.Width - 1)
+			LPoints[2] := Point(Self.Width div 2 + N1, Self.Height - N1 * Self.Height div Self.Width - 1)
 		else
-			LPuntos[2] := Point(Self.Width * (Self.Height + 2 * N1) div (Self.Height * 2), Self.Height - N1);
-		LPuntos[3] := Point(Self.Width div 2,Self.Height-1);
-		Polygon(LPuntos);
+			LPoints[2] := Point(Self.Width * (Self.Height + 2 * N1) div (Self.Height * 2), Self.Height - N1);
+		LPoints[3] := Point(Self.Width div 2,Self.Height-1);
+		Polygon(LPoints);
 
     // Draw false triangle in red
 		Pen.Width := 1;
 		Brush.Color := clRed;
-		LPuntos[0] := Point(Self.Width - 1,Self.Height div 2);
+		LPoints[0] := Point(Self.Width - 1,Self.Height div 2);
 		if Self.Width > Self.Height then
-			LPuntos[1] := Point(Self.Width - N2, Self.Height * (Self.Width - 2 * N2) div (2 * Self.Width))
+			LPoints[1] := Point(Self.Width - N2, Self.Height * (Self.Width - 2 * N2) div (2 * Self.Width))
 		else
-			LPuntos[1] := Point(Self.Width - Self.Width * N2 div Self.Height, Self.Height div 2 - N2);
+			LPoints[1] := Point(Self.Width - Self.Width * N2 div Self.Height, Self.Height div 2 - N2);
 		if Self.Width > Self.Height then
-			LPuntos[2] := Point(Self.Width - N2, Self.Height * (N2 * 2 + Self.Width) div (2 * Self.Width))
+			LPoints[2] := Point(Self.Width - N2, Self.Height * (N2 * 2 + Self.Width) div (2 * Self.Width))
 		else
-			LPuntos[2] := Point(Self.Width - Self.Width * N2 div Self.Height, Self.Height div 2 + N2);
-		LPuntos[3] := Point(Self.Width - 1,Self.Height div 2);
-		Polygon(LPuntos);
+			LPoints[2] := Point(Self.Width - Self.Width * N2 div Self.Height, Self.Height div 2 + N2);
+		LPoints[3] := Point(Self.Width - 1,Self.Height div 2);
+		Polygon(LPoints);
 	end;
 end;
 
-function TCondicion.EstaMouseEnObjeto(AX, AY: Integer): Boolean;
+function TCondition.IsMouseInObject(AX, AY: Integer): Boolean;
 var
 	M1,M2 : Real;
 	X1,Y1,X2,Y2,X3,Y3 : Real;
@@ -1208,47 +1205,47 @@ begin
 	end;
 end;
 
-constructor TCondicion.Create(AOwner: TComponent; AParent: TWinControl);
+constructor TCondition.Create(AOwner: TComponent; AParent: TWinControl);
 begin
   inherited;
-//  Caption := '';
-//	Texto := 'A = B';
-	MuestraCaption := False;
-	MuestraTexto := True;
+//  Comments := '';
+//	Parameters := 'A = B';
+	ShowComments := False;
+	ShowParameters := True;
 end;
 
-procedure TCondicion.DarCapacidades;
+procedure TCondition.SetCapacities;
 begin
-	PuedeMover := True;
-	PuedeTamano := True;
-	PuedeUnionNorte := True;
-	PuedeUnionEste := True;
-	PuedeUnionSur := True;
-	PuedeUnionOeste := False;
+	CanMove := True;
+	CanResize := True;
+	CanNorthJoin := True;
+	CanEastJoin := True;
+	CanSouthJoin := True;
+	CanWestJoin := False;
 
-	Entrada.AceptaEntrada := True;
-	Entrada.AceptaSalida := False;
-	Verdadero.AceptaEntrada := False;
-	Verdadero.AceptaSalida := True;
-	Falso.AceptaEntrada := False;
-	Falso.AceptaSalida := True;
+	Entrada.AcceptEntry := True;
+	Entrada.AcceptExit := False;
+	Verdadero.AcceptEntry := False;
+	Verdadero.AcceptExit := True;
+	Falso.AcceptEntry := False;
+	Falso.AcceptExit := True;
 end;
 
-function TCondicion.Ejecutar: TInstruccion;
+function TCondition.Execute: TInstruction;
 begin
 	Self.Error := False;
 	try
-		if TAnalizadores.Condicion(Texto) then
+		if TAnalyzers.Condition(Parameters) then
 		begin
-			if Not assigned(Verdadero.Flecha) then
+			if Not assigned(Verdadero.Arrow) then
 				raise Exception.Create('Exit arrow expected!')
 			else
-				Result := Verdadero.Flecha.UnionHasta.Instruccion
+				Result := Verdadero.Arrow.ToJoin.Instruction
 		end
 		else
 		begin
-			if assigned(Falso.Flecha) then
-				Result := Falso.Flecha.UnionHasta.Instruccion
+			if assigned(Falso.Arrow) then
+				Result := Falso.Arrow.ToJoin.Instruction
 			else
 				raise Exception.Create('Exit arrow expected!');
 		end;
@@ -1258,67 +1255,67 @@ begin
 	end;
 end;
 
-{ TUnion }
+{ TJoin }
 
-constructor TUnion.Create(AOwner: TComponent; AParent: TWinControl; AInstruccion: TInstruccion);
+constructor TJoin.Create(AOwner: TComponent; AParent: TWinControl; AInstruction: TInstruction);
 begin
 	inherited Create(AOwner);
 	Parent := AParent;
-	Instruccion := AInstruccion;
+	Instruction := AInstruction;
 end;
 
-destructor TUnion.Destroy;
+destructor TJoin.Destroy;
 begin
-	if Assigned(Flecha) then
-		Flecha.Free;	
+	if Assigned(Arrow) then
+		Arrow.Free;
 	inherited;
 end;
 
-function TUnion.GetRect: TRect;
+function TJoin.GetRect: TRect;
 begin
-	if Instruccion<>Nil then
+	if Instruction<>Nil then
 	begin
-		Result.Left := Instruccion.Left - BORDE;
-		Result.Top := Instruccion.Top - BORDE;
-		Result.Right := Instruccion.Left + Instruccion.Width + BORDE - 1;
-		Result.Bottom := Instruccion.Top + Instruccion.Height + BORDE - 1;
+		Result.Left := Instruction.Left - BORDER;
+		Result.Top := Instruction.Top - BORDER;
+		Result.Right := Instruction.Left + Instruction.Width + BORDER - 1;
+		Result.Bottom := Instruction.Top + Instruction.Height + BORDER - 1;
 	end;
 end;
 
-procedure TUnion.OnDestroyFlecha(Sender: TObject);
+procedure TJoin.OnDestroyArrow(Sender: TObject);
 begin
-	Flecha := Nil;
+	Arrow := Nil;
 end;
 
-procedure TUnion.SetFlecha(const Value: TFlecha);
+procedure TJoin.SetArrow(const Value: TArrow);
 begin
-  if FFlecha<>Value then
+  if FArrow<>Value then
   begin
-    FFlecha := Value;
-    NuevaPosicion;
-    if Assigned(Instruccion) then
-      Instruccion.Invalidate;
+    FArrow := Value;
+    NewPosition;
+    if Assigned(Instruction) then
+      Instruction.Invalidate;
   end;
 end;
 
-procedure TUnion.NuevaPosicion;
+procedure TJoin.NewPosition;
 begin
-	if Flecha<>Nil then
+	if Arrow<>Nil then
 	begin
-		if Flecha.UnionDesde=Self then
+		if Arrow.FromJoin=Self then
 		begin
-			Flecha.X1 := Self.X2;
-			Flecha.Y1 := Self.Y2;
+			Arrow.X1 := Self.X2;
+			Arrow.Y1 := Self.Y2;
 		end
 		else
 		begin
-			Flecha.X2 := Self.X2;
-			Flecha.Y2 := Self.Y2;
+			Arrow.X2 := Self.X2;
+			Arrow.Y2 := Self.Y2;
 		end;
 	end;
 end;
 
-procedure TUnion.SetX1(const Value: Integer);
+procedure TJoin.SetX1(const Value: Integer);
 var
 	LScrollBox : TScrollBox;
 begin
@@ -1328,31 +1325,31 @@ begin
 		if Self.Parent is TScrollBox then
 		begin
 			LScrollBox := Self.Parent as TScrollBox;
-			case Direcccion of
-				dNorte: Left := FX1 - BORDE div 2 - LScrollBox.HorzScrollBar.Position;
-				dEste: Left := FX1 - LScrollBox.HorzScrollBar.Position;
-				dSur: Left := FX1 - BORDE div 2 - LScrollBox.HorzScrollBar.Position;
-				dOeste: Left := FX1 - BORDE * 3 div 2 + 1 - LScrollBox.HorzScrollBar.Position;
+			case Direction of
+				diNorth: Left := FX1 - BORDER div 2 - LScrollBox.HorzScrollBar.Position;
+				diEast: Left := FX1 - LScrollBox.HorzScrollBar.Position;
+				diSouth: Left := FX1 - BORDER div 2 - LScrollBox.HorzScrollBar.Position;
+				diWest: Left := FX1 - BORDER * 3 div 2 + 1 - LScrollBox.HorzScrollBar.Position;
 			end;
 		end
 		else
-			case Direcccion of
-				dNorte: Left := FX1 - BORDE div 2;
-				dEste: Left := FX1;
-				dSur: Left := FX1 - BORDE div 2;
-				dOeste: Left := FX1 - BORDE * 3 div 2 + 1;
+			case Direction of
+				diNorth: Left := FX1 - BORDER div 2;
+				diEast: Left := FX1;
+				diSouth: Left := FX1 - BORDER div 2;
+				diWest: Left := FX1 - BORDER * 3 div 2 + 1;
 			end;
-		case Direcccion of
-			dNorte: FX2 := FX1;
-			dEste: FX2 := FX1 + BORDE div 2 * 2;
-			dSur: FX2 := FX1;
-			dOeste: FX2 := Value - BORDE div 2 * 2;
+		case Direction of
+			diNorth: FX2 := FX1;
+			diEast: FX2 := FX1 + BORDER div 2 * 2;
+			diSouth: FX2 := FX1;
+			diWest: FX2 := Value - BORDER div 2 * 2;
 		end;
-		NuevaPosicion;
+		NewPosition;
   end;
 end;
 
-procedure TUnion.SetY1(const Value: Integer);
+procedure TJoin.SetY1(const Value: Integer);
 var
   LScrollBox :  TScrollBox;
 begin
@@ -1362,57 +1359,57 @@ begin
 		if Self.Parent is TScrollBox then
 		begin
 			LScrollBox := Self.Parent as TScrollBox;
-			case Direcccion of
-				dNorte: Top := FY1 - BORDE * 3 div 2 + 1 - LScrollBox.VertScrollBar.Position;
-				dEste: Top := FY1 - BORDE div 2 - LScrollBox.VertScrollBar.Position;
-				dSur: Top := FY1 - LScrollBox.VertScrollBar.Position;
-				dOeste: Top := FY1 - BORDE div 2 - LScrollBox.VertScrollBar.Position;
+			case Direction of
+				diNorth: Top := FY1 - BORDER * 3 div 2 + 1 - LScrollBox.VertScrollBar.Position;
+				diEast: Top := FY1 - BORDER div 2 - LScrollBox.VertScrollBar.Position;
+				diSouth: Top := FY1 - LScrollBox.VertScrollBar.Position;
+				diWest: Top := FY1 - BORDER div 2 - LScrollBox.VertScrollBar.Position;
 			end;
 		end
 		else
-			case Direcccion of
-				dNorte: Top := FY1 - BORDE * 3 div 2 + 1;
-				dEste: Top := FY1 - BORDE div 2;
-				dSur: Top := FY1;
-				dOeste: Top := FY1 - BORDE div 2;
+			case Direction of
+				diNorth: Top := FY1 - BORDER * 3 div 2 + 1;
+				diEast: Top := FY1 - BORDER div 2;
+				diSouth: Top := FY1;
+				diWest: Top := FY1 - BORDER div 2;
 			end;
-		case Direcccion of
-			dNorte: FY2 := FY1 - BORDE div 2 * 2;
-			dEste: FY2 := FY1;
-      dSur: FY2 := FY1 + BORDE div 2 * 2;
-      dOeste: FY2 := FY1;
+		case Direction of
+			diNorth: FY2 := FY1 - BORDER div 2 * 2;
+			diEast: FY2 := FY1;
+      diSouth: FY2 := FY1 + BORDER div 2 * 2;
+      diWest: FY2 := FY1;
     end;
-    NuevaPosicion;
+    NewPosition;
   end;
 end;
 
-procedure TUnion.SetDirecccion(Value: TDireccion);
+procedure TJoin.SetDirection(Value: TDirection);
 var
 	LX1,LY1: Integer;
 begin
-	if Value<>FDirecccion then
+	if Value<>FDirection then
 	begin
 		LX1 := X1;
 		LY1 := Y1;
 		case Value of
-			dNorte, dSur:
+			diNorth, diSouth:
 				begin
-					Self.Width := BORDE;
-					Self.Height := BORDE * 3 div 2;
+					Self.Width := BORDER;
+					Self.Height := BORDER * 3 div 2;
 				end;
-			dEste, dOeste:
+			diEast, diWest:
 				begin
-					Self.Width := BORDE * 3 div 2;
-					Self.Height := BORDE;
+					Self.Width := BORDER * 3 div 2;
+					Self.Height := BORDER;
 				end;
 		end;
-		FDirecccion := Value;
+		FDirection := Value;
 		X1 := LX1;
 		Y1 := LY1;
 	end;
 end;
 
-procedure TUnion.Paint;
+procedure TJoin.Paint;
 begin
 	inherited;
 	with Canvas do
@@ -1424,134 +1421,134 @@ begin
 {$ENDIF}
 		Pen.Color := clBlack;
 //		Pen.Width := 1;
-		case Direcccion of
-			dNorte:
+		case Direction of
+			diNorth:
 				begin
 					MoveTo(Self.Width div 2, Self.Height);
-					LineTo(Self.Width div 2, BORDE div 2);
-					if MouseEnUnion then
+					LineTo(Self.Width div 2, BORDER div 2);
+					if MouseInJoin then
 					begin
 						Brush.Color := clGreen;
-						Rectangle(0,0,Self.Width,BORDE);
+						Rectangle(0,0,Self.Width,BORDER);
 					end
 					else if FSelected then
 					begin
 						Brush.Color := clBlue;
-						Rectangle(0,0,Self.Width,BORDE);
+						Rectangle(0,0,Self.Width,BORDER);
 					end
-					else if not Assigned(Flecha) then
+					else if not Assigned(Arrow) then
 					begin
 						Brush.Color := clRed;
-						Ellipse(BORDE div 4,BORDE div 4,BORDE * 3 div 4 + 1,BORDE * 3 div 4 + 1);
+						Ellipse(BORDER div 4,BORDER div 4,BORDER * 3 div 4 + 1,BORDER * 3 div 4 + 1);
 					end;
 				end;
-			dEste:
+			diEast:
 				begin
 					MoveTo(0, Self.Height div 2);
-					LineTo(BORDE, Self.Height div 2);
-					if MouseEnUnion then
+					LineTo(BORDER, Self.Height div 2);
+					if MouseInJoin then
           begin
             Brush.Color := clGreen;
-						Rectangle(BORDE div 2,0,Self.Width,Self.Height);
+						Rectangle(BORDER div 2,0,Self.Width,Self.Height);
           end
           else if FSelected then
           begin
             Brush.Color := clBlue;
-						Rectangle(BORDE div 2,0,Self.Width,Self.Height);
+						Rectangle(BORDER div 2,0,Self.Width,Self.Height);
 					end
-					else if not Assigned(Flecha) then
+					else if not Assigned(Arrow) then
 					begin
 						Brush.Color := clRed;
-						Ellipse(BORDE * 3 div 4,BORDE div 4,BORDE + 2,BORDE * 3 div 4 + 1);
+						Ellipse(BORDER * 3 div 4,BORDER div 4,BORDER + 2,BORDER * 3 div 4 + 1);
 					end;
 				end;
-			dSur:
+			diSouth:
 				begin
 					MoveTo(Self.Width div 2, 0);
-					LineTo(Self.Width div 2, BORDE);
-					if MouseEnUnion then
+					LineTo(Self.Width div 2, BORDER);
+					if MouseInJoin then
 					begin
 						Brush.Color := clGreen;
-						Rectangle(0,BORDE div 2,Self.Width,Self.Height);
+						Rectangle(0,BORDER div 2,Self.Width,Self.Height);
 					end
 					else if FSelected then
 					begin
 						Brush.Color := clBlue;
-						Rectangle(0,BORDE div 2,Self.Width,Self.Height);
+						Rectangle(0,BORDER div 2,Self.Width,Self.Height);
 					end
-					else if not Assigned(Flecha) then
+					else if not Assigned(Arrow) then
 					begin
 						Brush.Color := clRed;
-						Ellipse(BORDE div 4,BORDE * 3 div 4,BORDE * 3 div 4 +1,BORDE + 2);
+						Ellipse(BORDER div 4,BORDER * 3 div 4,BORDER * 3 div 4 +1,BORDER + 2);
 					end;
 				end;
-			dOeste:
+			diWest:
 				begin
 					MoveTo(Self.Width, Self.Height div 2);
-					LineTo(BORDE div 2, Self.Height div 2);
-					if MouseEnUnion then
+					LineTo(BORDER div 2, Self.Height div 2);
+					if MouseInJoin then
 					begin
 						Brush.Color := clGreen;
-						Rectangle(0,0,BORDE,Self.Height);
+						Rectangle(0,0,BORDER,Self.Height);
 					end
 					else if FSelected then
 					begin
 						Brush.Color := clBlue;
-						Rectangle(0,0,BORDE,Self.Height);
+						Rectangle(0,0,BORDER,Self.Height);
 					end
-					else if not Assigned(Flecha) then
+					else if not Assigned(Arrow) then
 					begin
 						Brush.Color := clRed;
-						Ellipse(BORDE div 4,BORDE div 4,BORDE * 3 div 4 + 1,BORDE-2);
+						Ellipse(BORDER div 4,BORDER div 4,BORDER * 3 div 4 + 1,BORDER-2);
 					end;
 				end;
 		end;
 	end;
 end;
 
-procedure TUnion.CMMouseEnter(var Message: TMessage);
+procedure TJoin.CMMouseEnter(var Message: TMessage);
 begin
-	MouseEnControl := True;
+	MouseInControl := True;
 end;
 
-procedure TUnion.CMMouseLeave(var Message: TMessage);
+procedure TJoin.CMMouseLeave(var Message: TMessage);
 begin
-	MouseEnControl := False;
-	MouseEnUnion := False;
+	MouseInControl := False;
+	MouseInJoin := False;
 end;
 
-procedure TUnion.SetMouseEnControl(const Value: Boolean);
+procedure TJoin.SetMouseInControl(const Value: Boolean);
 begin
-  FMouseEnControl := Value;
+  FMouseInControl := Value;
 end;
 
-procedure TUnion.SetMouseEnUnion(const Value: Boolean);
+procedure TJoin.SetMouseInJoin(const Value: Boolean);
 begin
-	if FMouseEnUnion <> value then
+	if FMouseInJoin <> value then
 	begin
-		FMouseEnUnion := Value;
+		FMouseInJoin := Value;
 		Invalidate;
 	end;
 end;
 
-procedure TUnion.MouseMove(Shift: TShiftState; X, Y: Integer);
+procedure TJoin.MouseMove(Shift: TShiftState; X, Y: Integer);
 begin
   inherited;
-	MouseEnUnion := EstaMouseEnUnion(X,Y);
+	MouseInJoin := EstaMouseInJoin(X,Y);
 end;
 
-function TUnion.EstaMouseEnUnion(X, Y: Integer): Boolean;
+function TJoin.EstaMouseInJoin(X, Y: Integer): Boolean;
 begin
 	Result := False;
-	case Direcccion of
-		dNorte: Result := Y < BORDE;
-		dEste: Result := X > BORDE div 2 - 1;
-		dSur : Result := Y > BORDE div 2 - 1;
-		dOeste : Result := X < BORDE;
+	case Direction of
+		diNorth: Result := Y < BORDER;
+		diEast: Result := X > BORDER div 2 - 1;
+		diSouth : Result := Y > BORDER div 2 - 1;
+		diWest : Result := X < BORDER;
 	end;
 end;
 
-procedure TUnion.SetSelected(const Value: Boolean);
+procedure TJoin.SetSelected(const Value: Boolean);
 begin
 	if FSelected<>Value then
 	begin
@@ -1564,9 +1561,9 @@ begin
 	end;
 end;
 
-{ TFlecha }
+{ TArrow }
 
-procedure TFlecha.Reset;
+procedure TArrow.Reset;
 type
 	TPunto = record
 		Punto: TPoint;
@@ -1576,15 +1573,15 @@ type
 		Arcos: array of integer;
 	end;
 var
-	Puntos : array of TPunto;
+	Points : array of TPunto;
 	R1,R2: TRect;
 
-	procedure CrearPuntos;
+	procedure CrearPoints;
 
 		procedure Insertar(AX,AY: Integer);
 		begin
-			SetLength(Puntos,Length(Puntos)+1);
-			with Puntos[High(Puntos)] do
+			SetLength(Points,Length(Points)+1);
+			with Points[High(Points)] do
 			begin
 				Punto.X := AX; Punto.Y := AY;
 				Distancia := MaxInt; Asignado := False;
@@ -1593,8 +1590,8 @@ var
 		end; //Insertar
 
 	begin
-		SetLength(Puntos,0);
-		Insertar(UnionDesde.X2,UnionDesde.Y2);
+		SetLength(Points,0);
+		Insertar(FromJoin.X2,FromJoin.Y2);
 
 		Insertar(R1.Left,R1.Top);
 		Insertar(R1.Right,R1.Top);
@@ -1606,8 +1603,8 @@ var
 		Insertar(R2.Left,R2.Bottom);
 		Insertar(R2.Right,R2.Bottom);
 
-		Insertar(UnionHasta.X2,UnionHasta.Y2);
-	end; // CrearPuntos
+		Insertar(ToJoin.X2,ToJoin.Y2);
+	end; // CrearPoints
 
 	procedure CrearArcos;
 	var
@@ -1657,19 +1654,19 @@ var
 		end; // Secantes
 
 	begin
-		for j := 0 to High(Puntos) do
-			for k := j+1 to High(Puntos) do
+		for j := 0 to High(Points) do
+			for k := j+1 to High(Points) do
 				if j<>k then
 					begin
-						if not Secantes(Puntos[j].Punto,Puntos[k].Punto,R1)
-							and not Secantes(Puntos[j].Punto,Puntos[k].Punto,R2) then
+						if not Secantes(Points[j].Punto,Points[k].Punto,R1)
+							and not Secantes(Points[j].Punto,Points[k].Punto,R2) then
 						begin
-							with Puntos[j] do
+							with Points[j] do
 							begin
 								SetLength(Arcos,Length(Arcos)+1);
 								Arcos[High(Arcos)] := k;
 							end;
-							with Puntos[k] do
+							with Points[k] do
 							begin
 								SetLength(Arcos,Length(Arcos)+1);
 								Arcos[High(Arcos)] := j;
@@ -1690,60 +1687,60 @@ var
 		Act,Min : integer;
 		DistMin : Real;
 	begin
-		Puntos[0].Asignado := True;
-		Puntos[0].Distancia := 0;
+		Points[0].Asignado := True;
+		Points[0].Distancia := 0;
 		Act := 0;
-		while not Puntos[High(Puntos)].Asignado do begin
-			for j := 0 to High(Puntos[Act].Arcos) do
+		while not Points[High(Points)].Asignado do begin
+			for j := 0 to High(Points[Act].Arcos) do
 			begin
-				if not Puntos[Puntos[Act].Arcos[j]].Asignado then
+				if not Points[Points[Act].Arcos[j]].Asignado then
 				begin
-					DistMin := Puntos[Act].Distancia +
-						Dist(Puntos[Act].Punto,Puntos[Puntos[Act].Arcos[j]].Punto);
-					if (Puntos[Puntos[Act].Arcos[j]].Distancia>DistMin) then
+					DistMin := Points[Act].Distancia +
+						Dist(Points[Act].Punto,Points[Points[Act].Arcos[j]].Punto);
+					if (Points[Points[Act].Arcos[j]].Distancia>DistMin) then
 					begin
-						Puntos[Puntos[Act].Arcos[j]].Distancia := DistMin;
-						Puntos[Puntos[Act].Arcos[j]].Desde := Act;
+						Points[Points[Act].Arcos[j]].Distancia := DistMin;
+						Points[Points[Act].Arcos[j]].Desde := Act;
 					end;
 				end;
 			end;
 
 			DistMin := MaxInt;
 			Min := -1;
-			for j := 0 to High(Puntos) do
+			for j := 0 to High(Points) do
 			begin
-				if not Puntos[j].Asignado and (Puntos[j].Distancia<DistMin) then
+				if not Points[j].Asignado and (Points[j].Distancia<DistMin) then
 				begin
-					DistMin := Puntos[j].Distancia;
+					DistMin := Points[j].Distancia;
 					Min := j;
 				end;
 			end;
 
-			Puntos[Min].Asignado := True;
+			Points[Min].Asignado := True;
 			Act := Min;
 		end;
 	end; // CrearRuta
 
-	procedure CrearSegmentos;
+	procedure CrearSegments;
 
-		procedure NuevoSegmento(ADireccion: TDireccion;AX1,AY1,AX2,AY2:Integer);
-		var Aux: TSegmento;
+		procedure NuevoSegment(ADirection: TDirection;AX1,AY1,AX2,AY2:Integer);
+		var Aux: TSegment;
 		begin
-				Aux := TSegmento.Create(Self,Parent);
-				Segmentos.Add(Aux);
+				Aux := TSegment.Create(Self,Parent);
+				Segments.Add(Aux);
 				Aux.Parent := Self.Parent;
-				Aux.Direccion := ADireccion;
+				Aux.Direction := ADirection;
 				Aux.X1 := AX1;
 				Aux.Y1 := AY1;
 				Aux.X2 := AX2;
 				Aux.Y2 := AY2;
 				Aux.SendToBack;
-		end; // NuevoSegmento;
+		end; // NuevoSegment;
 
 	type
 		TRuta = record
 			I : Integer;
-			D : TDireccion;
+			D : TDirection;
 		end;
 	var
 		Ruta : Array of TRuta;
@@ -1751,113 +1748,113 @@ var
 	begin
 		SetLength(Ruta,1);
 		Ruta[0].I := 9;
-		case UnionHasta.Direcccion of
-			dNorte,dSur,dVertical: Ruta[0].D := dVertical;
-			dEste,dOeste,dHorizontal: Ruta[0].D := dHorizontal;
+		case ToJoin.Direction of
+			diNorth,diSouth,diVertical: Ruta[0].D := diVertical;
+			diEast,diWest,diHorizontal: Ruta[0].D := diHorizontal;
 		end;
 		while Ruta[High(Ruta)].I<>0 do
 		begin
 			SetLength(Ruta,Length(Ruta)+1);
-			Ruta[High(Ruta)].I := Puntos[Ruta[High(Ruta)-1].I].Desde;
-			Ruta[High(Ruta)].D := dIndefinida;
+			Ruta[High(Ruta)].I := Points[Ruta[High(Ruta)-1].I].Desde;
+			Ruta[High(Ruta)].D := deUnknown;
 		end;
-		case UnionDesde.Direcccion of
-			dNorte,dSur,dVertical: Ruta[High(Ruta)].D := dVertical;
-			dEste,dOeste,dHorizontal: Ruta[High(Ruta)].D := dHorizontal;
+		case FromJoin.Direction of
+			diNorth,diSouth,diVertical: Ruta[High(Ruta)].D := diVertical;
+			diEast,diWest,diHorizontal: Ruta[High(Ruta)].D := diHorizontal;
 		end;
 
 		for j := High(Ruta)-1 downto 1 do
-			if Ruta[j].D=dIndefinida then
+			if Ruta[j].D=deUnknown then
 			begin
-				if Puntos[Ruta[j].I].Punto.X=Puntos[Ruta[j+1].I].Punto.X then
-					Ruta[j].D := dVertical
-				else if Puntos[Ruta[j].I].Punto.Y=Puntos[Ruta[j+1].I].Punto.Y then
-					Ruta[j].D := dHorizontal
-				else if Puntos[Ruta[j].I].Punto.X=Puntos[Ruta[j-1].I].Punto.X then
-					Ruta[j].D := dVertical
-				else if Puntos[Ruta[j].I].Punto.Y=Puntos[Ruta[j-1].I].Punto.Y then
-					Ruta[j].D := dHorizontal;
+				if Points[Ruta[j].I].Punto.X=Points[Ruta[j+1].I].Punto.X then
+					Ruta[j].D := diVertical
+				else if Points[Ruta[j].I].Punto.Y=Points[Ruta[j+1].I].Punto.Y then
+					Ruta[j].D := diHorizontal
+				else if Points[Ruta[j].I].Punto.X=Points[Ruta[j-1].I].Punto.X then
+					Ruta[j].D := diVertical
+				else if Points[Ruta[j].I].Punto.Y=Points[Ruta[j-1].I].Punto.Y then
+					Ruta[j].D := diHorizontal;
 			end;
 
 		for j := High(Ruta) downto 1 do
 		begin
-			LX1 := Puntos[Ruta[j].I].Punto.X;
-			LY1 := Puntos[Ruta[j].I].Punto.Y;
-			LX2 := Puntos[Ruta[j-1].I].Punto.X;
-			LY2 := Puntos[Ruta[j-1].I].Punto.Y;
+			LX1 := Points[Ruta[j].I].Punto.X;
+			LY1 := Points[Ruta[j].I].Punto.Y;
+			LX2 := Points[Ruta[j-1].I].Punto.X;
+			LY2 := Points[Ruta[j-1].I].Punto.Y;
 
-			if (Ruta[j].D=dHorizontal)and(Ruta[j-1].D=dHorizontal) then
+			if (Ruta[j].D=diHorizontal)and(Ruta[j-1].D=diHorizontal) then
 			begin
 				if LY1=LY2 then
-					NuevoSegmento(dHorizontal,LX1,LY1,LX2,0)
+					NuevoSegment(diHorizontal,LX1,LY1,LX2,0)
 				else
 				begin
-					NuevoSegmento(dHorizontal,LX1,LY1,(LX1+LX2) div 2,0);
-					NuevoSegmento(dVertical,(LX1+LX2) div 2,LY1,0,LY2);
-					NuevoSegmento(dHorizontal,(LX1+LX2) div 2,LY2,LX2,0);
+					NuevoSegment(diHorizontal,LX1,LY1,(LX1+LX2) div 2,0);
+					NuevoSegment(diVertical,(LX1+LX2) div 2,LY1,0,LY2);
+					NuevoSegment(diHorizontal,(LX1+LX2) div 2,LY2,LX2,0);
 				end;
 			end
-			else if (Ruta[j].D=dVertical)and(Ruta[j-1].D=dVertical) then
+			else if (Ruta[j].D=diVertical)and(Ruta[j-1].D=diVertical) then
 			begin
 				if LX1=LX2 then
-					NuevoSegmento(dVertical,LX1,LY1,0,LY2)
+					NuevoSegment(diVertical,LX1,LY1,0,LY2)
 				else
 				begin
-					NuevoSegmento(dVertical,LX1,LY1,0,(LY1+LY2) div 2);
-					NuevoSegmento(dHorizontal,LX1,(LY1+LY2) div 2,LX2,0);
-					NuevoSegmento(dVertical,LX2,(LY1+LY2) div 2,0,LY2);
+					NuevoSegment(diVertical,LX1,LY1,0,(LY1+LY2) div 2);
+					NuevoSegment(diHorizontal,LX1,(LY1+LY2) div 2,LX2,0);
+					NuevoSegment(diVertical,LX2,(LY1+LY2) div 2,0,LY2);
 				end;
-			end else if (Ruta[j].D=dHorizontal)and(Ruta[j-1].D=dVertical) then
+			end else if (Ruta[j].D=diHorizontal)and(Ruta[j-1].D=diVertical) then
 			begin
 				if LX1<>LX2 then
-					NuevoSegmento(dHorizontal,LX1,LY1,LX2,0);
+					NuevoSegment(diHorizontal,LX1,LY1,LX2,0);
 				if LY1<>LY2 then
-					NuevoSegmento(dVertical,LX2,LY1,0,LY2);
-			end else if (Ruta[j].D=dVertical)and(Ruta[j-1].D=dHorizontal) then
+					NuevoSegment(diVertical,LX2,LY1,0,LY2);
+			end else if (Ruta[j].D=diVertical)and(Ruta[j-1].D=diHorizontal) then
 			begin
 				if LY1<>LY2 then
-					NuevoSegmento(dVertical,LX1,LY1,0,LY2);
+					NuevoSegment(diVertical,LX1,LY1,0,LY2);
 				if LX1<>LX2 then
-					NuevoSegmento(dHorizontal,LX1,LY2,LX2,0);
+					NuevoSegment(diHorizontal,LX1,LY2,LX2,0);
 			end;
 		end;
-	end; // CrearSegmentos;
+	end; // CrearSegments;
 
 var
 	j : integer;
 begin
-	if Not Assigned(UnionDesde) or not Assigned(UnionHasta) then
+	if Not Assigned(FromJoin) or not Assigned(ToJoin) then
 		Exit;
 
-	for j := 0 to Segmentos.Count-1 do
-		TSegmento(Segmentos.Items[j]).Free;
-	Segmentos.Clear;
+	for j := 0 to Segments.Count-1 do
+		TSegment(Segments.Items[j]).Free;
+	Segments.Clear;
 
-	R1 := UnionDesde.Rect;
-	R2 := UnionHasta.Rect;
-	CrearPuntos;
+	R1 := FromJoin.Rect;
+	R2 := ToJoin.Rect;
+	CrearPoints;
 	CrearArcos;
 	CrearRuta;
-	CrearSegmentos;
+	CrearSegments;
 
-	Reducir;
+	Reduce;
 end;
 
-constructor TFlecha.Create(AOwner: TComponent; AParent: TWinControl);
+constructor TArrow.Create(AOwner: TComponent; AParent: TWinControl);
 begin
 	inherited Create(AOwner);
 	Parent := AParent;
-  SetLength(FPuntos,0);
-	FSegmentos := TList.Create;
+  SetLength(FPoints,0);
+	FSegments := TList.Create;
 end;
 
-destructor TFlecha.Destroy;
+destructor TArrow.Destroy;
 begin
-	FSegmentos.Free;
-	if Assigned(FUnionDesde) then
-		FUnionDesde.Flecha := Nil;
-	if Assigned(FUnionHasta) then
-		FUnionHasta.Flecha := Nil;
+	FSegments.Free;
+	if Assigned(FFromJoin) then
+		FFromJoin.Arrow := Nil;
+	if Assigned(FToJoin) then
+		FToJoin.Arrow := Nil;
 	if Assigned(FOnDestroy2) then
 		FOnDestroy2(Self);
 	if Assigned(FOnDestroy) then
@@ -1865,60 +1862,60 @@ begin
 	inherited;
 end;
 
-function TFlecha.GetAnterior(ASegmento: TSegmento): TSegmento;
+function TArrow.GetPrevious(ASegment: TSegment): TSegment;
 var
 	i : integer;
 begin
-	i := FSegmentos.IndexOf(ASegmento);
+	i := FSegments.IndexOf(ASegment);
 	if i <= 0 then
 		result := Nil
 	else
-		Result := TSegmento(FSegmentos.Items[i-1]);
+		Result := TSegment(FSegments.Items[i-1]);
 end;
 
-function TFlecha.GetD1: TDireccion;
+function TArrow.GetD1: TDirection;
 begin
-	Result := UnionDesde.Direcccion;
+	Result := FromJoin.Direction;
 end;
 
-function TFlecha.GetD2: TDireccion;
+function TArrow.GetD2: TDirection;
 begin
-	Result := UnionHasta.Direcccion;
+	Result := ToJoin.Direction;
 end;
 
-function TFlecha.GetSiguiente(ASegmento: TSegmento): TSegmento;
+function TArrow.GetNext(ASegment: TSegment): TSegment;
 var
 	i : integer;
 begin
-	i := FSegmentos.IndexOf(ASegmento);
-	if i >= FSegmentos.Count-1 then
+	i := FSegments.IndexOf(ASegment);
+	if i >= FSegments.Count-1 then
 		result := Nil
 	else
-		Result := TSegmento(FSegmentos.Items[i+1]);
+		Result := TSegment(FSegments.Items[i+1]);
 end;
 
-procedure TFlecha.MoverSegmento(ASegmento: TSegmento; DX, DY: Integer;
-	ACrearInicial: Boolean = true; ACrearFinal: Boolean = true);
+procedure TArrow.MoveSegment(ASegment: TSegment; DX, DY: Integer;
+	ACreateBegin: Boolean = true; ACreateEnding: Boolean = true);
 var
-	A,S : TSegmento;
+	A,S : TSegment;
 
 	procedure PrepararInicio;
-	var Aux : TSegmento;
+	var Aux : TSegment;
 	begin
-		Aux := TSegmento.Create(Self,Parent);
-		FSegmentos.Insert(0,Aux);
+		Aux := TSegment.Create(Self,Parent);
+		FSegments.Insert(0,Aux);
 		Aux.Parent := Parent;
 		Aux.X1 := X1;
 		Aux.Y1 := Y1;
-		case ASegmento.Direccion of
-			dEste,dOeste,dHorizontal:
+		case ASegment.Direction of
+			diEast,diWest,diHorizontal:
 				begin
-					Aux.Direccion := dVertical;
+					Aux.Direction := diVertical;
 					Aux.Y2 := Y1;
 				end;
-			dNorte,dSur,dVertical:
+			diNorth,diSouth,diVertical:
 				begin
-					Aux.Direccion := dHorizontal;
+					Aux.Direction := diHorizontal;
 					Aux.X2 := X1;
 				end;
 {$IFDEF DEBUG}
@@ -1930,22 +1927,22 @@ var
 	end; // PrepararInicio
 
 	procedure PrepararFin;
-	var Aux : TSegmento;
+	var Aux : TSegment;
 	begin
-		Aux := TSegmento.Create(Self,Parent);
-		FSegmentos.Add(Aux);
+		Aux := TSegment.Create(Self,Parent);
+		FSegments.Add(Aux);
 		Aux.Parent := Parent;
 		Aux.X1 := X2;
 		Aux.Y1 := Y2;
-		case ASegmento.Direccion of
-			dNorte,dSur,dVertical:
+		case ASegment.Direction of
+			diNorth,diSouth,diVertical:
 				begin
-					Aux.Direccion := dHorizontal;
+					Aux.Direction := diHorizontal;
 					Aux.X2 := X2;
 				end;
-			dEste,dOeste,dHorizontal:
+			diEast,diWest,diHorizontal:
 				begin
-					Aux.Direccion := dVertical;
+					Aux.Direction := diVertical;
 					Aux.Y2 := Y2;
 				end;
 {$IFDEF DEBUG}
@@ -1957,238 +1954,236 @@ var
 	end; // PrepararFin
 
 begin
-	A := GetAnterior(ASegmento);
-	S := GetSiguiente(ASegmento);
-	if ACrearInicial and not Assigned(A) then
+	A := GetPrevious(ASegment);
+	S := GetNext(ASegment);
+	if ACreateBegin and not Assigned(A) then
 		PrepararInicio;
-	if ACrearFinal and not Assigned(S) then
+	if ACreateEnding and not Assigned(S) then
 		PrepararFin;
 
-	case ASegmento.Direccion of
-		dHorizontal:
+	case ASegment.Direction of
+		diHorizontal:
 			begin
-				ASegmento.Y1 := ASegmento.Y1 + DY;
+				ASegment.Y1 := ASegment.Y1 + DY;
 				if A<>Nil then
 					A.Y2 := A.Y2 + DY;
 				if S<>Nil then
 					S.Y1 := S.Y1 + DY;
 			end;
-		dVertical:
+		diVertical:
 			begin
-				ASegmento.X1 := ASegmento.X1 + DX;
+				ASegment.X1 := ASegment.X1 + DX;
 				if A<>Nil then
 					A.X2 := A.X2 + DX;
 				if S<>Nil then
 					S.X1 := S.X1 + DX;
 			end;
 	end;
-  if Assigned(FOnModificar) then
-    OnModificar(Self);
+  if Assigned(FOnModify) then
+    OnModify(Self);
 end;
 
-procedure TFlecha.Repaint;
+procedure TArrow.Repaint;
 var
 	j : integer;
 begin
-	for j := 0 to fSegmentos.Count-1 do
-		TSegmento(FSegmentos.Items[j]).Repaint;
+	for j := 0 to fSegments.Count-1 do
+		TSegment(FSegments.Items[j]).Repaint;
 end;
 
-procedure TFlecha.SetParent(const Value: TWinControl);
+procedure TArrow.SetParent(const Value: TWinControl);
 var
 	j : integer;
 begin
 	if FParent<>Value then
 	begin
 		FParent := Value;
-		if Assigned(FSegmentos) then
-			for j := 0 to Segmentos.Count-1 do
-				TSegmento(Segmentos.Items[j]).Parent := FParent;
+		if Assigned(FSegments) then
+			for j := 0 to Segments.Count-1 do
+				TSegment(Segments.Items[j]).Parent := FParent;
 	end;
 end;
 
-procedure TFlecha.SetUnionDesde(const Value: TUnion);
+procedure TArrow.SetFromJoin(const Value: TJoin);
 begin
-	if Value<>FUnionDesde then
+	if Value<>FFromJoin then
 	begin
-    if Assigned(FUnionDesde) then
-      FUnionDesde.Flecha := Nil;
-		FUnionDesde := Value;
-		FUnionDesde.Flecha := Self;
-		OnDestroy2 := @FUnionDesde.OnDestroyFlecha;
-//		Reset;
+    if Assigned(FFromJoin) then
+      FFromJoin.Arrow := Nil;
+		FFromJoin := Value;
+		FFromJoin.Arrow := Self;
+		OnDestroy2 := @FFromJoin.OnDestroyArrow;
 	end;
 end;
 
-procedure TFlecha.SetUnionHasta(const Value: Tunion);
+procedure TArrow.SetToJoin(const Value: TJoin);
 begin
-	if Value<>FUnionHasta then
+	if Value<>FToJoin then
 	begin
-    if Assigned(FUnionHasta) then
-      FUnionHasta.Flecha := Nil;
-		FUnionHasta := Value;
-		FUnionHasta.Flecha := Self;
-		OnDestroy2 := @FUnionHasta.OnDestroyFlecha;
-//		Reset;
+    if Assigned(FToJoin) then
+      FToJoin.Arrow := Nil;
+		FToJoin := Value;
+		FToJoin.Arrow := Self;
+		OnDestroy2 := @FToJoin.OnDestroyArrow;
 	end;
 end;
 
-procedure TFlecha.SetX1(const Value: integer);
+procedure TArrow.SetX1(const Value: integer);
 var
 	DX : integer;
-	LSegmento: TSegmento;
+	LSegment: TSegment;
 begin
   if X1<>Value then
   begin
-    if Segmentos.Count=0 then
+    if Segments.Count=0 then
       Reset
     else
     begin
-      LSegmento := TSegmento(Segmentos.Items[0]);
-      case LSegmento.Direccion of
-        dHorizontal:
-            LSegmento.X1 := Value;
-        dVertical:
+      LSegment := TSegment(Segments.Items[0]);
+      case LSegment.Direction of
+        diHorizontal:
+            LSegment.X1 := Value;
+        diVertical:
           begin
-            DX := Value - LSegmento.X1;
-            MoverSegmento(LSegmento,DX,0,False,True);
+            DX := Value - LSegment.X1;
+            MoveSegment(LSegment,DX,0,False,True);
           end;
         else
           raise Exception.Create('Direction error!');
       end;
-      Reducir;
+      Reduce;
     end;
     FX1 := Value;
   end;
 end;
 
-procedure TFlecha.SetX2(const Value: integer);
+procedure TArrow.SetX2(const Value: integer);
 var
 	DX : integer;
-	LSegmento: TSegmento;
+	LSegment: TSegment;
 begin
 	if X2<>Value then
 	begin
-		if Segmentos.Count=0 then
+		if Segments.Count=0 then
 			Reset
 		else
 		begin
-			LSegmento := TSegmento(Segmentos.Items[Segmentos.Count-1]);
-			case LSegmento.Direccion of
-				dHorizontal:
-						LSegmento.X2 := Value;
-				dVertical:
+			LSegment := TSegment(Segments.Items[Segments.Count-1]);
+			case LSegment.Direction of
+				diHorizontal:
+						LSegment.X2 := Value;
+				diVertical:
 					begin
-						DX := Value - LSegmento.X2;
-						MoverSegmento(LSegmento,DX,0,True,False);
+						DX := Value - LSegment.X2;
+						MoveSegment(LSegment,DX,0,True,False);
 					end;
 				else
 					raise Exception.Create('Direction error!');
 			end;
-			Reducir;
+			Reduce;
 		end;
 		FX2 := Value;
 	end;
 end;
 
-procedure TFlecha.SetY1(const Value: integer);
+procedure TArrow.SetY1(const Value: integer);
 var
 	DY : integer;
-	LSegmento: TSegmento;
+	LSegment: TSegment;
 begin
   if Y1<>Value then
   begin
-    if Segmentos.Count=0 then
+    if Segments.Count=0 then
     begin
       Reset;
     end
     else
     begin
-      LSegmento := TSegmento(Segmentos.Items[0]);
-      case LSegmento.Direccion of
-        dVertical:
-						LSegmento.Y1 := Value;
-        dHorizontal:
+      LSegment := TSegment(Segments.Items[0]);
+      case LSegment.Direction of
+        diVertical:
+						LSegment.Y1 := Value;
+        diHorizontal:
           begin
-            DY := Value - LSegmento.Y1;
-            MoverSegmento(LSegmento,0,DY,False,True);
+            DY := Value - LSegment.Y1;
+            MoveSegment(LSegment,0,DY,False,True);
 					end;
 				else
 					raise Exception.Create('Direction error!');
 			end;
-			Reducir;
+			Reduce;
 		end;
 		FY1 := Value;
 	end;
 end;
 
-procedure TFlecha.SetY2(const Value: integer);
+procedure TArrow.SetY2(const Value: integer);
 var
 	DY : integer;
-	LSegmento: TSegmento;
+	LSegment: TSegment;
 begin
 	if Y2<>Value then
 	begin
-		if Segmentos.Count=0 then
+		if Segments.Count=0 then
 			Reset
 		else
     begin
-      LSegmento := TSegmento(Segmentos.Items[Segmentos.Count-1]);
-      case LSegmento.Direccion of
-        dVertical:
-            LSegmento.Y2 := Value;
-        dHorizontal:
+      LSegment := TSegment(Segments.Items[Segments.Count-1]);
+      case LSegment.Direction of
+        diVertical:
+            LSegment.Y2 := Value;
+        diHorizontal:
           begin
-            DY := Value - LSegmento.Y2;
-            MoverSegmento(LSegmento,0,DY,True,False);
+            DY := Value - LSegment.Y2;
+            MoveSegment(LSegment,0,DY,True,False);
           end;
         else
           raise Exception.Create('Direction error!');
       end;
-      Reducir;
+      Reduce;
     end;
     FY2 := Value;
   end;
 end;
 
-procedure TFlecha.Reducir;
+procedure TArrow.Reduce;
 var
 	j : integer;
 begin
-//  if (X1<>X2)and(Y1<>Y2)and(Segmentos.Count=0) then
+//  if (X1<>X2)and(Y1<>Y2)and(Segments.Count=0) then
 //    Reset;
 	j := 0;
-	while j<=Segmentos.Count-1 do
+	while j<=Segments.Count-1 do
 	begin
-		if (TSegmento(Segmentos.Items[j]).Direccion = dHorizontal)
-			and(TSegmento(Segmentos.Items[j]).X1 = TSegmento(Segmentos.Items[j]).X2)
+		if (TSegment(Segments.Items[j]).Direction = diHorizontal)
+			and(TSegment(Segments.Items[j]).X1 = TSegment(Segments.Items[j]).X2)
 			and (j>0) then
 		begin
-			TSegmento(Segmentos.Items[j]).Free;
-			Segmentos.Delete(j);
+			TSegment(Segments.Items[j]).Free;
+			Segments.Delete(j);
 			j := -1;
 		end
-		else if (TSegmento(Segmentos.Items[j]).Direccion = dVertical)
-			and(TSegmento(Segmentos.Items[j]).Y1 = TSegmento(Segmentos.Items[j]).Y2)
+		else if (TSegment(Segments.Items[j]).Direction = diVertical)
+			and(TSegment(Segments.Items[j]).Y1 = TSegment(Segments.Items[j]).Y2)
 			and (j>0) then
 		begin
-			TSegmento(Segmentos.Items[j]).Free;
-			Segmentos.Delete(j);
+			TSegment(Segments.Items[j]).Free;
+			Segments.Delete(j);
 			j := -1;
 		end
-		else if j<Segmentos.Count-1 then
+		else if j<Segments.Count-1 then
 		begin
-			if TSegmento(Segmentos.Items[j]).Direccion =
-				TSegmento(Segmentos.Items[j+1]).Direccion then
+			if TSegment(Segments.Items[j]).Direction =
+				TSegment(Segments.Items[j+1]).Direction then
 			begin
-				if TSegmento(Segmentos.Items[j]).Direccion = dHorizontal then
-					TSegmento(Segmentos.Items[j]).X2 :=
-						TSegmento(Segmentos.Items[j+1]).X2
+				if TSegment(Segments.Items[j]).Direction = diHorizontal then
+					TSegment(Segments.Items[j]).X2 :=
+						TSegment(Segments.Items[j+1]).X2
 				else
-					TSegmento(Segmentos.Items[j]).Y2 :=
-						TSegmento(Segmentos.Items[j+1]).Y2;
-				TSegmento(Segmentos.Items[j+1]).Free;
-				Segmentos.Delete(j+1);
+					TSegment(Segments.Items[j]).Y2 :=
+						TSegment(Segments.Items[j+1]).Y2;
+				TSegment(Segments.Items[j+1]).Free;
+				Segments.Delete(j+1);
 				j := -1;
 			end;
 		end;                                 
@@ -2196,42 +2191,42 @@ begin
 	end;
 end;
 
-procedure TFlecha.Mostrar;
+procedure TArrow.Show;
 var
   j : integer;
 begin
-   for j := 0 to Segmentos.Count-1 do
-    TSegmento(Segmentos.Items[j]).Show;
+   for j := 0 to Segments.Count-1 do
+    TSegment(Segments.Items[j]).Show;
 end;
 
-procedure TFlecha.Ocultar;
+procedure TArrow.Hide;
 var
   j : integer;
 begin
-   for j := 0 to Segmentos.Count-1 do
-    TSegmento(Segmentos.Items[j]).Hide;
+   for j := 0 to Segments.Count-1 do
+    TSegment(Segments.Items[j]).Hide;
 end;
 
-procedure TFlecha.DesplazarTodo(DX, DY: Integer);
+procedure TArrow.MoveAll(DX, DY: Integer);
 var
 	j : integer;
-	Lsegmento : TSegmento;
+	LSegment : TSegment;
 begin
-	for j := 1 to Segmentos.Count-2 do
+	for j := 1 to Segments.Count-2 do
 	begin
-		LSegmento := TSegmento(Segmentos.Items[j]);
-		MoverSegmento(Lsegmento,DX,DY,False,False);
+		LSegment := TSegment(Segments.Items[j]);
+		MoveSegment(LSegment,DX,DY,False,False);
 	end;
 end;
 
-{ TSegmento }
+{ TSegment }
 
-procedure TSegmento.Actualizar(Sender: TObject);
+procedure TSegment.Update(Sender: TObject);
 begin
 	Invalidate;
 end;
 
-procedure TSegmento.ActualizarLimites;
+procedure TSegment.UpdateLimits;
 var
 	L,T,H,W : integer;
   LScrollBox : TScrollBox;
@@ -2240,19 +2235,19 @@ begin
 	T := 0;
 	H := 0;
 	W := 0;
-	case Direccion of
-		dHorizontal :
+	case Direction of
+		diHorizontal :
 			begin
 				L := FX1;
-				T := FY1 - Ancho div 2;
+				T := FY1 - Width div 2;
 				W := FX2 - FX1;
-				H := Ancho;
+				H := Width;
 			end;
-		dVertical :
+		diVertical :
 			begin
-				L := FX1 - Ancho div 2;
+				L := FX1 - Width div 2;
 				T := FY1;
-				W := Ancho;
+				W := Width;
 				H := FY2 - FY1;
 			end;
 	end;
@@ -2286,68 +2281,68 @@ begin
   end;
 end;
 
-constructor TSegmento.Create(AOwner: TComponent; AParent: TWinControl);
+constructor TSegment.Create(AOwner: TComponent; AParent: TWinControl);
 begin
 	inherited Create(AOwner);
 
-	Assert(Assigned(GOnSegmentoMouseDown));
-	Self.OnMouseDown := GOnSegmentoMouseDown;
-	Assert(Assigned(GOnSegmentoMouseUp));
-	Self.OnMouseUp := GOnSegmentoMouseUp;
-	Assert(Assigned(GOnSegmentoMouseMove));
-	Self.OnMouseMove := GOnSegmentoMouseMove;
+	Assert(Assigned(GOnSegmentMouseDown));
+	Self.OnMouseDown := GOnSegmentMouseDown;
+	Assert(Assigned(GOnSegmentMouseUp));
+	Self.OnMouseUp := GOnSegmentMouseUp;
+	Assert(Assigned(GOnSegmentMouseMove));
+	Self.OnMouseMove := GOnSegmentMouseMove;
 
 	ControlStyle := ControlStyle + [csReplicatable] - [csOpaque];
 	Parent := AParent;
-	Ancho := 5;
+	Width := 5;
 	FPen := TPen.Create;
-	FPen.OnChange := @Actualizar;
-	ActualizarLimites;
+	FPen.OnChange := @Update;
+	UpdateLimits;
 end;
 
-destructor TSegmento.Destroy;
+destructor TSegment.Destroy;
 begin
 	FPen.Free;
 	inherited;
 end;
 
-function TSegmento.GetFlecha: TFlecha;
+function TSegment.GetArrow: TArrow;
 begin
-	Result := Owner as TFlecha;
+	Result := Owner as TArrow;
 end;
 
-procedure TSegmento.MouseDown(Button: TMouseButton; Shift: TShiftState; X,
+procedure TSegment.MouseDown(Button: TMouseButton; Shift: TShiftState; X,
   Y: Integer);
 begin
   inherited;
 	if Button = mbLeft then
 	begin
-		FPos := Point(X,Y);
-		FArrastrando := True;
+		FPosition := Point(X,Y);
+		FDragging := True;
 	end;
 end;
 
-procedure TSegmento.MouseMove(Shift: TShiftState; X, Y: Integer);
+procedure TSegment.MouseMove(Shift: TShiftState; X, Y: Integer);
 begin
   inherited;
-	if Arrastrando then
-		Flecha.MoverSegmento(Self,X - FPos.X,Y - FPos.Y,True);
+	if Dragging then
+		Arrow.MoveSegment(Self,X - FPosition.X,Y - FPosition.Y,True);
 end;
 
-procedure TSegmento.MouseUp(Button: TMouseButton; Shift: TShiftState; X,
+procedure TSegment.MouseUp(Button: TMouseButton; Shift: TShiftState; X,
   Y: Integer);
 begin
   inherited;
 	if Button = mbLeft then
 	begin
-		FArrastrando := False;
-		Flecha.Reducir;
+		FDragging := False;
+		Arrow.Reduce;
 	end;
 end;
 
-procedure TSegmento.Paint;
+procedure TSegment.Paint;
 begin
-//	ActualizarLimites;
+//	UpdateLimites;
 
 	with Canvas do
 	begin
@@ -2360,38 +2355,38 @@ begin
 {$ENDIF}
 	end;
 
-	case Direccion of
-		dHorizontal:
+	case Direction of
+		diHorizontal:
 			begin
 				with Canvas do
 				begin
-					MoveTo(0, Ancho div 2);
-					LineTo(Self.Width, Ancho div 2);
+					MoveTo(0, Width div 2);
+					LineTo(Self.Width, Width div 2);
 				end;
 			end;
-		dVertical:
+		diVertical:
 			begin
 				with Canvas do
 				begin
-					MoveTo(Ancho div 2, 0);
-					LineTo(Ancho div 2, Self.Height);
+					MoveTo(Width div 2, 0);
+					LineTo(Width div 2, Self.Height);
 				end;
 			end;
 	end;
 end;
 
-procedure TSegmento.SetDireccion(const Value: TDireccion);
+procedure TSegment.SetDirection(const Value: TDirection);
 begin
-	if FDireccion<>Value then
+	if FDirection<>Value then
 	begin
-		FDireccion := Value;
-		case Direccion of
-			dHorizontal :
+		FDirection := Value;
+		case Direction of
+			diHorizontal :
       begin
         Cursor := crSizeNS;
         FY2 := FY1;
       end;
-			dVertical :
+			diVertical :
       begin
         Cursor := crSizeWE;
         FX2 := FX1;
@@ -2401,90 +2396,90 @@ begin
 	end;
 end;
 
-procedure TSegmento.SetPen(const Value: TPen);
+procedure TSegment.SetPen(const Value: TPen);
 begin
 	FPen := Value;
 end;
 
-procedure TSegmento.SetX1(const Value: integer);
+procedure TSegment.SetX1(const Value: integer);
 begin
 	if FX1<>Value then
 	begin
 		FX1 := Value;
-		if Direccion = dVertical then
+		if Direction = diVertical then
 			FX2 := Value;
-		ActualizarLimites;
+		UpdateLimits;
 	end;
 end;
 
-procedure TSegmento.SetX2(const Value: integer);
+procedure TSegment.SetX2(const Value: integer);
 begin
-	if (FX2<>Value)and(Direccion = dHorizontal) then
+	if (FX2<>Value)and(Direction = diHorizontal) then
 	begin
 		FX2 := Value;
-		ActualizarLimites;
+		UpdateLimits;
 	end;
 end;
 
-procedure TSegmento.SetY1(const Value: integer);
+procedure TSegment.SetY1(const Value: integer);
 begin
 	if FY1<>Value then
 	begin
 		FY1 := Value;
-		if Direccion = dHorizontal then
+		if Direction = diHorizontal then
 			FY2 := Value;
-		ActualizarLimites;
+		UpdateLimits;
 	end;
 end;
 
-procedure TSegmento.SetY2(const Value: integer);
+procedure TSegment.SetY2(const Value: integer);
 begin
-	if (FY2<>Value)and(Direccion = dVertical) then
+	if (FY2<>Value)and(Direction = diVertical) then
 	begin
 		FY2 := Value;
-		ActualizarLimites;
+		UpdateLimits;
 	end;
 end;
 
-{ TNodo }
+{ TNode }
 
-constructor TNodo.Create(AOwner: TComponent; AParent: TWinControl);
+constructor TNode.Create(AOwner: TComponent; AParent: TWinControl);
 begin
   inherited;
-	Ancho := BORDE div 2 * 2 + 1;
-	Alto := BORDE div 2 * 2 + 1;
-	Caption := '';
-	Texto := '';
+	Width := BORDER div 2 * 2 + 1;
+	Height := BORDER div 2 * 2 + 1;
+	Comments := '';
+	Parameters := '';
 end;
 
-procedure TNodo.DarCapacidades;
+procedure TNode.SetCapacities;
 begin
-	PuedeMover := True;
-	PuedeTamano := False;
-	PuedeUnionNorte := True;
-	PuedeUnionEste := True;
-	PuedeUnionSur := True;
-	PuedeUnionOeste := True;
+	CanMove := True;
+	CanResize := False;
+	CanNorthJoin := True;
+	CanEastJoin := True;
+	CanSouthJoin := True;
+	CanWestJoin := True;
 
-	EntradaNorte.AceptaEntrada := True;
-	EntradaNorte.AceptaSalida := False;
-	EntradaEste.AceptaEntrada := True;
-	EntradaEste.AceptaSalida := False;
-	EntradaOeste.AceptaEntrada := True;
-	EntradaOeste.AceptaSalida := False;
-	Salida.AceptaEntrada := False;
-	Salida.AceptaSalida := True;
+	EntradaNorte.AcceptEntry := True;
+	EntradaNorte.AcceptExit := False;
+	EntradaEste.AcceptEntry := True;
+	EntradaEste.AcceptExit := False;
+	EntradaOeste.AcceptEntry := True;
+	EntradaOeste.AcceptExit := False;
+	Salida.AcceptEntry := False;
+	Salida.AcceptExit := True;
 
-	MuestraCaption := False;
-	MuestraTexto := False;
+	ShowComments := False;
+	ShowParameters := False;
 end;
 
-function TNodo.Ejecutar: TInstruccion;
+function TNode.Execute: TInstruction;
 begin
 	Self.Error := False;
 	try
-		if assigned(Salida.Flecha) then
-			Result := Salida.Flecha.UnionHasta.Instruccion
+		if assigned(Salida.Arrow) then
+			Result := Salida.Arrow.ToJoin.Instruction
 		else
 			raise Exception.Create('Exit arrow missed!');
 	except
@@ -2493,12 +2488,12 @@ begin
 	end;
 end;
 
-function TNodo.EstaMouseEnObjeto(AX, AY: Integer): Boolean;
+function TNode.IsMouseInObject(AX, AY: Integer): Boolean;
 begin
-	Result := Sqr(BORDE / 2) > Sqr(AX - Self.Width / 2) + Sqr(AY - Self.Height / 2);
+	Result := Sqr(BORDER / 2) > Sqr(AX - Self.Width / 2) + Sqr(AY - Self.Height / 2);
 end;
 
-procedure TNodo.PaintObjeto;
+procedure TNode.PaintObject;
 begin
 	with Canvas do
 	begin
@@ -2510,12 +2505,12 @@ begin
 
 		if Error then
 			Brush.Color := COLOR_ERROR
-		else if Ejecutando then
-			Brush.Color := COLOR_EJECUCION
+		else if Executing then
+			Brush.Color := COLOR_EXECUTING
 		else if BreakPoint then
 			Brush.Color := COLOR_BREAK_POINT
 		else
-			Brush.Color := COLOR_OBJETO;
+			Brush.Color := COLOR_OBJECT;
 
 		Brush.Style := bsSolid;
 		Ellipse(0,0,self.Width,self.Height);
@@ -2524,7 +2519,7 @@ end;
 
 { TDragger }
 
-procedure TDragger.ActualizarLimites;
+procedure TDragger.UpdateLimites;
 var
 	LX2,LY2: Integer;
 	h : Real;
@@ -2587,7 +2582,7 @@ begin
 	if FX1<>Value then
 	begin
 		FX1 := Value;
-		ActualizarLimites;
+		UpdateLimites;
 	end;
 end;
 
@@ -2596,7 +2591,7 @@ begin
 	if FX2<>Value then
 	begin
 		FX2 := Value;
-		ActualizarLimites;
+		UpdateLimites;
 	end;
 end;
 
@@ -2605,7 +2600,7 @@ begin
 	if FY1<>Value then
 	begin
 		FY1 := Value;
-		ActualizarLimites;
+		UpdateLimites;
 	end;
 end;
 
@@ -2614,47 +2609,47 @@ begin
 	if FY2<>Value then
 	begin
 		FY2 := Value;
-		ActualizarLimites;
+		UpdateLimites;
 	end;
 end;
 
-{ TFin }
+{ TEnd }
 
-constructor TFin.Create(AOwner: TComponent; AParent: TWinControl);
+constructor TEnd.Create(AOwner: TComponent; AParent: TWinControl);
 begin
   inherited;
-	Caption := 'End';
-	Texto := '';
-	MuestraCaption := True;
-	MuestraTexto := False;
+	Comments := 'End';
+	Parameters := '';
+	ShowComments := True;
+	ShowParameters := False;
 
 	BreakPoint := true;
 end;
 
-procedure TFin.DarCapacidades;
+procedure TEnd.SetCapacities;
 begin
-	PuedeMover := True;
-	PuedeTamano := True;
-	PuedeUnionNorte := True;
-	PuedeUnionEste := False;
-	PuedeUnionSur := False;
-	PuedeUnionOeste := False;
+	CanMove := True;
+	CanResize := True;
+	CanNorthJoin := True;
+	CanEastJoin := False;
+	CanSouthJoin := False;
+	CanWestJoin := False;
 
-	Entrada.AceptaEntrada := True;
-	Entrada.AceptaSalida := False;
+	Entrada.AcceptEntry := True;
+	Entrada.AcceptExit := False;
 end;
 
-function TFin.Ejecutar: TInstruccion;
+function TEnd.Execute: TInstruction;
 begin
 	Result := Nil;
 end;
 
-function TFin.EstaMouseEnObjeto(AX, AY: Integer): Boolean;
+function TEnd.IsMouseInObject(AX, AY: Integer): Boolean;
 begin
 	Result := (AX>=0)and(AX<=Self.Width)and(AY>=0)and(AY<=Self.Height);
 end;
 
-procedure TFin.PaintObjeto;
+procedure TEnd.PaintObject;
 begin
 	with Canvas do
 	begin
@@ -2666,48 +2661,48 @@ begin
 
 		if Error then
 			Brush.Color := COLOR_ERROR
-		else if Ejecutando then
-			Brush.Color := COLOR_EJECUCION
+		else if Executing then
+			Brush.Color := COLOR_EXECUTING
 		else if BreakPoint then
 			Brush.Color := clYellow
 		else
 			Brush.Color := clWhite;
 
 		Brush.Style := bsSolid;
-		RoundRect(0,0,Self.Width,Self.Height, BORDE * 2, BORDE * 2);
+		RoundRect(0,0,Self.Width,Self.Height, BORDER * 2, BORDER * 2);
 	end;
 end;
 
-{ TInicio }
+{ TBegin }
 
-constructor TInicio.Create(AOwner: TComponent; AParent: TWinControl);
+constructor TBegin.Create(AOwner: TComponent; AParent: TWinControl);
 begin
 	inherited;
-	Caption := 'Program';
-	Texto := '';
-	MuestraCaption := True;
-	MuestraTexto := False;
+	Comments := 'Program';
+	Parameters := '';
+	ShowComments := True;
+	ShowParameters := False;
 end;
 
-procedure TInicio.DarCapacidades;
+procedure TBegin.SetCapacities;
 begin
-	PuedeMover := True;
-	PuedeTamano := True;
-	PuedeUnionNorte := False;
-	PuedeUnionEste := False;
-	PuedeUnionSur := True;
-	PuedeUnionOeste := False;
+	CanMove := True;
+	CanResize := True;
+	CanNorthJoin := False;
+	CanEastJoin := False;
+	CanSouthJoin := True;
+	CanWestJoin := False;
 
-	Salida.AceptaEntrada := False;
-	Salida.AceptaSalida := True;
+	ExitJoin.AcceptEntry := False;
+	ExitJoin.AcceptExit := True;
 end;
 
-function TInicio.Ejecutar: TInstruccion;
+function TBegin.Execute: TInstruction;
 begin
 	Self.Error := False;
 	try
-		if Assigned(Salida.Flecha) then
-			Result := Salida.Flecha.UnionHasta.Instruccion
+		if Assigned(ExitJoin.Arrow) then
+			Result := ExitJoin.Arrow.ToJoin.Instruction
 		else
 			raise Exception.Create('Exit arrow missed!');
 	except
@@ -2716,12 +2711,12 @@ begin
 	end;
 end;
 
-function TInicio.EstaMouseEnObjeto(AX, AY: Integer): Boolean;
+function TBegin.IsMouseInObject(AX, AY: Integer): Boolean;
 begin
 	Result := (AX>=0)and(AX<=Self.Width)and(AY>=0)and(AY<=Self.Height);
 end;
 
-procedure TInicio.PaintObjeto;
+procedure TBegin.PaintObject;
 var
    w,h : integer;
 begin
@@ -2735,8 +2730,8 @@ begin
 
 		if Error then
 			Brush.Color := COLOR_ERROR
-		else if Ejecutando then
-			Brush.Color := COLOR_EJECUCION
+		else if Executing then
+			Brush.Color := COLOR_EXECUTING
 		else if BreakPoint then
 			Brush.Color := clYellow
 		else
@@ -2747,54 +2742,54 @@ begin
     w := self.Width;
     h := self.Height;
 
-		RoundRect(0,0,w,h, BORDE * 2, BORDE * 2);
+		RoundRect(0,0,w,h, BORDER * 2, BORDER * 2);
 	end;
 end;
 
-{ TEntrada }
+{ TInput }
 
-procedure TEntrada.Actualizar;
+procedure TInput.Update;
 var
   s : string;
 begin
   S := 'Read';
 
-  if (Dispositivo = diArchivo)  then
+  if (Device = deFile)  then
     S := S + 'File';
 
-  if Retorno then
+  if CarriageReturn then
      S := S + 'Ln';
 
   S := S + '(';
 
-  if Dispositivo=diArchivo then
-    S := S + Archivo + SEPARADOR + ' ';
+  if Device=deFile then
+    S := S + FilePath + SEPARATOR + ' ';
 
-  S := S + Parametros + ')';
+  S := S + Parameters + ')';
 
-  Texto := S;
+  Parameters := S;
 end;
 
-constructor TEntrada.Create(AOwner: TComponent; AParent: TWinControl);
+constructor TInput.Create(AOwner: TComponent; AParent: TWinControl);
 begin
   inherited;
 
 end;
 
-destructor TEntrada.Destroy;
+destructor TInput.Destroy;
 begin
 
   inherited;
 end;
 
-function TEntrada.EstaMouseEnObjeto(AX, AY: Integer): Boolean;
+function TInput.IsMouseInObject(AX, AY: Integer): Boolean;
 begin
 	Result := (AX>=0)and(AX<=Self.Width)and(AY>=0)and(AY<=Self.Height);
 end;
 
-procedure TEntrada.PaintObjeto;
+procedure TInput.PaintObject;
 var
-  LPuntos : array [0..4] of TPoint;
+  LPoints : array [0..4] of TPoint;
 begin
 	with Canvas do
 	begin
@@ -2806,68 +2801,68 @@ begin
 
 		if Error then
 			Brush.Color := COLOR_ERROR
-		else if Ejecutando then
-			Brush.Color := COLOR_EJECUCION
+		else if Executing then
+			Brush.Color := COLOR_EXECUTING
 		else if BreakPoint then
 			Brush.Color := COLOR_BREAK_POINT
 		else
-			Brush.Color := COLOR_OBJETO;
+			Brush.Color := COLOR_OBJECT;
 
 		Brush.Style := bsSolid;
 
-    LPuntos[0] := Point(0,0);
-    LPuntos[1] := Point(Self.Width - 1, 0);
-    LPuntos[2] := Point(Self.Width - 1, Self.Height - 1);
-    LPuntos[3] := Point(0,Self.Height - 1);
-    LPuntos[4] := Point(PUNTA_ENT_SAL,Self.Height div 2);
-    Polygon(LPuntos);
+    LPoints[0] := Point(0,0);
+    LPoints[1] := Point(Self.Width - 1, 0);
+    LPoints[2] := Point(Self.Width - 1, Self.Height - 1);
+    LPoints[3] := Point(0,Self.Height - 1);
+    LPoints[4] := Point(COMMUNICATION_ARROW_WIDTH,Self.Height div 2);
+    Polygon(LPoints);
 	end;
 end;
 
 { TSalida }
 
-procedure TSalida.Actualizar;
+procedure TOutput.Update;
 var
   s : string;
 begin
   S := 'Write';
-  if (Dispositivo = diArchivo)  then
+  if (Device = deFile)  then
     S := S + 'File';
 
-  if Retorno then
+  if CarriageReturn then
      S := S + 'Ln';
 
   S := S + '(';
 
-  if Dispositivo=diArchivo then
-    S := S + Archivo + SEPARADOR + ' ';
+  if Device=deFile then
+    S := S + FilePath + SEPARATOR + ' ';
 
-	S := S + Parametros + ')';
+	S := S + Parameters + ')';
 
-  Texto := S;
+  Parameters := S;
 end;
 
-constructor TSalida.Create(AOwner: TComponent; AParent: TWinControl);
+constructor TOutput.Create(AOwner: TComponent; AParent: TWinControl);
 begin
   inherited;
 end;
 
-destructor TSalida.Destroy;
+destructor TOutput.Destroy;
 begin
 
   inherited;
 end;
 
-function TSalida.EstaMouseEnObjeto(AX, AY: Integer): Boolean;
+function TOutput.IsMouseInObject(AX, AY: Integer): Boolean;
 begin
 	Result := (AX>=0)and(AY>=0)and(AY<=Self.Height)
-		and (AY >= Round(Self.Height * (AX - Self.Width + PUNTA_ENT_SAL) / 2 / PUNTA_ENT_SAL))
-		and (AY <= Round(Self.Height * (Self.Width + PUNTA_ENT_SAL - AX) / 2 / PUNTA_ENT_SAL ));
+		and (AY >= Round(Self.Height * (AX - Self.Width + COMMUNICATION_ARROW_WIDTH) / 2 / COMMUNICATION_ARROW_WIDTH))
+		and (AY <= Round(Self.Height * (Self.Width + COMMUNICATION_ARROW_WIDTH - AX) / 2 / COMMUNICATION_ARROW_WIDTH ));
 end;
 
-procedure TSalida.PaintObjeto;
+procedure TOutput.PaintObject;
 var
-  LPuntos : Array[0..4] of TPoint;
+  LPoints : Array[0..4] of TPoint;
 begin
 	with Canvas do
 	begin
@@ -2879,76 +2874,76 @@ begin
 
 		if Error then
 			Brush.Color := COLOR_ERROR
-		else if Ejecutando then
-			Brush.Color := COLOR_EJECUCION
+		else if Executing then
+			Brush.Color := COLOR_EXECUTING
 		else if BreakPoint then
 			Brush.Color := COLOR_BREAK_POINT
 		else
-			Brush.Color := COLOR_OBJETO;
+			Brush.Color := COLOR_OBJECT;
 
 		Brush.Style := bsSolid;
 
-    LPuntos[0] := Point(0,0);
-    LPuntos[1] := Point(Self.Width - PUNTA_ENT_SAL,0);
-    LPuntos[2] := Point(Self.Width - 1,Self.Height div 2);
-    LPuntos[3] := Point(Self.Width - PUNTA_ENT_SAL,Self.Height - 1);
-    LPuntos[4] := Point(0,Self.Height - 1);
-    Polygon(LPuntos);
+    LPoints[0] := Point(0,0);
+    LPoints[1] := Point(Self.Width - COMMUNICATION_ARROW_WIDTH,0);
+    LPoints[2] := Point(Self.Width - 1,Self.Height div 2);
+    LPoints[3] := Point(Self.Width - COMMUNICATION_ARROW_WIDTH,Self.Height - 1);
+    LPoints[4] := Point(0,Self.Height - 1);
+    Polygon(LPoints);
 	end;
 end;
 
-{ TEntradaSalida }
+{ TCommunication }
 
-constructor TEntradaSalida.Create(AOwner: TComponent;
+constructor TCommunication.Create(AOwner: TComponent;
   AParent: TWinControl);
 begin
 	inherited;
 
-	Retorno := True;
+	CarriageReturn := True;
 end;
 
-procedure TEntradaSalida.SetArchivo(const Value: String);
+procedure TCommunication.SetFilePath(const Value: String);
 begin
-  if Value<> FArchivo then
+  if Value<> FFilePath then
   begin
-    FArchivo := Value;
-    Actualizar;
-    if Assigned(FOnModificar) then
-      OnModificar(Self);
+    FFilePath := Value;
+    Update;
+    if Assigned(FOnModify) then
+      OnModify(Self);
   end;
 end;
 
-procedure TEntradaSalida.SetDispositivo(const Value: TDispositivo);
+procedure TCommunication.SetDevice(const Value: TDevice);
 begin
-  if Value<> FDispositivo then
+  if Value<> FDevice then
   begin
-    FDispositivo := Value;
-    Actualizar;
-    if Assigned(FOnModificar) then
-      OnModificar(Self);
+    FDevice := Value;
+    Update;
+    if Assigned(FOnModify) then
+      OnModify(Self);
   end;
 end;
 
-procedure TEntradaSalida.SetParametros(const Value: String);
+procedure TCommunication.SetParameters(const Value: String);
 begin
-  if Value<> FParametros then
+  if Value<> FParameters then
   begin
-    FParametros := Value;
-    Actualizar;
-    if Assigned(FOnModificar) then
-      OnModificar(Self);
+    FParameters := Value;
+    Update;
+    if Assigned(FOnModify) then
+      OnModify(Self);
   end;
 end;
 
-procedure TEntradaSalida.SetRetorno(const Value: Boolean);
+procedure TCommunication.SetCarriageReturn(const Value: Boolean);
 begin
-  if Value<> FRetorno then
+  if Value<> FCarriageReturn then
   begin
-    FRetorno := Value;
-    Actualizar;
-    if Assigned(FOnModificar) then
-      OnModificar(Self);
+    FCarriageReturn := Value;
+    Update;
+    if Assigned(FOnModify) then
+      OnModify(Self);
   end;
 end;
 
-end.
+end.

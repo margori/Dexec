@@ -5,94 +5,94 @@ interface
 uses Sysutils, UValores;
 
 type
-  TFuncionValor = function(p: String): TValor;
+  TFunctionPointer = function(p: String): TValue;
 
-	TFuncion = record
-		Nombre : String;
-		Valor : TFuncionValor;
+	TFunction = record
+		FunctionName : String;
+		FunctionPointer : TFunctionPointer;
 	end;
 
-	TFunciones = class
+	TFunctions = class
 	private
-		FFunciones : array of TFuncion;
+		FFunctions : array of TFunction;
 	public
 		constructor Create;
 		destructor Destroy; override;
 
-		procedure Registrar(ANombre: String; AValor: TFuncionValor);
-		procedure Deregistrar(ANombre: String); overload;
-		procedure Deregistrar(Index: Integer); overload;
-		procedure DeregistrarTodo;
+		procedure Add(ANombre: String; AValor: TFunctionPointer);
+		procedure Remove(AName: String); overload;
+		procedure Remove(Index: Integer); overload;
+		procedure Clean;
 
-		function Funcion(ANombre : String): TFuncion; overload;
-		function Funcion(Index : Integer): TFuncion; overload;
-		function EsFuncion(S: String): Boolean;
+		function GetFunction(AName : String): TFunction; overload;
+		function GetFunction(Index : Integer): TFunction; overload;
+		function IsFunction(S: String): Boolean;
 
     function Count : Integer;
 	end;
 
 var
-	Funciones : TFunciones;
+	Functions : TFunctions;
 
 const
-  FUNCION_VACIA : TFuncion = (Nombre : '';
-    Valor : Nil);
+  DEFAULT_FUNCTION : TFunction = (FunctionName : '';
+    FunctionPointer : Nil);
 
 implementation
 
 uses UAnalizadores, UTipos;
 
-{ TFunciones }
+{ TFunctions }
 
-function TFunciones.Count: Integer;
+function TFunctions.Count: Integer;
 begin
-  Result := Length(FFunciones);
+  Result := Length(FFunctions);
 end;
 
-constructor TFunciones.Create;
+constructor TFunctions.Create;
 begin
-  SetLength(FFunciones,0);
+  SetLength(FFunctions,0);
 end;
 
-procedure TFunciones.Deregistrar(ANombre: String);
+procedure TFunctions.Remove(AName: String);
 var
 	j : integer;
 begin
-	for j := High(FFunciones) downto Low(FFunciones) do
+	for j := High(FFunctions) downto Low(FFunctions) do
 	begin
-		if FFunciones[j].Nombre = ANombre  then
+		if FFunctions[j].FunctionName = AName  then
 		begin
-			SetLength(FFunciones,Length(FFunciones)-1);
+			SetLength(FFunctions,Length(FFunctions)-1);
 			Break;
 		end;
 	end;
 end;
 
-procedure TFunciones.Deregistrar(Index: Integer);
+procedure TFunctions.Remove(Index: Integer);
 begin
-	SetLength(FFunciones,Length(FFunciones)-1);
+	SetLength(FFunctions,Length(FFunctions)-1);
 end;
 
-procedure TFunciones.DeregistrarTodo;
+procedure TFunctions.Clean;
 begin
-	while Length(FFunciones)>0 do
-		Deregistrar(0);
+	while Length(FFunctions)>0 do
+		Remove(0);
 end;
 
-destructor TFunciones.Destroy;
+destructor TFunctions.Destroy;
 begin
-	DeregistrarTodo;
+	Clean;
   inherited;
 end;
 
-function TFunciones.EsFuncion(S: String): Boolean;
+function TFunctions.IsFunction(S: String): Boolean;
 var
 	j : integer;
 begin
 	Result := False;
-	for j := Low(FFunciones) to High(FFunciones) do
+	for j := Low(FFunctions) to High(FFunctions) do
 	begin
-		if UpperCase(FFunciones[j].Nombre) = UpperCase(S) then
+		if UpperCase(FFunctions[j].FunctionName) = UpperCase(S) then
 		begin
 			Result := True;
 			Break;
@@ -100,390 +100,390 @@ begin
 	end;
 end;
 
-function TFunciones.Funcion(ANombre: String): TFuncion;
+function TFunctions.GetFunction(AName: String): TFunction;
 var
 	j : integer;
 begin
-	for j := Low(FFunciones) to High(FFunciones) do
+	for j := Low(FFunctions) to High(FFunctions) do
 	begin
-		if UpperCase(FFunciones[j].Nombre) = UpperCase(ANombre) then
+		if UpperCase(FFunctions[j].FunctionName) = UpperCase(AName) then
 		begin
-			Result := FFunciones[j];
+			Result := FFunctions[j];
 			Break;
 		end;
 	end;
 end;
 
-function TFunciones.Funcion(Index: Integer): TFuncion;
+function TFunctions.GetFunction(Index: Integer): TFunction;
 begin
-	Result := FFunciones[Index];
+	Result := FFunctions[Index];
 end;
 
-procedure TFunciones.Registrar(ANombre: String; AValor: TFuncionValor);
+procedure TFunctions.Add(ANombre: String; AValor: TFunctionPointer);
 begin
-	SetLength(FFunciones,Length(FFunciones)+1);
-  FFunciones[High(FFunciones)] := FUNCION_VACIA;
-	with FFunciones[High(FFunciones)] do
+	SetLength(FFunctions,Length(FFunctions)+1);
+  FFunctions[High(FFunctions)] := DEFAULT_FUNCTION;
+	with FFunctions[High(FFunctions)] do
 	begin
-		Nombre := ANombre;
-		Valor := AValor;
+		FunctionName := ANombre;
+		FunctionPointer := AValor;
 	end;
 end;
 
-//-------- Funciones ------------//
+//-------- Functions ------------//
 
-function FuncSQR(P: string): TValor;
+function FuncSQR(P: string): TValue;
 var
-  LValor : TValor;
+  LValor : TValue;
 begin
 	P := Trim(P);
 	try
-		LValor := TAnalizadores.Expresion(P);
-		Result := VALOR_VACIO;
-		case LValor.Tipo of
+		LValor := TAnalyzers.Expression(P);
+		Result := DEFAULT_VALUE;
+		case LValor.ValueType of
 			nInt32 :
 			begin
-				TValores.SetValor(Result,nInt32);
-				PInt32(Result.Puntero)^ := PInt32(LValor.Puntero)^ * PInt32(LValor.Puntero)^;
+				TValues.SetValueType(Result,nInt32);
+				PInteger32(Result.ValuePointer)^ := PInteger32(LValor.ValuePointer)^ * PInteger32(LValor.ValuePointer)^;
 			end;
 			nExte :
 			begin
-				TValores.SetValor(Result,nExte);
-				PExte(Result.Puntero)^ := PExte(LValor.Puntero)^ * PExte(LValor.Puntero)^;
+				TValues.SetValueType(Result,nExte);
+				PExte(Result.ValuePointer)^ := PExte(LValor.ValuePointer)^ * PExte(LValor.ValuePointer)^;
 			end;
 		else
 			raise Exception.Create('Not supported parameter type!');
 		end;
 	finally
-		TValores.FreeValor(LValor);
+		TValues.FreeValue(LValor);
 	end;
 end;
 
-function FuncSQRT(P: string): TValor;
+function FuncSQRT(P: string): TValue;
 var
-	LValor : TValor;
+	LValor : TValue;
 begin
 	P := Trim(P);
 	try
-		LValor := TAnalizadores.Expresion(P);
-		Result := VALOR_VACIO;
-		case LValor.Tipo of
+		LValor := TAnalyzers.Expression(P);
+		Result := DEFAULT_VALUE;
+		case LValor.ValueType of
 			nInt32 :
 			begin
-				if PInt32(LValor.Puntero)^ < 0 then
+				if PInteger32(LValor.ValuePointer)^ < 0 then
 					raise Exception.Create('Square root of negative number not supported!');
-				TValores.SetValor(Result,nExte);
-				PExte(Result.Puntero)^ := Sqrt(PInt32(LValor.Puntero)^);
+				TValues.SetValueType(Result,nExte);
+				PExte(Result.ValuePointer)^ := Sqrt(PInteger32(LValor.ValuePointer)^);
 			end;
 			nExte :
 			begin
-				if PExte(LValor.Puntero)^ < 0 then
+				if PExte(LValor.ValuePointer)^ < 0 then
 					raise Exception.Create('Square root of negative number not supported!');
-				TValores.SetValor(Result,nExte);
-				PExte(Result.Puntero)^ := Sqrt(PExte(LValor.Puntero)^);
+				TValues.SetValueType(Result,nExte);
+				PExte(Result.ValuePointer)^ := Sqrt(PExte(LValor.ValuePointer)^);
 			end;
 		else
 			raise Exception.Create('Not supported parameter type!');
 		end;
 	finally
-		TValores.FreeValor(LValor);
+		TValues.FreeValue(LValor);
 	end;
 end;
 
-function FuncAbs(P: string): TValor;
+function FuncAbs(P: string): TValue;
 var
-	LValor : TValor;
+	LValor : TValue;
 begin
 	P := Trim(P);
 	try
-		LValor := TAnalizadores.Expresion(P);
-		Result := VALOR_VACIO;
-		case LValor.Tipo of
+		LValor := TAnalyzers.Expression(P);
+		Result := DEFAULT_VALUE;
+		case LValor.ValueType of
 			nInt32 :
 			begin
-				TValores.SetValor(Result,nInt32);
-				PInt32(Result.Puntero)^ := Abs(PInt32(LValor.Puntero)^);
+				TValues.SetValueType(Result,nInt32);
+				PInteger32(Result.ValuePointer)^ := Abs(PInteger32(LValor.ValuePointer)^);
 			end;
 			nExte :
 			begin
-				TValores.SetValor(Result,nExte);
-				PExte(Result.Puntero)^ := Abs(PExte(LValor.Puntero)^);
+				TValues.SetValueType(Result,nExte);
+				PExte(Result.ValuePointer)^ := Abs(PExte(LValor.ValuePointer)^);
 			end;
 		else
 			raise Exception.Create('Not supported parameter type!');
 		end;
 	finally
-		TValores.FreeValor(LValor);
+		TValues.FreeValue(LValor);
 	end;
 end;
 
-function FuncSin(P: string): TValor;
+function FuncSin(P: string): TValue;
 var
-	LValor : TValor;
+	LValor : TValue;
 begin
 	P := Trim(P);
 	try
-		LValor := TAnalizadores.Expresion(P);
-		Result := VALOR_VACIO;
-		case LValor.Tipo of
+		LValor := TAnalyzers.Expression(P);
+		Result := DEFAULT_VALUE;
+		case LValor.ValueType of
 			nInt32 :
 			begin
-				TValores.SetValor(Result,nExte);
-				PExte(Result.Puntero)^ := Sin(PInt32(LValor.Puntero)^);
+				TValues.SetValueType(Result,nExte);
+				PExte(Result.ValuePointer)^ := Sin(PInteger32(LValor.ValuePointer)^);
 			end;
 			nExte :
 			begin
-				TValores.SetValor(Result,nExte);
-				PExte(Result.Puntero)^ := Sin(PExte(LValor.Puntero)^);
+				TValues.SetValueType(Result,nExte);
+				PExte(Result.ValuePointer)^ := Sin(PExte(LValor.ValuePointer)^);
 			end;
 		else
 			raise Exception.Create('Not supported parameter type!');
 		end;
 	finally
-		TValores.FreeValor(LValor);
+		TValues.FreeValue(LValor);
 	end;
 end;
 
-function FuncCos(P: string): TValor;
+function FuncCos(P: string): TValue;
 var
-	LValor : TValor;
+	LValor : TValue;
 begin
 	P := Trim(P);
 	try
-		LValor := TAnalizadores.Expresion(P);
-		Result := VALOR_VACIO;
-		case LValor.Tipo of
+		LValor := TAnalyzers.Expression(P);
+		Result := DEFAULT_VALUE;
+		case LValor.ValueType of
 			nInt32 :
 			begin
-				TValores.SetValor(Result,nExte);
-				PExte(Result.Puntero)^ := Cos(PInt32(LValor.Puntero)^);
+				TValues.SetValueType(Result,nExte);
+				PExte(Result.ValuePointer)^ := Cos(PInteger32(LValor.ValuePointer)^);
 			end;
 			nExte :
 			begin
-				TValores.SetValor(Result,nExte);
-				PExte(Result.Puntero)^ := Cos(PExte(LValor.Puntero)^);
+				TValues.SetValueType(Result,nExte);
+				PExte(Result.ValuePointer)^ := Cos(PExte(LValor.ValuePointer)^);
 			end;
 		else
 			raise Exception.Create('Not supported parameter type!');
 		end;
 	finally
-		TValores.FreeValor(LValor);
+		TValues.FreeValue(LValor);
 	end;
 end;
 
-function FuncTan(P: string): TValor;
+function FuncTan(P: string): TValue;
 var
-	LValor : TValor;
+	LValor : TValue;
 begin
 	P := Trim(P);
 	try
-		LValor := TAnalizadores.Expresion(P);
-		Result := VALOR_VACIO;
-		case LValor.Tipo of
+		LValor := TAnalyzers.Expression(P);
+		Result := DEFAULT_VALUE;
+		case LValor.ValueType of
 			nInt32 :
 			begin
-				if Cos(PInt32(LValor.Puntero)^) = 0 then
+				if Cos(PInteger32(LValor.ValuePointer)^) = 0 then
 					raise Exception.Create('Tangent not defined for angles = n * Pi + Pi / 2.');
-				TValores.SetValor(Result,nExte);
-				PExte(Result.Puntero)^ := Sin(PInt32(LValor.Puntero)^)/Cos(PInt32(LValor.Puntero)^);
+				TValues.SetValueType(Result,nExte);
+				PExte(Result.ValuePointer)^ := Sin(PInteger32(LValor.ValuePointer)^)/Cos(PInteger32(LValor.ValuePointer)^);
 			end;
 			nExte :
 			begin
-				if Cos(PExte(LValor.Puntero)^) = 0 then
+				if Cos(PExte(LValor.ValuePointer)^) = 0 then
 					raise Exception.Create('Tangent not defined for angles = n * Pi + Pi / 2.');
-				TValores.SetValor(Result,nExte);
-				PExte(Result.Puntero)^ := Sin(PExte(LValor.Puntero)^)/Cos(PExte(LValor.Puntero)^);
+				TValues.SetValueType(Result,nExte);
+				PExte(Result.ValuePointer)^ := Sin(PExte(LValor.ValuePointer)^)/Cos(PExte(LValor.ValuePointer)^);
 			end;
 		else
 			raise Exception.Create('Not supported parameter type!');
 		end;
 	finally
-		TValores.FreeValor(LValor);
+		TValues.FreeValue(LValor);
 	end;
 end;
 
-function FuncArcTan(P: string): TValor;
+function FuncArcTan(P: string): TValue;
 var
-	LValor : TValor;
+	LValor : TValue;
 begin
 	P := Trim(P);
 	try
-		LValor := TAnalizadores.Expresion(P);
-		Result := VALOR_VACIO;
-		case LValor.Tipo of
+		LValor := TAnalyzers.Expression(P);
+		Result := DEFAULT_VALUE;
+		case LValor.ValueType of
 			nInt32 :
 			begin
-				TValores.SetValor(Result,nExte);
-				PExte(Result.Puntero)^ := ArcTan(PInt32(LValor.Puntero)^);
+				TValues.SetValueType(Result,nExte);
+				PExte(Result.ValuePointer)^ := ArcTan(PInteger32(LValor.ValuePointer)^);
 			end;
 			nExte :
 			begin
-				TValores.SetValor(Result,nExte);
-				PExte(Result.Puntero)^ := ArcTan(PExte(LValor.Puntero)^);
+				TValues.SetValueType(Result,nExte);
+				PExte(Result.ValuePointer)^ := ArcTan(PExte(LValor.ValuePointer)^);
 			end;
 		else
 			raise Exception.Create('Not supported parameter type!');
 		end;
 	finally
-		TValores.FreeValor(LValor);
+		TValues.FreeValue(LValor);
 	end;
 end;
 
-function FuncLog(P: string): TValor;
+function FuncLog(P: string): TValue;
 var
-	LValor : TValor;
+	LValor : TValue;
 begin
 	P := Trim(P);
 	try
-		LValor := TAnalizadores.Expresion(P);
-		Result := VALOR_VACIO;
-		case LValor.Tipo of
+		LValor := TAnalyzers.Expression(P);
+		Result := DEFAULT_VALUE;
+		case LValor.ValueType of
 			nInt32 :
 			begin
-				if PInt32(LValor.Puntero)^ <= 0 then
+				if PInteger32(LValor.ValuePointer)^ <= 0 then
 					raise Exception.Create('Logarithm of negative numbers not supported!');
-				TValores.SetValor(Result,nExte);
-				PExte(Result.Puntero)^ := Ln(PInt32(LValor.Puntero)^);
+				TValues.SetValueType(Result,nExte);
+				PExte(Result.ValuePointer)^ := Ln(PInteger32(LValor.ValuePointer)^);
 			end;
 			nExte :
 			begin
-				if Cos(PExte(LValor.Puntero)^) = 0 then
+				if Cos(PExte(LValor.ValuePointer)^) = 0 then
 					raise Exception.Create('Logarithm of negative numbers not supported!');
-				TValores.SetValor(Result,nExte);
-				PExte(Result.Puntero)^ := Ln(PExte(LValor.Puntero)^);
+				TValues.SetValueType(Result,nExte);
+				PExte(Result.ValuePointer)^ := Ln(PExte(LValor.ValuePointer)^);
 			end;
 		else
 			raise Exception.Create('Not supported parameter type!');
 		end;
 	finally
-		TValores.FreeValor(LValor);
+		TValues.FreeValue(LValor);
 	end;
 end;
 
-function FuncExp(P: string): TValor;
+function FuncExp(P: string): TValue;
 var
-	LValor : TValor;
+	LValor : TValue;
 begin
 	P := Trim(P);
 	try
-		LValor := TAnalizadores.Expresion(P);
-		Result := VALOR_VACIO;
-		case LValor.Tipo of
+		LValor := TAnalyzers.Expression(P);
+		Result := DEFAULT_VALUE;
+		case LValor.ValueType of
 			nInt32 :
 			begin
-				TValores.SetValor(Result,nExte);
-				PExte(Result.Puntero)^ := Exp(PInt32(LValor.Puntero)^);
+				TValues.SetValueType(Result,nExte);
+				PExte(Result.ValuePointer)^ := Exp(PInteger32(LValor.ValuePointer)^);
 			end;
 			nExte :
 			begin
-				TValores.SetValor(Result,nExte);
-				PExte(Result.Puntero)^ := Exp(PExte(LValor.Puntero)^);
+				TValues.SetValueType(Result,nExte);
+				PExte(Result.ValuePointer)^ := Exp(PExte(LValor.ValuePointer)^);
 			end;
 		else
 			raise Exception.Create('Not supported parameter type!');
 		end;
 	finally
-		TValores.FreeValor(LValor);
+		TValues.FreeValue(LValor);
 	end;
 end;
 
-function FuncPi(P: string): TValor;
+function FuncPi(P: string): TValue;
 begin
-	TValores.SetValor(Result,nExte);
-	PExte(Result.Puntero)^ := Pi;
+	TValues.SetValueType(Result,nExte);
+	PExte(Result.ValuePointer)^ := Pi;
 end;
 
-function FuncLength(P: string): TValor;
+function FuncLength(P: string): TValue;
 var
-	LValor : TValor;
-begin
-	P := Trim(P);
-	try
-		LValor := TAnalizadores.Expresion(P);
-		Result := VALOR_VACIO;
-		case LValor.Tipo of
-			nCad :
-			begin
-				TValores.SetValor(Result,nInt32);
-				PInt32(Result.Puntero)^ := Length(PCadena(LValor.Puntero)^);
-			end;
-		else
-			raise Exception.Create('Not supported parameter type!');
-		end;
-	finally
-		TValores.FreeValor(LValor);
-	end;
-end;
-
-function FuncUpCase(P: string): TValor;
-var
-	LValor : TValor;
+	LValor : TValue;
 begin
 	P := Trim(P);
 	try
-		LValor := TAnalizadores.Expresion(P);
-		Result := VALOR_VACIO;
-		case LValor.Tipo of
-			nCad :
+		LValor := TAnalyzers.Expression(P);
+		Result := DEFAULT_VALUE;
+		case LValor.ValueType of
+			nString :
 			begin
-				TValores.SetValor(Result,nCad);
-				PCadena(Result.Puntero)^ := UpperCase(PCadena(LValor.Puntero)^);
+				TValues.SetValueType(Result,nInt32);
+				PInteger32(Result.ValuePointer)^ := Length(PString(LValor.ValuePointer)^);
 			end;
 		else
 			raise Exception.Create('Not supported parameter type!');
 		end;
 	finally
-		TValores.FreeValor(LValor);
+		TValues.FreeValue(LValor);
 	end;
 end;
 
-function FuncLoCase(P: string): TValor;
+function FuncUpCase(P: string): TValue;
 var
-	LValor : TValor;
+	LValor : TValue;
 begin
 	P := Trim(P);
 	try
-		LValor := TAnalizadores.Expresion(P);
-		Result := VALOR_VACIO;
-		case LValor.Tipo of
-			nCad :
+		LValor := TAnalyzers.Expression(P);
+		Result := DEFAULT_VALUE;
+		case LValor.ValueType of
+			nString :
 			begin
-				TValores.SetValor(Result,nCad);
-				PCadena(Result.Puntero)^ := LowerCase(PCadena(LValor.Puntero)^);
+				TValues.SetValueType(Result,nString);
+				PString(Result.ValuePointer)^ := UpperCase(PString(LValor.ValuePointer)^);
 			end;
 		else
 			raise Exception.Create('Not supported parameter type!');
 		end;
 	finally
-		TValores.FreeValor(LValor);
+		TValues.FreeValue(LValor);
 	end;
 end;
 
-function FuncTrim(P: string): TValor;
+function FuncLoCase(P: string): TValue;
 var
-	LValor : TValor;
+	LValor : TValue;
 begin
 	P := Trim(P);
 	try
-		LValor := TAnalizadores.Expresion(P);
-		Result := VALOR_VACIO;
-		case LValor.Tipo of
-			nCad :
+		LValor := TAnalyzers.Expression(P);
+		Result := DEFAULT_VALUE;
+		case LValor.ValueType of
+			nString :
 			begin
-				TValores.SetValor(Result,nCad);
-				PCadena(Result.Puntero)^ := Trim(PCadena(LValor.Puntero)^);
+				TValues.SetValueType(Result,nString);
+				PString(Result.ValuePointer)^ := LowerCase(PString(LValor.ValuePointer)^);
 			end;
 		else
 			raise Exception.Create('Not supported parameter type!');
 		end;
 	finally
-		TValores.FreeValor(LValor);
+		TValues.FreeValue(LValor);
 	end;
 end;
 
-function FuncCopy(P: string): TValor;
+function FuncTrim(P: string): TValue;
 var
-	LValor : TValor;
+	LValor : TValue;
+begin
+	P := Trim(P);
+	try
+		LValor := TAnalyzers.Expression(P);
+		Result := DEFAULT_VALUE;
+		case LValor.ValueType of
+			nString :
+			begin
+				TValues.SetValueType(Result,nString);
+				PString(Result.ValuePointer)^ := Trim(PString(LValor.ValuePointer)^);
+			end;
+		else
+			raise Exception.Create('Not supported parameter type!');
+		end;
+	finally
+		TValues.FreeValue(LValor);
+	end;
+end;
+
+function FuncCopy(P: string): TValue;
+var
+	LValor : TValue;
   LCadena : String;
   LInicio : Integer;
   LLargo : Integer;
@@ -492,88 +492,88 @@ begin
   Aux := Copy(P,1,Pos(#10#13,P)-1);
   Delete(P,1,Pos(#10#13,P)+1);
 	try
-		LValor := TAnalizadores.Expresion(Aux);
-    if LValor.Tipo<>nCad then
+		LValor := TAnalyzers.Expression(Aux);
+    if LValor.ValueType<>nString then
 			raise Exception.Create('String expected!');
-    LCadena := PCadena(LValor.Puntero)^;
+    LCadena := PString(LValor.ValuePointer)^;
 	finally
-		TValores.FreeValor(LValor);
+		TValues.FreeValue(LValor);
 	end;
 
   Aux := Copy(P,1,Pos(#10#13,P)-1);
   Delete(P,1,Pos(#10#13,P)+1);
 	try
-		LValor := TAnalizadores.Expresion(Aux);
-    if LValor.Tipo<>nInt32 then
+		LValor := TAnalyzers.Expression(Aux);
+    if LValor.ValueType<>nInt32 then
 			raise Exception.Create('Integer number expected!');
-    LInicio := PInt32(LValor.Puntero)^;
+    LInicio := PInteger32(LValor.ValuePointer)^;
 	finally
-		TValores.FreeValor(LValor);
+		TValues.FreeValue(LValor);
 	end;
 
   Aux := Copy(P,1,Pos(#10#13,P)-1);
   Delete(P,1,Pos(#10#13,P)+1);
 	try
-		LValor := TAnalizadores.Expresion(Aux);
-    if LValor.Tipo<>nInt32 then
+		LValor := TAnalyzers.Expression(Aux);
+    if LValor.ValueType<>nInt32 then
 			raise Exception.Create('Integer number expected!');
-    LLargo := PInt32(LValor.Puntero)^;
+    LLargo := PInteger32(LValor.ValuePointer)^;
 	finally
-		TValores.FreeValor(LValor);
+		TValues.FreeValue(LValor);
 	end;
 
   if P<>'' then
     raise Exception.Create('Parameter expected!');
 
-	TValores.SetValor(Result,nCad);
-  PCadena(Result.Puntero)^ := Copy(LCadena,LInicio, LLargo);
+	TValues.SetValueType(Result,nString);
+  PString(Result.ValuePointer)^ := Copy(LCadena,LInicio, LLargo);
 end;
 
-//-------- Funciones ------------//
+//-------- Functions ------------//
 
-procedure FuncionesPorDefecto;
+procedure FunctionInitialize;
 begin
-	Funciones.Registrar('SQR',FuncSQR);
-	Funciones.Registrar('CUAD',FuncSQR);
-	Funciones.Registrar('SQRT',FuncSQRT);
-	Funciones.Registrar('RAIZ',FuncSQRT);
+	Functions.Add('SQR',FuncSQR);
+	Functions.Add('CUAD',FuncSQR);
+	Functions.Add('SQRT',FuncSQRT);
+	Functions.Add('RAIZ',FuncSQRT);
 
-	Funciones.Registrar('ABS',FuncAbs);
+	Functions.Add('ABS',FuncAbs);
 
-	Funciones.Registrar('SIN',FuncSin);
-	Funciones.Registrar('SEN',FuncSin);
-	Funciones.Registrar('COS',FuncCos);
-	Funciones.Registrar('TAN',FuncTan);
-	Funciones.Registrar('ARCTAN',FuncArcTan);
+	Functions.Add('SIN',FuncSin);
+	Functions.Add('SEN',FuncSin);
+	Functions.Add('COS',FuncCos);
+	Functions.Add('TAN',FuncTan);
+	Functions.Add('ARCTAN',FuncArcTan);
 
-	Funciones.Registrar('LOG',FuncLog);
-  Funciones.Registrar('EXP',FuncExp);
+	Functions.Add('LOG',FuncLog);
+  Functions.Add('EXP',FuncExp);
 
-  Funciones.Registrar('PI',FuncPi);
+  Functions.Add('PI',FuncPi);
 
-  Funciones.Registrar('LENGTH', FuncLength);
-  Funciones.Registrar('LARGO', FuncLength);
+  Functions.Add('LENGTH', FuncLength);
+  Functions.Add('LARGO', FuncLength);
 
-  Funciones.Registrar('UPCASE', FuncUpCase);
-  Funciones.Registrar('MAYUS', FuncUpCase);
+  Functions.Add('UPCASE', FuncUpCase);
+  Functions.Add('MAYUS', FuncUpCase);
 
-  Funciones.Registrar('LOCASE', FuncUpCase);
-  Funciones.Registrar('MINUS', FuncUpCase);
+  Functions.Add('LOCASE', FuncUpCase);
+  Functions.Add('MINUS', FuncUpCase);
 
-  Funciones.Registrar('TRIM', FuncTrim);
-  Funciones.Registrar('ARREGLAR', FuncTrim);
+  Functions.Add('TRIM', FuncTrim);
+  Functions.Add('ARREGLAR', FuncTrim);
 
-  Funciones.Registrar('COPY', FuncCopy);
-  Funciones.Registrar('COPIAR', FuncCopy);
+  Functions.Add('COPY', FuncCopy);
+  Functions.Add('COPIAR', FuncCopy);
 end;
 
 initialization
-	Funciones := TFunciones.Create;
+	Functions := TFunctions.Create;
 
-  FuncionesPorDefecto;
+  FunctionInitialize;
 
 finalization
-	Funciones.Free;
+	Functions.Free;
 
 end.
 

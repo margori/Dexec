@@ -23,7 +23,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="3"/>
-      <RevisionNr Value="1"/>
+      <RevisionNr Value="2"/>
       <BuildNr Value="1"/>
       <StringTable ProductVersion=""/>
     </VersionInfo>
@@ -46,14 +46,16 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="40">
+    <Units Count="45">
       <Unit0>
         <Filename Value="Dexec.lpr"/>
         <IsPartOfProject Value="True"/>
+        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="13"/>
-        <CursorPos X="25" Y="24"/>
-        <UsageCount Value="43"/>
+        <TopLine Value="23"/>
+        <CursorPos X="1" Y="36"/>
+        <UsageCount Value="73"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit0>
       <Unit1>
@@ -62,7 +64,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="73"/>
         <CursorPos X="8" Y="73"/>
-        <UsageCount Value="19"/>
+        <UsageCount Value="16"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit1>
       <Unit2>
@@ -72,19 +74,17 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="507"/>
-        <CursorPos X="6" Y="519"/>
+        <TopLine Value="224"/>
+        <CursorPos X="13" Y="236"/>
         <ExtraEditorCount Value="1"/>
         <ExtraEditor1>
-          <IsVisibleTab Value="True"/>
-          <WindowIndex Value="1"/>
           <TopLine Value="2894"/>
           <CursorPos X="1" Y="2898"/>
         </ExtraEditor1>
-        <UsageCount Value="43"/>
+        <UsageCount Value="73"/>
         <Bookmarks Count="2">
-          <Item0 X="1" Y="1120" ID="1"/>
-          <Item1 X="1" Y="2872" ID="2"/>
+          <Item0 X="1" Y="1117" ID="1"/>
+          <Item1 X="1" Y="2867" ID="2"/>
         </Bookmarks>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -93,77 +93,89 @@
         <Filename Value="UUtiles.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="UUtiles"/>
+        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="19" Y="1"/>
-        <UsageCount Value="43"/>
+        <CursorPos X="1" Y="1"/>
+        <UsageCount Value="73"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit3>
       <Unit4>
         <Filename Value="UAnalizadores.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="UAnalizadores"/>
+        <EditorIndex Value="11"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="16" Y="17"/>
-        <UsageCount Value="43"/>
+        <TopLine Value="64"/>
+        <CursorPos X="34" Y="76"/>
+        <UsageCount Value="73"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit4>
       <Unit5>
         <Filename Value="UTipos.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="UTipos"/>
+        <EditorIndex Value="17"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="12"/>
-        <CursorPos X="6" Y="26"/>
-        <UsageCount Value="43"/>
+        <TopLine Value="19"/>
+        <CursorPos X="3" Y="31"/>
+        <UsageCount Value="73"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit5>
       <Unit6>
         <Filename Value="UConstantes.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="UConstantes"/>
+        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="36"/>
-        <CursorPos X="3" Y="53"/>
-        <UsageCount Value="43"/>
+        <TopLine Value="1"/>
+        <CursorPos X="9" Y="19"/>
+        <UsageCount Value="73"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit6>
       <Unit7>
         <Filename Value="UVariables.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="UVariables"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="257"/>
-        <CursorPos X="93" Y="271"/>
-        <UsageCount Value="43"/>
+        <TopLine Value="334"/>
+        <CursorPos X="56" Y="346"/>
+        <UsageCount Value="73"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit7>
       <Unit8>
         <Filename Value="UEsTipo.pas"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="43"/>
+        <UsageCount Value="73"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit8>
       <Unit9>
         <Filename Value="UValores.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="UValores"/>
+        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="130"/>
-        <CursorPos X="60" Y="153"/>
-        <UsageCount Value="43"/>
+        <TopLine Value="3"/>
+        <CursorPos X="20" Y="15"/>
+        <UsageCount Value="73"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit9>
       <Unit10>
         <Filename Value="UProcedimientos.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="UProcedimientos"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="322"/>
-        <CursorPos X="34" Y="328"/>
-        <UsageCount Value="43"/>
+        <TopLine Value="26"/>
+        <CursorPos X="20" Y="38"/>
+        <UsageCount Value="73"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit10>
@@ -171,40 +183,48 @@
         <Filename Value="UFunciones.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="UFunciones"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="469"/>
-        <CursorPos X="41" Y="548"/>
-        <UsageCount Value="43"/>
+        <TopLine Value="522"/>
+        <CursorPos X="29" Y="535"/>
+        <UsageCount Value="73"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit11>
       <Unit12>
         <Filename Value="UExtractores.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="UExtractores"/>
+        <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="89"/>
-        <CursorPos X="65" Y="115"/>
-        <UsageCount Value="43"/>
+        <TopLine Value="142"/>
+        <CursorPos X="9" Y="164"/>
+        <UsageCount Value="73"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit12>
       <Unit13>
         <Filename Value="UOperadores.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="UOperadores"/>
+        <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="536"/>
-        <CursorPos X="46" Y="559"/>
-        <UsageCount Value="43"/>
+        <TopLine Value="368"/>
+        <CursorPos X="23" Y="391"/>
+        <UsageCount Value="73"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit13>
       <Unit14>
         <Filename Value="UArchivos.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="UArchivos"/>
+        <EditorIndex Value="13"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="213"/>
-        <CursorPos X="54" Y="227"/>
-        <UsageCount Value="43"/>
+        <TopLine Value="145"/>
+        <CursorPos X="45" Y="157"/>
+        <UsageCount Value="73"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit14>
       <Unit15>
@@ -217,7 +237,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="46"/>
         <CursorPos X="9" Y="56"/>
-        <UsageCount Value="43"/>
+        <UsageCount Value="73"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit15>
       <Unit16>
@@ -227,11 +247,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="UFormMain"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="694"/>
-        <CursorPos X="1" Y="717"/>
-        <UsageCount Value="43"/>
+        <TopLine Value="456"/>
+        <CursorPos X="1" Y="468"/>
+        <UsageCount Value="73"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit16>
@@ -242,10 +262,12 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="UFormPropiedades"/>
+        <EditorIndex Value="12"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="4"/>
-        <UsageCount Value="43"/>
+        <TopLine Value="91"/>
+        <CursorPos X="20" Y="102"/>
+        <UsageCount Value="73"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit17>
       <Unit18>
@@ -255,10 +277,12 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="UFormPropiedadesVariables"/>
+        <EditorIndex Value="15"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="4"/>
-        <UsageCount Value="43"/>
+        <TopLine Value="40"/>
+        <CursorPos X="62" Y="55"/>
+        <UsageCount Value="73"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit18>
       <Unit19>
@@ -271,7 +295,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="4"/>
-        <UsageCount Value="43"/>
+        <UsageCount Value="73"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit19>
       <Unit20>
@@ -284,7 +308,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="3" Y="6"/>
-        <UsageCount Value="43"/>
+        <UsageCount Value="73"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit20>
       <Unit21>
@@ -294,20 +318,24 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="UFormPropiedadesSalida"/>
+        <EditorIndex Value="14"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="4"/>
-        <UsageCount Value="43"/>
+        <TopLine Value="63"/>
+        <CursorPos X="24" Y="75"/>
+        <UsageCount Value="73"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit21>
       <Unit22>
         <Filename Value="UValidadores.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="UValidadores"/>
+        <EditorIndex Value="16"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="3"/>
-        <CursorPos X="18" Y="9"/>
-        <UsageCount Value="43"/>
+        <TopLine Value="11"/>
+        <CursorPos X="38" Y="26"/>
+        <UsageCount Value="73"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit22>
       <Unit23>
@@ -319,7 +347,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="4"/>
-        <UsageCount Value="39"/>
+        <UsageCount Value="36"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit23>
       <Unit24>
@@ -328,7 +356,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="6"/>
         <CursorPos X="15" Y="19"/>
-        <UsageCount Value="22"/>
+        <UsageCount Value="19"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit24>
       <Unit25>
@@ -338,13 +366,13 @@
         <WindowIndex Value="0"/>
         <TopLine Value="51"/>
         <CursorPos X="5" Y="65"/>
-        <UsageCount Value="21"/>
+        <UsageCount Value="18"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit25>
       <Unit26>
         <Filename Value="UConfiguracion.pas"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="43"/>
+        <UsageCount Value="73"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit26>
       <Unit27>
@@ -352,15 +380,16 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1090"/>
         <CursorPos X="21" Y="1090"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="6"/>
         <DefaultSyntaxHighlighter Value="LFM"/>
       </Unit27>
       <Unit28>
         <Filename Value="/usr/lib/lazarus/0.9.30.2/lcl/include/control.inc"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1695"/>
-        <CursorPos X="1" Y="1709"/>
+        <TopLine Value="3366"/>
+        <CursorPos X="1" Y="3385"/>
         <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit28>
       <Unit29>
         <Filename Value="/usr/lib/lazarus/0.9.30.2/lcl/stdctrls.pp"/>
@@ -368,7 +397,8 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1304"/>
         <CursorPos X="14" Y="1316"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="7"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit29>
       <Unit30>
         <Filename Value="C:/lazarus/lcl/graphics.pp"/>
@@ -376,7 +406,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1117"/>
         <CursorPos X="15" Y="1129"/>
-        <UsageCount Value="11"/>
+        <UsageCount Value="8"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit30>
       <Unit31>
@@ -384,7 +414,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="831"/>
         <CursorPos X="3" Y="839"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="7"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit31>
       <Unit32>
@@ -393,7 +423,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="308"/>
         <CursorPos X="44" Y="322"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="7"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit32>
       <Unit33>
@@ -402,7 +432,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="22"/>
         <CursorPos X="8" Y="32"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="7"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit33>
       <Unit34>
@@ -411,7 +441,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="167"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="7"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit34>
       <Unit35>
@@ -420,7 +450,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="17"/>
         <CursorPos X="22" Y="29"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="7"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit35>
       <Unit36>
@@ -429,14 +459,16 @@
         <WindowIndex Value="0"/>
         <TopLine Value="320"/>
         <CursorPos X="36" Y="331"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="7"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit36>
       <Unit37>
         <Filename Value="C:/lazarus_0_9_30/fpc/2.4.2/source/rtl/objpas/classes/classesh.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="291"/>
         <CursorPos X="44" Y="304"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="7"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit37>
       <Unit38>
         <Filename Value="C:/lazarus_0_9_30/lcl/fileutil.pas"/>
@@ -444,7 +476,8 @@
         <WindowIndex Value="0"/>
         <TopLine Value="165"/>
         <CursorPos X="10" Y="177"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="7"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit38>
       <Unit39>
         <Filename Value="C:/lazarus_0_9_30/fpc/2.4.2/source/rtl/objpas/types.pp"/>
@@ -452,129 +485,172 @@
         <WindowIndex Value="0"/>
         <TopLine Value="276"/>
         <CursorPos X="10" Y="288"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="7"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit39>
+      <Unit40>
+        <Filename Value="C:/lazarus_0_9_30/lcl/lcltype.pp"/>
+        <UnitName Value="LCLType"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="71"/>
+        <CursorPos X="3" Y="83"/>
+        <UsageCount Value="9"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit40>
+      <Unit41>
+        <Filename Value="/usr/lib/lazarus/0.9.30.2/lcl/include/application.inc"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="2067"/>
+        <CursorPos X="1" Y="2087"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit41>
+      <Unit42>
+        <Filename Value="/usr/lib/lazarus/0.9.30.2/lcl/include/customform.inc"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1868"/>
+        <CursorPos X="1" Y="1871"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit42>
+      <Unit43>
+        <Filename Value="/usr/lib/lazarus/0.9.30.2/lcl/include/menuitem.inc"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="52"/>
+        <CursorPos X="1" Y="72"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit43>
+      <Unit44>
+        <Filename Value="/usr/lib/lazarus/0.9.30.2/lcl/lclclasses.pp"/>
+        <UnitName Value="LCLClasses"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="107"/>
+        <CursorPos X="1" Y="127"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit44>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="UObjetos.pas"/>
-        <Caret Line="2045" Column="49" TopLine="2033"/>
+        <Caret Line="787" Column="1" TopLine="774"/>
       </Position1>
       <Position2>
         <Filename Value="UObjetos.pas"/>
-        <Caret Line="2220" Column="45" TopLine="2208"/>
+        <Caret Line="792" Column="1" TopLine="774"/>
       </Position2>
       <Position3>
         <Filename Value="UObjetos.pas"/>
-        <Caret Line="2302" Column="20" TopLine="2290"/>
+        <Caret Line="797" Column="1" TopLine="777"/>
       </Position3>
       <Position4>
         <Filename Value="UObjetos.pas"/>
-        <Caret Line="2227" Column="21" TopLine="2215"/>
+        <Caret Line="982" Column="1" TopLine="970"/>
       </Position4>
       <Position5>
         <Filename Value="UObjetos.pas"/>
-        <Caret Line="2460" Column="1" TopLine="2448"/>
+        <Caret Line="541" Column="8" TopLine="529"/>
       </Position5>
       <Position6>
         <Filename Value="UObjetos.pas"/>
-        <Caret Line="2501" Column="1" TopLine="2489"/>
+        <Caret Line="312" Column="54" TopLine="300"/>
       </Position6>
       <Position7>
         <Filename Value="UObjetos.pas"/>
-        <Caret Line="2634" Column="1" TopLine="2622"/>
+        <Caret Line="964" Column="7" TopLine="954"/>
       </Position7>
       <Position8>
-        <Filename Value="UObjetos.pas"/>
-        <Caret Line="2657" Column="1" TopLine="2645"/>
+        <Filename Value="Dexec.lpr"/>
+        <Caret Line="36" Column="1" TopLine="23"/>
       </Position8>
       <Position9>
-        <Filename Value="UObjetos.pas"/>
-        <Caret Line="2727" Column="1" TopLine="2715"/>
+        <Filename Value="Formularios/UFormMain.pas"/>
+        <Caret Line="231" Column="1" TopLine="219"/>
       </Position9>
       <Position10>
-        <Filename Value="UObjetos.pas"/>
-        <Caret Line="2692" Column="1" TopLine="2680"/>
+        <Filename Value="Formularios/UFormMain.pas"/>
+        <Caret Line="468" Column="1" TopLine="456"/>
       </Position10>
       <Position11>
         <Filename Value="UObjetos.pas"/>
-        <Caret Line="2758" Column="1" TopLine="2746"/>
+        <Caret Line="2679" Column="1" TopLine="2667"/>
       </Position11>
       <Position12>
         <Filename Value="UObjetos.pas"/>
-        <Caret Line="2838" Column="33" TopLine="2825"/>
+        <Caret Line="540" Column="1" TopLine="528"/>
       </Position12>
       <Position13>
         <Filename Value="UObjetos.pas"/>
-        <Caret Line="1140" Column="13" TopLine="1133"/>
+        <Caret Line="972" Column="1" TopLine="960"/>
       </Position13>
       <Position14>
         <Filename Value="UObjetos.pas"/>
-        <Caret Line="1138" Column="37" TopLine="1159"/>
+        <Caret Line="974" Column="1" TopLine="960"/>
       </Position14>
       <Position15>
         <Filename Value="UObjetos.pas"/>
-        <Caret Line="1118" Column="3" TopLine="1108"/>
+        <Caret Line="975" Column="1" TopLine="960"/>
       </Position15>
       <Position16>
         <Filename Value="UObjetos.pas"/>
-        <Caret Line="1145" Column="67" TopLine="1130"/>
+        <Caret Line="976" Column="1" TopLine="960"/>
       </Position16>
       <Position17>
         <Filename Value="UObjetos.pas"/>
-        <Caret Line="237" Column="30" TopLine="225"/>
+        <Caret Line="977" Column="1" TopLine="960"/>
       </Position17>
       <Position18>
         <Filename Value="UObjetos.pas"/>
-        <Caret Line="1175" Column="20" TopLine="1159"/>
+        <Caret Line="978" Column="1" TopLine="960"/>
       </Position18>
       <Position19>
         <Filename Value="UObjetos.pas"/>
-        <Caret Line="2836" Column="1" TopLine="2815"/>
+        <Caret Line="980" Column="1" TopLine="960"/>
       </Position19>
       <Position20>
         <Filename Value="UObjetos.pas"/>
-        <Caret Line="2764" Column="20" TopLine="2759"/>
+        <Caret Line="541" Column="1" TopLine="529"/>
       </Position20>
       <Position21>
         <Filename Value="UObjetos.pas"/>
-        <Caret Line="407" Column="23" TopLine="398"/>
+        <Caret Line="542" Column="1" TopLine="529"/>
       </Position21>
       <Position22>
         <Filename Value="UObjetos.pas"/>
-        <Caret Line="2944" Column="3" TopLine="2930"/>
+        <Caret Line="544" Column="1" TopLine="529"/>
       </Position22>
       <Position23>
         <Filename Value="UObjetos.pas"/>
-        <Caret Line="306" Column="12" TopLine="294"/>
+        <Caret Line="545" Column="1" TopLine="529"/>
       </Position23>
       <Position24>
         <Filename Value="UObjetos.pas"/>
-        <Caret Line="1111" Column="50" TopLine="1168"/>
+        <Caret Line="2681" Column="1" TopLine="2669"/>
       </Position24>
       <Position25>
         <Filename Value="UObjetos.pas"/>
-        <Caret Line="2844" Column="1" TopLine="2828"/>
+        <Caret Line="2682" Column="1" TopLine="2669"/>
       </Position25>
       <Position26>
         <Filename Value="UObjetos.pas"/>
-        <Caret Line="2766" Column="18" TopLine="2756"/>
+        <Caret Line="2683" Column="1" TopLine="2669"/>
       </Position26>
       <Position27>
-        <Filename Value="Formularios/UFormMain.pas"/>
-        <Caret Line="1816" Column="54" TopLine="1804"/>
+        <Filename Value="UObjetos.pas"/>
+        <Caret Line="2684" Column="1" TopLine="2669"/>
       </Position27>
       <Position28>
-        <Filename Value="Formularios/UFormMain.pas"/>
-        <Caret Line="473" Column="8" TopLine="461"/>
+        <Filename Value="UObjetos.pas"/>
+        <Caret Line="2685" Column="1" TopLine="2669"/>
       </Position28>
       <Position29>
         <Filename Value="UObjetos.pas"/>
-        <Caret Line="2838" Column="18" TopLine="2829"/>
+        <Caret Line="540" Column="1" TopLine="528"/>
       </Position29>
       <Position30>
         <Filename Value="UObjetos.pas"/>
-        <Caret Line="236" Column="30" TopLine="224"/>
+        <Caret Line="972" Column="1" TopLine="960"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
@@ -599,7 +675,7 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <BreakPoints Count="2">
+    <BreakPoints Count="6">
       <Item1>
         <Source Value="Formularios/UFormMain.dfm"/>
         <Line Value="1086"/>
@@ -608,6 +684,22 @@
         <Source Value="Formularios/UFormPropiedades.pas"/>
         <Line Value="79"/>
       </Item2>
+      <Item3>
+        <Source Value="Dexec.lpr"/>
+        <Line Value="36"/>
+      </Item3>
+      <Item4>
+        <Source Value="Formularios/UFormMain.pas"/>
+        <Line Value="231"/>
+      </Item4>
+      <Item5>
+        <Source Value="Formularios/UFormMain.pas"/>
+        <Line Value="468"/>
+      </Item5>
+      <Item6>
+        <Source Value="UObjetos.pas"/>
+        <Line Value="2679"/>
+      </Item6>
     </BreakPoints>
     <Exceptions Count="4">
       <Item1>

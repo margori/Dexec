@@ -1,11 +1,11 @@
 object FormMain: TFormMain
-  Left = 164
-  Height = 524
-  Top = 129
-  Width = 1018
+  Left = 358
+  Height = 480
+  Top = 128
+  Width = 640
   Caption = 'Dexec - '
-  ClientHeight = 505
-  ClientWidth = 1018
+  ClientHeight = 461
+  ClientWidth = 640
   Color = clBtnFace
   Font.Color = clWindowText
   Font.Height = -11
@@ -18,10 +18,9 @@ object FormMain: TFormMain
   OnMouseWheel = FormMouseWheel
   OnShow = FormShow
   LCLVersion = '0.9.30'
-  WindowState = wsMaximized
   object splitterPanelDerecho: TSplitter
-    Left = 853
-    Height = 481
+    Left = 475
+    Height = 437
     Top = 24
     Width = 5
     Align = alRight
@@ -29,12 +28,12 @@ object FormMain: TFormMain
   end
   object ScrollBox1: TScrollBox
     Left = 0
-    Height = 481
+    Height = 437
     Top = 24
-    Width = 853
+    Width = 475
     Align = alClient
-    ClientHeight = 477
-    ClientWidth = 849
+    ClientHeight = 433
+    ClientWidth = 471
     TabOrder = 1
     OnMouseDown = ScrollBox1MouseDown
     OnMouseMove = ScrollBox1MouseMove
@@ -59,7 +58,7 @@ object FormMain: TFormMain
     Left = 0
     Height = 24
     Top = 0
-    Width = 1018
+    Width = 640
     AutoSize = True
     EdgeBorders = [ebLeft, ebTop, ebRight, ebBottom]
     EdgeInner = esNone
@@ -250,13 +249,13 @@ object FormMain: TFormMain
     end
   end
   object panelDerecho: TPanel
-    Left = 858
-    Height = 481
+    Left = 480
+    Height = 437
     Top = 24
     Width = 160
     Align = alRight
     BevelOuter = bvNone
-    ClientHeight = 481
+    ClientHeight = 437
     ClientWidth = 160
     Constraints.MinWidth = 160
     TabOrder = 2
@@ -264,19 +263,19 @@ object FormMain: TFormMain
       Cursor = crVSplit
       Left = 0
       Height = 3
-      Top = 209
+      Top = 165
       Width = 160
       Align = alBottom
       ResizeAnchor = akBottom
     end
     object panelVariables: TPanel
       Left = 0
-      Height = 209
+      Height = 165
       Top = 0
       Width = 160
       Align = alClient
       BevelOuter = bvLowered
-      ClientHeight = 209
+      ClientHeight = 165
       ClientWidth = 160
       TabOrder = 0
       object labelVariables: TLabel
@@ -330,7 +329,7 @@ object FormMain: TFormMain
       end
       object gridVariables: TStringGrid
         Left = 1
-        Height = 171
+        Height = 127
         Top = 37
         Width = 158
         Align = alClient
@@ -353,7 +352,7 @@ object FormMain: TFormMain
     object panelArchivos: TPanel
       Left = 0
       Height = 269
-      Top = 212
+      Top = 168
       Width = 160
       Align = alBottom
       BevelOuter = bvLowered

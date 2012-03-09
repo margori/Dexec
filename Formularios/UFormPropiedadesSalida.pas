@@ -25,17 +25,17 @@ type
     procedure FormCreate(Sender: TObject);
   private
   public
-		function Execute(AInstruccion : TEntradaSalida): Boolean;
+		function Execute(AInstruction : TCommunication): Boolean;
 
-		function MuestraCaption: Boolean;
-		function MuestraTexto: Boolean;
-		function Caption: String;
-		function Parametros: String;
+		function ShowComments: Boolean;
+		function ShowParameters: Boolean;
+		function Comments: String;
+		function Parameters: String;
 		function BreckPoint: Boolean;
-		function Bloquear: Boolean;
-    function Dispositivo: TDispositivo;
-    function Archivo: String;
-    function Retorno: Boolean;
+		function Locked: Boolean;
+    function Device: TDevice;
+    function FilePath: String;
+    function CarriageReturn: Boolean;
   end;
 
 var
@@ -47,12 +47,12 @@ implementation
 
 { TformPropiedadesSalida }
 
-function TformPropiedadesSalida.Archivo: String;
+function TformPropiedadesSalida.FilePath: String;
 begin
   Result := trim(editArchivo.Text);
 end;
 
-function TformPropiedadesSalida.Bloquear: Boolean;
+function TformPropiedadesSalida.Locked: Boolean;
 begin
   Result := checkBloquear.Checked;
 end;
@@ -62,50 +62,50 @@ begin
   Result := checkBreackPoint.Checked;
 end;
 
-function TformPropiedadesSalida.Caption: String;
+function TformPropiedadesSalida.Comments: String;
 begin
   Result := editCaption.Text;
 end;
 
-function TformPropiedadesSalida.Dispositivo: TDispositivo;
+function TformPropiedadesSalida.Device: TDevice;
 begin
   if radioPantalla.Checked then
-    Result := diPantalla
+    Result := deScreen
   else
-    Result := diArchivo;
+    Result := deFile;
 end;
 
-function TformPropiedadesSalida.Execute(AInstruccion: TEntradaSalida): Boolean;
+function TformPropiedadesSalida.Execute(AInstruction: TCommunication): Boolean;
 begin
-	editCaption.Text := AInstruccion.Caption;
-	editParametros.Text := AInstruccion.Parametros;
-	checkBreackPoint.Checked := AInstruccion.BreakPoint;
-	checkCaption.Checked := AInstruccion.MuestraCaption;
-	checkTexto.Checked := AInstruccion.MuestraTexto;
-	checkBloquear.Checked := AInstruccion.Bloqueado;
+	editCaption.Text := AInstruction.Comments;
+	editParametros.Text := AInstruction.Parameters;
+	checkBreackPoint.Checked := AInstruction.BreakPoint;
+	checkCaption.Checked := AInstruction.ShowComments;
+	checkTexto.Checked := AInstruction.ShowParameters;
+	checkBloquear.Checked := AInstruction.Locked;
 
-  editArchivo.Text := AInstruccion.Archivo;
-  checkRetorno.Checked := AInstruccion.Retorno;
-  radioPantalla.Checked := AInstruccion.Dispositivo = diPantalla;
+  editArchivo.Text := AInstruction.FilePath;
+  checkRetorno.Checked := AInstruction.CarriageReturn;
+  radioPantalla.Checked := AInstruction.Device = deScreen;
 	Result := Self.ShowModal = mrOk;
 end;
 
-function TformPropiedadesSalida.MuestraCaption: Boolean;
+function TformPropiedadesSalida.ShowComments: Boolean;
 begin
   Result := checkCaption.checked;
 end;
 
-function TformPropiedadesSalida.MuestraTexto: Boolean;
+function TformPropiedadesSalida.ShowParameters: Boolean;
 begin
   Result := checkTexto.Checked;
 end;
 
-function TformPropiedadesSalida.Parametros: String;
+function TformPropiedadesSalida.Parameters: String;
 begin
   Result := editParametros.Text;
 end;
 
-function TformPropiedadesSalida.Retorno: Boolean;
+function TformPropiedadesSalida.CarriageReturn: Boolean;
 begin
   Result := checkRetorno.Checked;
 end;
