@@ -1425,8 +1425,8 @@ begin
 		for k := 0 to LArrow.Segments.Count-1 do
 		begin
 			LSegment := TSegment(LArrow.Segments.Items[k]);
-			if BevelAncho.Left < (LSegment.Left + LSegment.Width - 1 + BORDER) then
-				BevelAncho.Left := LSegment.Left + LSegment.Width - 1 + BORDER;
+			if BevelAncho.Left < (LSegment.Left + LSegment.Thickness - 1 + BORDER) then
+				BevelAncho.Left := LSegment.Left + LSegment.Thickness - 1 + BORDER;
 			if BevelAlto.Top < (LSegment.Top + LSegment.Height - 1 + BORDER) then
 				BevelAlto.Top := LSegment.Top + LSegment.Height - 1 + BORDER;
 		end;

@@ -27,7 +27,7 @@ type
 		FDragging: boolean;
 		FPosition : TPoint;
 		FDirection: TDirection;
-		FWidth: Integer;
+		FThickness: Integer;
 
 		FX1: integer;
 		FX2: integer;
@@ -64,7 +64,7 @@ type
 		property X2: integer read FX2 write SetX2;
 		property Y1: integer read FY1 write SetY1;
 		property Y2: integer read FY2 write SetY2;
-		property Width : Integer read FWidth write FWidth default 5;
+		property Thickness : Integer read FThickness write FThickness default 5;
 
 		property OnMouseDown;
 		property OnMouseUp;
@@ -201,7 +201,9 @@ type
     property OnSelect : TNotifyEvent read FOnSelect write FOnSelect;
 	end;
 
-	TInstruction = class(TGraphicControl)
+{ TInstruction }
+
+TInstruction = class(TGraphicControl)
 	private
 		FMouseInResizeZone: Boolean;
 		FMouseInResize: Boolean;
@@ -298,6 +300,9 @@ type
 		function IsMouseInObject(X,Y: Integer): Boolean; virtual; abstract;
 
 		procedure SetCapacities; virtual; abstract;
+
+    function ExecutionParameters: string; virtual;
+    function DisplayParameters: string; virtual;
 	public
 		constructor Create(AOwner: TComponent; AParent: TWinControl); virtual;
 		destructor Destroy; override;
@@ -369,6 +374,8 @@ type
 		property Exit: TJoin read FSouthJoin;
 	end;
 
+  { TCommunication }
+
   TCommunication = class(TSentence)
 	private
     FCarriageReturn: Boolean;
@@ -378,8 +385,6 @@ type
 		procedure SetCarriageReturn(const Value: Boolean);
 		procedure SetFilePath(const Value: String);
 		procedure SetParameters(const Value: String);
-
-		procedure Update; virtual; abstract;
 	protected
 	public
 		constructor Create(AOwner: TComponent; AParent: TWinControl); override;
@@ -389,10 +394,13 @@ type
 		property FilePath: String read FFilePath write SetFilePath;
 	end;
 
-	TInput = class(TCommunication)
+{ TInput }
+
+TInput = class(TCommunication)
 	private
 	protected
-		procedure Update; override;
+    function DisplayParameters: string; override;
+    function ExecutionParameters: string; override;
 
 		function IsMouseInObject(AX,AY: Integer): Boolean; override;
 
@@ -403,10 +411,13 @@ type
 	published
 	end;
 
-	TOutput = class(TCommunication)
+{ TOutput }
+
+TOutput = class(TCommunication)
 	private
 	protected
-    procedure Update; override;
+    function DisplayParameters: string; override;
+    function ExecutionParameters: string; override;
 
 		function IsMouseInObject(AX,AY: Integer): Boolean; override;
 
@@ -611,6 +622,16 @@ begin
 	Result := CanResize and
 		TUtiles.PuntoEnRect(X,Y,
       TUtiles.RectCentradoEn(Self.Width-BORDER div 2,Self.Height-BORDER div 2,BORDER));
+end;
+
+function TInstruction.ExecutionParameters: string;
+begin
+  Result := Self.Parameters;
+end;
+
+function TInstruction.DisplayParameters: string;
+begin
+  Result := Self.Parameters;
 end;
 
 procedure TInstruction.SetMouseInResizeZone(const Value: Boolean);
@@ -870,8 +891,8 @@ begin
 		begin
 			b1 := TextWidth(Comments);
 			TextOut((Self.Width - b1) div 2,Self.Height div 2 - h,Comments);
-			b2 := TextWidth(Parameters);
-			TextOut((Self.Width - b2) div 2,Self.Height div 2,Parameters);
+			b2 := TextWidth(DisplayParameters);
+			TextOut((Self.Width - b2) div 2,Self.Height div 2,DisplayParameters);
 		end
 		else if ShowComments then
 		begin
@@ -880,8 +901,8 @@ begin
 		end
 		else if ShowParameters then
 		begin
-			b2 := TextWidth(Parameters);
-			TextOut((Self.Width - b2) div 2,(Self.Height - h) div 2,Parameters);
+			b2 := TextWidth(DisplayParameters);
+			TextOut((Self.Width - b2) div 2,(Self.Height - h) div 2,DisplayParameters);
 		end;
 	end;
 end;
@@ -1094,7 +1115,7 @@ function TSentence.Execute: TInstruction;
 begin
 	Self.Error := False;
 	try
-		TAnalyzers.Sentence(Self.Parameters);
+		TAnalyzers.Sentence(Self.ExecutionParameters);
 		if not assigned(Exit.Arrow) then
 			raise Exception.Create('Exit arrow expected!')
 		else
@@ -1235,7 +1256,7 @@ function TCondition.Execute: TInstruction;
 begin
 	Self.Error := False;
 	try
-		if TAnalyzers.Condition(Parameters) then
+		if TAnalyzers.Condition(ExecutionParameters) then
 		begin
 			if Not assigned(Verdadero.Arrow) then
 				raise Exception.Create('Exit arrow expected!')
@@ -2239,15 +2260,15 @@ begin
 		diHorizontal :
 			begin
 				L := FX1;
-				T := FY1 - Width div 2;
+				T := FY1 - Thickness div 2;
 				W := FX2 - FX1;
-				H := Width;
+				H := Thickness;
 			end;
 		diVertical :
 			begin
-				L := FX1 - Width div 2;
+				L := FX1 - Thickness div 2;
 				T := FY1;
-				W := Width;
+				W := Thickness;
 				H := FY2 - FY1;
 			end;
 	end;
@@ -2267,17 +2288,26 @@ begin
   if Self.Parent is TScrollBox then
   begin
     LScrollBox := Self.Parent as TScrollBox;
-    Left := L - LScrollBox.HorzScrollBar.Position;
-    Top := T - LScrollBox.VertScrollBar.Position;
-    Self.Width := W + 1;
-    Self.Height := H + 1;
+    Self.Left := L - LScrollBox.HorzScrollBar.Position;
+    Self.Top := T - LScrollBox.VertScrollBar.Position;
+
+    if Self.Direction = diHorizontal then
+    begin
+      Self.Width := W + 1;
+      Self.Height := H;
+    end
+    else
+    begin
+      Self.Width := W;
+      Self.Height := H + 1;
+    end;
   end
   else
   begin
     Left := L;
     Top := T;
-    Self.Width := W + 1;
-    Self.Height := H + 1;
+    Self.Width := W;
+    Self.Height := H;
   end;
 end;
 
@@ -2294,7 +2324,7 @@ begin
 
 	ControlStyle := ControlStyle + [csReplicatable] - [csOpaque];
 	Parent := AParent;
-	Width := 5;
+	Thickness := 5;
 	FPen := TPen.Create;
 	FPen.OnChange := @Update;
 	UpdateLimits;
@@ -2360,16 +2390,16 @@ begin
 			begin
 				with Canvas do
 				begin
-					MoveTo(0, Width div 2);
-					LineTo(Self.Width, Width div 2);
+					MoveTo(0 , Self.Height div 2);
+					LineTo(Self.Width , Self.Height div 2);
 				end;
 			end;
 		diVertical:
 			begin
 				with Canvas do
 				begin
-					MoveTo(Width div 2, 0);
-					LineTo(Width div 2, Self.Height);
+					MoveTo(Self.Width div 2, 0);
+					LineTo(Self.Width div 2, Self.Height);
 				end;
 			end;
 	end;
@@ -2748,7 +2778,41 @@ end;
 
 { TInput }
 
-procedure TInput.Update;
+constructor TInput.Create(AOwner: TComponent; AParent: TWinControl);
+begin
+  inherited;
+
+end;
+
+destructor TInput.Destroy;
+begin
+
+  inherited;
+end;
+
+function TInput.DisplayParameters: string;
+var
+  s : string;
+begin
+  S := 'Read';
+
+  if (Device = deFile)  then
+    S := S + 'File';
+
+  S := S + '(';
+
+  if Device=deFile then
+    S := S + FilePath + SEPARATOR + ' ';
+
+  S := S + Parameters + ')';
+
+  if CarriageReturn then
+     S := S + ' + CR';
+
+  Result := S;
+end;
+
+function TInput.ExecutionParameters: string;
 var
   s : string;
 begin
@@ -2767,19 +2831,7 @@ begin
 
   S := S + Parameters + ')';
 
-  Parameters := S;
-end;
-
-constructor TInput.Create(AOwner: TComponent; AParent: TWinControl);
-begin
-  inherited;
-
-end;
-
-destructor TInput.Destroy;
-begin
-
-  inherited;
+  Result := S;
 end;
 
 function TInput.IsMouseInObject(AX, AY: Integer): Boolean;
@@ -2821,27 +2873,6 @@ end;
 
 { TSalida }
 
-procedure TOutput.Update;
-var
-  s : string;
-begin
-  S := 'Write';
-  if (Device = deFile)  then
-    S := S + 'File';
-
-  if CarriageReturn then
-     S := S + 'Ln';
-
-  S := S + '(';
-
-  if Device=deFile then
-    S := S + FilePath + SEPARATOR + ' ';
-
-	S := S + Parameters + ')';
-
-  Parameters := S;
-end;
-
 constructor TOutput.Create(AOwner: TComponent; AParent: TWinControl);
 begin
   inherited;
@@ -2851,6 +2882,48 @@ destructor TOutput.Destroy;
 begin
 
   inherited;
+end;
+
+function TOutput.DisplayParameters: string;
+var
+  s : string;
+begin
+  s := 'Write';
+  if (Device = deFile)  then
+    s := s + 'File';
+
+  s := s + '(';
+
+  if Device=deFile then
+    s := s + FilePath + SEPARATOR + ' ';
+
+	s := s + Parameters + ')';
+
+  if CarriageReturn then
+     s := s + ' + CR';
+
+  Result := s;
+end;
+
+function TOutput.ExecutionParameters: string;
+var
+  s : string;
+begin
+  s := 'Write';
+  if (Device = deFile)  then
+    s := s + 'File';
+
+  if CarriageReturn then
+     s := s + 'Ln';
+
+  s := s + '(';
+
+  if Device=deFile then
+    s := s + FilePath + SEPARATOR + ' ';
+
+	s := s + Parameters + ')';
+
+  Result := s;
 end;
 
 function TOutput.IsMouseInObject(AX, AY: Integer): Boolean;
@@ -2946,4 +3019,4 @@ begin
   end;
 end;
 
-end.
+end.
